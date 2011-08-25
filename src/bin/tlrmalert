@@ -1,0 +1,147 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2010,2011
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# locale setup
+import os
+import gettext
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import sys
+import itertools
+
+from ibm.teal import Teal
+from ibm.teal import registry, alert
+from ibm.teal.database import db_interface
+from ibm.teal.util import command
+
+if __name__ == '__main__':
+
+    # Parse the command line        
+    parser = command.TealOptionParser([])
+    parser.add_option('-i', '--ids',
+                      type='string',
+                      action='store',
+                      dest='recid_list',
+                      default=None,
+                      help=_('A single alert id or a comma-separated list of alert ids'))
+    parser.add_option('-o', '--older-than',
+                      type='string',
+                      action='store',
+                      dest='query_time',
+                      default=None,
+                      help=_('The time condition_qry in the format YYYY-MM-DD-HH:MM::SS'))
+    (options, args) = parser.parse_args()
+
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tlrmalert.log', msgLevel='warning', data_only=True)
+
+    # Prepare to use the database
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+    cnxn = db.get_connection()
+    cursor = cnxn.cursor()
+
+    where_flds = []
+    
+    # Add the where clause for older than if specified
+    if options.query_time is not None:
+        try:
+            time_range = parser.validate_timestamp(options.query_time)
+        except BaseException,be:
+            registry.get_logger().exception(be)
+            parser.error(_('Invalid timestamp for {0}: {1}').format('--older-than', options.query_time))
+            
+        older_where = "AND ${0} < '{1}'".format(alert.ALERT_ATTR_CREATION_TIME, time_range[0])
+        where_flds.append(alert.ALERT_ATTR_CREATION_TIME)
+    else:
+        older_where = ''
+
+    if options.recid_list is not None:
+        recids_where = 'AND ${0} IN ({1})'.format(alert.ALERT_ATTR_REC_ID,
+                                                  options.recid_list)
+        # rec_id field added in main clause below
+    else:
+        recids_where = ''
+
+    # Remove all alerts that are closed and are not the target of an association
+    a2a_qry = db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
+                            db_interface.TABLE_ALERT2ALERT)
+    
+    delete_where = '${0} = {1} AND ${2} NOT IN ({3}) {4} {5}'.format(alert.ALERT_ATTR_STATE,
+                                                                     alert.ALERT_STATE_CLOSED,
+                                                                     alert.ALERT_ATTR_REC_ID,
+                                                                     a2a_qry,
+                                                                     older_where,
+                                                                     recids_where)
+    
+    where_flds.extend([alert.ALERT_ATTR_STATE,alert.ALERT_ATTR_REC_ID])
+    
+    alert_delete = db.gen_delete(db_interface.TABLE_ALERT_LOG,
+                                 where=delete_where,
+                                 where_fields=where_flds)
+    
+    # Since we can be removing associations through each pass, we need to loop
+    # until we don't delete anything anymore
+    total_alerts_deleted = 0
+    row_count = 1
+    while (row_count != 0):
+        cursor.execute(alert_delete)
+        row_count = cursor.rowcount
+        total_alerts_deleted += row_count
+
+    # If record ids where specified, then if any of them were not deleted, let the user know why
+    if options.recid_list is not None:
+        alert_state_qry = db.gen_select([alert.ALERT_ATTR_REC_ID, alert.ALERT_ATTR_STATE],
+                                        db_interface.TABLE_ALERT_LOG,
+                                        where='${0} IN ({1})'.format(alert.ALERT_ATTR_REC_ID, options.recid_list),
+                                        where_fields=[alert.ALERT_ATTR_REC_ID],
+                                        order=alert.ALERT_ATTR_REC_ID)
+        
+        alert_assoc_qry = db.gen_select([alert.ALERT2ALERT_ATTR_ALERT_RECID, 
+                                         alert.ALERT2ALERT_ATTR_ASSOC_TYPE,
+                                         alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
+                                         db_interface.TABLE_ALERT2ALERT,
+                                         where='${0} IN ({1})'.format(alert.ALERT2ALERT_ATTR_T_ALERT_RECID, options.recid_list),
+                                         where_fields=[alert.ALERT2ALERT_ATTR_T_ALERT_RECID])
+        
+        cursor.execute(alert_state_qry)
+        alert_states = cursor.fetchall()
+        
+        cursor.execute(alert_assoc_qry)
+        alert_assocs = cursor.fetchall()
+        
+        for alert_recid, alert_state in alert_states:            
+            print >>sys.stderr, _("Alert '{0}' cannot be removed.").format(alert_recid)
+            
+            # The Alert at least has to be closed
+            if alert_state != alert.ALERT_STATE_CLOSED:
+                print >>sys.stderr, '\tReason: Alert is not closed'
+            
+            # And it may have other active associations with other open Alerts
+            for assoc in itertools.ifilter(lambda x: x[2] == alert_recid, alert_assocs):                
+                print >>sys.stderr, "\tReason: Alert is associated with open Alert '{0}'".format(assoc[0])
+        
+    # Commit changes to db 
+    cnxn.commit()
+ 
+    # All done, now shut down TEAL gracefully
+    t.shutdown()
+
+    if total_alerts_deleted == 1:
+        print _('\n{0} unique alert removed').format(total_alerts_deleted)
+    else:
+        print _('\n{0} unique alerts removed').format(total_alerts_deleted)
+

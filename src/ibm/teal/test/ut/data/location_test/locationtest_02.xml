@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<cluster ver="1.0"
+    xmlns="http://www.ibm.com/teal" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.ibm.com/teal ../../../../../xml/location.xsd">
+    <location id="TS" type="test_simple">
+        <simple>
+            <component type="parent"/>
+            <component type="child"/>
+            <component type="grandchild"/>
+        </simple>
+    </location>  
+    <location id='TC' type="test_complex" separator="-">
+        <complex>
+            <component type="top" id="R">
+                <!-- compref ref="home"/ Multiple roots --> 
+            </component>
+            <component type="home" id="H">
+                <compref ref="psanders"/>
+                <compref ref="markland"/>
+                <compref ref="jecarey"/>
+                <compref ref="kilroy"/>
+            </component>
+            <component type="psanders" id="PS" min="1" max="10"/>
+            <component type="markland" id="MM" min="5"/>
+            <component type="jecarey"  id="JC"/>
+            <component type="kilroy"   id="K" max="20">
+                <compref ref="src"/>
+            </component>
+            <component type="src" id="S"/>    
+        </complex>
+    </location>         
+</cluster>

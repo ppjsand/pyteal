@@ -1,0 +1,111 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2010,2011
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# locale setup
+import os
+import gettext
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import sys
+import logging
+from optparse import OptionParser
+
+from ibm.teal import registry
+from ibm.teal.registry import SERVICE_LOGGER, SERVICE_ALERT_METADATA
+from ibm.teal.teal import TealLogger, Teal
+from ibm.teal.analyzer.gear.ruleset import GearRuleset
+from ibm.teal.teal_error import XMLParsingError
+from ibm.teal.metadata import Metadata, META_TYPE_ALERT
+
+if __name__ == '__main__':
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    my_teal = Teal(None, logFile='stderr', msgLevel='critical', data_only=True)
+
+    # Parse the command line        
+    parser = OptionParser('usage: %prog [options] rule-file')
+    parser.add_option('-m', '--metadata',
+                      type='string',
+                      action='store',
+                      default=None,
+                      help=_('verify the rule using this alert metadata specification'))
+# TODO: Add location support
+#    parser.add_option('-l', '--location',
+#                      type='string',
+#                      action='store',
+#                      default=None,
+#                      help=_('verify the rule using this location specification'))
+    alert_input = False   # otherwise not defined error
+    parser.add_option('-a', '--alert',
+                      dest='alert_input',
+                      action='store_true',
+                      default=False,
+                      help=_('verifying a rule that also processes alerts'))
+    parser.add_option('-c', '--conf_attr',
+                      type='string',
+                      action='store',
+                      default=None,
+                      help=_('verify the rule assuming these configuration attributes'))
+    parser.add_option('-x', '--cref',
+                      type='string',
+                      action='store',
+                      default=None,
+                      help=_('if valid provide a cross reference of id usage'))
+    (options, args) = parser.parse_args()
+    #print options,args
+    if len(args) < 1:
+        print >> sys.stderr, _('rule file to process must be specified')
+        sys.exit(1)
+    
+    result = 0
+    # process metadata
+    if options.metadata is not None:
+        #print 'metadata ', options.metadata
+        # Wipe out existing metadata
+        registry.unregister_service(SERVICE_ALERT_METADATA)
+        # Create new metadata
+        alert_metadata = Metadata(META_TYPE_ALERT, [])
+        registry.register_service(SERVICE_ALERT_METADATA, alert_metadata)
+        # TODO: Currently this is relative to the data dir ... 
+        #       should we change to make relative to where we are running?
+        alert_metadata.add_files([options.metadata], use_data_dir=False)
+    
+#    # process location
+#    if options.location is not None:
+#        print 'location ', options.location
+              
+    # process configuation entries
+    if options.conf_attr is None:
+        config_dict = None
+    else:
+        #print 'conf_attr ', options.conf_attr
+        config_dict = {}
+        for entry in options.conf_attr.split(','):
+            key, value = entry.split(':')
+            
+            config_dict[key.strip()] = value.strip()
+    #print config_dict
+    
+    try:
+        rs = GearRuleset(args[0], config_dict=config_dict, event_input=True, alert_input=alert_input, name=str(args[0]), use_checkpoint=False)
+        if options.cref is not None:
+            rs.print_cross_ref()
+    except XMLParsingError,e:
+        print >> sys.stderr, e
+        result = 1
+  
+    sys.exit(result)
+    

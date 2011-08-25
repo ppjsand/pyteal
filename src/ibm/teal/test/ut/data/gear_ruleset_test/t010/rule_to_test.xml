@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="NNN"/>
+</gear_control>
+<events>
+   <event id="EF000001" comp="CNM" min_time_in_pool="500"/>
+   <event id="EF000002" comp="CNM" min_time_in_pool="500"/>
+   <event id="EF000003" comp="CNM" min_time_in_pool="500"/>
+   <event id="EFS00001" comp="CNM" min_time_in_pool="500"/>
+   <event id="EFS00002" comp="CNM" min_time_in_pool="500"/>
+   <event id="EFS00003" comp="CNM" min_time_in_pool="500"/>
+   <event id="E0000001" comp="CNM"/>
+   <event id="E0000002" comp="CNM" name="E2"/>
+   <event id="E0000003" comp="CNM" name="E3"/>
+   <event id="E0000004" comp="CNM" name="Everyveryveryveryveryverylongname4"/>
+   <event id="E0000005" comp="CNM" name="E5"/>
+</events>
+<constants>
+   <constant name="E1" type="event_id" value="E0000001"/>
+   <constant name="E4" type="event_id" value="E0000004"/>
+   <constant name="E1andE4" type="set_of_event_ids" value="E1,Everyveryveryveryveryverylongname4"/>
+   <constant name="E1E2E3E4" type="set_of_event_ids" value="E1,E2,E3,E4"/>
+</constants>
+<analyze>
+   <!-- Start base setup  -->
+   <rule name="EFS000001 suppressions">
+      <condition>
+            <event_equals id="EF000001" comp="CNM"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00001" comp="CNM"/>
+        <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+   <rule name="EFS000002 suppressions">
+      <condition>
+            <event_equals id="EF000002" comp="CNM"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00002" comp="CNM"/>
+        <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+   <rule name="EFS000003 suppressions">
+      <condition>
+            <event_equals id="EF000003" comp="CNM"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00003" comp="CNM"/>
+        <create_alert id="Alert 03"/>
+      </action>
+   </rule>   
+   <!-- END BASE SETUP ... at this point should have 
+        EF000001, EF000002, and EF000003 moving forward
+        EFS00001, EFS00002, and EFS00003 moving forward and suppressed by one above
+        
+        This should create 3 alerts (1,2,3) each with one condition event and one suppression
+    -->
+    <!-- NOTE INPUT EVENT DATA CHANGE: Added raw data entry for neighbor_loc to all E0000005 events -->
+   <!--  Subtest 1: 
+             
+              
+             Test and with location match of unique with the event equals scoped to pciSlot.
+               consolidation will occur based on truth_locs when creating the alerts.
+               
+               One alert will be created: 
+               
+E1  7 MB-SL1, 11 MB-SL1, 15 MB-DM3, 19 MB-SL2  -> 7, 11 MB-SL1, 15 MB-DM3, 19 MB-SL2
+    OR 
+E2  8 MB-SL1, 12 MB-SL1, 16 MB-DM3, 20 MB-SL2  -> 8, 12 MB-SL1, 16 MB-DM3, 20 MB-SL2
+
+ 7,11 MB-SL1,   16 MB-DM3    (1,3)  7, 11, 16   -> 7, 8, 11, 12, 15, 16   pAlert
+ 7,11 MB-SL1,   20 MB-SL2    (1,2)  7, 11, 20   -> 7, 8, 11, 12, 19, 20   pAlert
+   15 MB-DM3, 8,12 MB-SL1    (1,3)  8, 12, 15   x
+   15 MB-DM3,   20 MB-SL2    (2,3) 15, 20       -> 15, 16, 19, 20 pAlert
+   19 MB-SL2, 8,12 MB-SL1    (1,2)  8, 12, 19   x
+   19 MB-SL2,   16 MB-DM3    (2,3) 16, 19       x
+               
+               Overlaping location so combined into one 
+    -->
+   <rule name="all_event instances 1">
+      <condition default_event_comp="CNM">
+         <and location_match="unique">
+             <event_equals id="E1" scope="C:pciSlot"/>
+             <event_equals id="E2" scope="C:pciSlot"/>
+         </and>
+      </condition>
+      <action>
+        <create_alert id="Alert 04"/>
+      </action>
+      
+   <!--  Subtest 2: 
+       
+          Same as subtest 1, but using default scope      
+               
+   -->    
+   </rule>
+      <rule name="all_event instances 1">
+      <condition default_event_comp="CNM" default_scope="C:pciSlot">
+         <and location_match="unique">
+             <event_equals id="E1"/>
+             <event_equals id="E2"/>
+         </and>
+      </condition>
+      <action>
+        <create_alert id="Alert 05"/>
+      </action>
+   </rule>
+      
+  <!--  Subtest 3: 
+       
+          Test that 'not' works.   This will fire for the events before the first flush but not after that.
+          Thus it will occur before as part of the alerts from the first pool 
+          
+          This is because in the 2nd pool there is a true event for every location at this scope
+          
+          One alert will be created:
+            1 with 3 condition and 3 suppressed ... the original 6   
+               
+    -->    
+      <rule name="not 1">
+      <condition default_event_comp="CNM" default_scope="C:pciSlot">
+       <not>
+         <and location_match="identical">
+             <event_equals id="E1"/>
+             <event_equals id="E2"/>
+         </and>
+       </not>
+      </condition>
+      <action>
+        <create_alert id="Alert 06"/>
+      </action>
+      
+   </rule>    
+   
+  <!--  Subtest 4: 
+       
+          Test that 'not' works.   This will fire for the events before the first flush as well as in the 2nd pool
+          
+         5 alerts be created:
+            1 with 3 condition and 3 suppressed ... the original 6  
+            3 with 4 conditions for each the ones at the same location (see next)
+            1 with 7 conditions and 3 suppressed at the MB-SL1-ET1-PT1 location
+               
+    -->    
+      <rule name="not 2">
+      <condition default_event_comp="CNM">
+       <not>
+            <event_equals id="E5"/>
+        </not>
+      </condition>
+      <action>
+        <create_alert id="Alert 07"/>
+      </action>
+   </rule> 
+   
+   <!--  Subtest 5: 
+    
+          Test that 'not' works.  Same as subtest 4 with scope added.   This caused the alert with the first
+       pool and consolidates the ones in the 2nd pool and ommit those with the same location (at the slot)
+       as the matched E5s.
+          
+         3 alerts be created:
+            1 with 3 condition and 3 suppressed ... the original 6  
+            1 with 4 conditions for those at MB-DM3
+            1 with 11 conditions and 3 suppressed at the MB-SL1 location
+            Note none at MB-SL2 because that is the scoped location of E5
+               
+    -->    
+      <rule name="not 3">
+      <condition default_event_comp="CNM" default_scope="C:pciSlot">
+       <not>
+            <event_equals id="E5"/>
+        </not>
+      </condition>
+      <action>
+        <create_alert id="Alert 08"/>
+      </action>
+   </rule> 
+   
+      <!--  Subtest 6: 
+         Test that 'not' works.  Same as subtest but using location match ignore.  Only the first pool should get
+       an alert because E5 is only in the 2nd pool.
+          
+         3 alerts be created:
+            1 with 3 condition and 3 suppressed ... the original 6  
+                   
+    -->    
+     <rule name="not 4">
+      <condition default_event_comp="CNM">
+       <not>
+            <event_equals id="E5" location_match="ignore"/>
+        </not>
+      </condition>
+      <action>
+        <create_alert id="Alert 09"/>
+      </action>
+   </rule> 
+   
+</analyze>
+</gear_ruleset>

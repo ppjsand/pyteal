@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:teal="http://www.ibm.com/teal"
+    targetNamespace="http://www.ibm.com/teal"
+    elementFormDefault="qualified"
+    >
+    
+    <!--
+        This schema defines the sets of Location codes for a cluster.
+        
+        Location codes are hierarchical by nature and made up of components.
+        A Location code can be considered "simple" or "complex" based on the needs of the user
+        
+        A simple Location code uses free-form text for each component and is a simple hierarchy with
+        one component per level.
+        
+        A complex Location code uses a short-hand alpha key value followed by an optional number for
+        each of its components. Each component may have any number of child components as well. Complex
+        Location codes are typically used to model hardware topology within a system                
+     -->
+     
+    <!-- 
+        The cluster element is the top level element with in the document and contains a number of
+        different location code types. Each location code type and id must be unique within the cluster.        
+     --> 
+    <xsd:element name="cluster" type="teal:clusterType">
+        <xsd:unique name="LocationCondition">
+            <xsd:selector xpath=".//teal:location"/>
+            <xsd:field xpath="@id"/>
+        </xsd:unique>
+        <xsd:unique name="TypeCondition">
+            <xsd:selector xpath=".//teal:location"/>
+            <xsd:field xpath="@type"/>
+        </xsd:unique>        
+    </xsd:element>                    
+     
+     <!--    
+             Similarly to the location, each component and its type must be unique within a location code
+      -->        
+    <xsd:complexType name="clusterType">
+        <xsd:sequence>
+            <xsd:element name="location" type="teal:locationType"  minOccurs="1" maxOccurs="unbounded">
+                <xsd:unique name="CompTypeCondition">
+                    <xsd:selector xpath=".//*/teal:component"/>
+                    <xsd:field xpath="@type"/>
+                </xsd:unique>
+                <xsd:unique name="RefCondition">
+                    <xsd:selector xpath=".//*/teal:component/teal:compref"/>
+                    <xsd:field xpath="@ref"/>
+                </xsd:unique>
+                <xsd:key name="componentTypeId">
+                    <xsd:selector xpath=".//*/teal:component"/>
+                    <xsd:field xpath="@type"/>
+                </xsd:key>
+                <xsd:keyref name="componentIdRef" refer="teal:componentTypeId">
+                    <xsd:selector xpath=".//*/teal:component/teal:compref"/>
+                    <xsd:field xpath="@ref"/>
+                </xsd:keyref>
+            </xsd:element>        
+        </xsd:sequence>
+        <xsd:attribute name="ver" type="xsd:float" use="required"/>
+    </xsd:complexType>
+        
+    <xsd:complexType name="locationType">
+        <xsd:choice>
+            <xsd:element name="simple" type="teal:simpleType"/>
+            <xsd:element name="complex" type="teal:complexType"/>
+        </xsd:choice>
+        <!-- The ID is used to identify the type of Location Code this is within the TEAL framework and database tables -->        
+        <xsd:attribute name="id"        use="required" type="teal:identType"/>
+        <!-- The type of Location code this is within the cluster -->
+        <xsd:attribute name="type"      use="required" type="xsd:string"/>
+        <!-- string separator when displaying and parsing the components of a location code -->
+        <xsd:attribute name="separator" use="optional" default="." type="xsd:string"/> 
+    </xsd:complexType>
+    
+    <!-- 
+        Simple Location code content is described by a list of components. The order that the components are
+        defined within this section describes the hierarchy of the Location code. There is a one-one 
+        parent-child correspondence  
+     -->
+    <xsd:complexType name="simpleType">
+        <xsd:sequence>
+            <xsd:element name="component" type="teal:simpleComponentType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <!--
+        Complex Location code content is a tree structure and is displayed as short-hand ID with an optional
+        instance value. 
+     -->
+    <xsd:complexType name="complexType">
+        <xsd:sequence>
+            <xsd:element name="component" type="teal:complexComponentType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="simpleComponentType">
+        <xsd:attribute name="type"/> <!-- Type is the only requirement of a simple Location code component -->
+    </xsd:complexType>
+    
+    <xsd:complexType name="complexComponentType">
+        <xsd:sequence>
+            <xsd:element name="compref" type="teal:componentRefType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <!--  Must have a unique type for each level -->
+        <xsd:attribute name="type" use="required" type="xsd:string"/> 
+        <!-- Each level will have a simple 1-2 character ID. It is not necessary to be unique within the Location code -->
+        <xsd:attribute name="id" type="teal:identType" use="required"/> 
+        <!-- 
+            A min and max value may be specified by the user. For a range of valid values. 
+            
+            If neither min nor max are specified, then the component has NO value, only an identifier.
+            If min is only specified, then max is the size of the largest int representation on the system
+            If max is only specified, then min is defaulted to 0
+            If both max and min are specified, it must be true that min <= max
+        -->   
+        <!-- xsd:attribute name="min" type="xsd:nonNegativeInteger" use="optional"/ -->
+        <!-- xsd:attribute name="max" type="xsd:nonNegativeInteger" use="optional"/ -->
+        <xsd:attribute name="pattern" type="xsd:token" use="optional"/>
+    </xsd:complexType>
+    
+    <!--
+        A component reference element is used to describe which components are a child of the current component. 
+     -->
+    <xsd:complexType name="componentRefType">
+        <xsd:attribute name="ref" type="xsd:string"/>
+    </xsd:complexType>
+    
+    <!--
+        An identity string is a one or two uppercase character string. 
+     -->
+    <xsd:simpleType name="identType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[A-Z]{1,2}"/>    
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

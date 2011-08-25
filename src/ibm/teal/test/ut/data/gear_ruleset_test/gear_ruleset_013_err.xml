@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gear_ruleset>
+<events>
+   <event id="Example1" comp="TST"/>
+   <event id="Example2" comp="TST"/>
+</events>
+<pool_control>
+   <initial_duration default="4" force="true"/>
+   <max_duration minimum="3" maximum="10" default="9"/>
+</pool_control>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <all_events ids="Example1, BAD3, Example2" comp="TST"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="Example2, Example1" comp="TST"/>
+      </action>
+   </rule>
+</analyze>
+<events>
+  <event id="foo" comp="TST"/>
+</events>
+</gear_ruleset>

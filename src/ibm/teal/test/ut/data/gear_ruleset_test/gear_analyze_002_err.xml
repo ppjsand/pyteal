@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!-- <gear_ruleset> -->
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="TC"/>
+  <analyze_alerts id_regx="  Z  ,   B,Q"/>
+  <analyze_events id_regx=".*"/>
+</gear_control>
+<pool_control>
+  <initial_duration default="300"/>
+</pool_control>
+<events>
+   <event id="Example5" comp="PS" name="REFNAME"/>
+   <event id="Example2"/>
+   <event id="Example1" pool_extension_time="3" min_time_in_pool="5"/>   
+</events>
+<alerts>
+   <alert id="Alert2"/>
+   <alert id="Alert1" name="George" pool_extension_time="12" min_time_in_pool="7"/>
+</alerts>
+<analyze>
+</analyze>
+</gear_ruleset>

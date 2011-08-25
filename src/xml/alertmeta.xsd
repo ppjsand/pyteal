@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ibm.com/teal/alertmeta"
+	xmlns:tns="http://www.ibm.com/teal/alertmeta" elementFormDefault="qualified">
+	<element name="alertMetadata">
+		<complexType>
+			<sequence>
+				<element name="alert" minOccurs="1" maxOccurs="unbounded">
+					<complexType>
+						<all>
+							<!--
+								Descriptive Message Template - Message to display that describes
+								the event. This is the reason for the alert. It can contain
+								replacement text. (how does this work?)
+							-->
+							<element name="description" type="string" minOccurs="0" maxOccurs="1"/>
+							<element name="msg_template" type="string" minOccurs="1"
+								maxOccurs="1" />
+							<!--Recommendation - Recommended action. -->
+							<element name="recommendation" type="string" minOccurs="1"
+								maxOccurs="1" />
+							<!--Urgency - How urgent is the alert.  See restrictions for values. -->
+							<element name="urgency" minOccurs="1" maxOccurs="1">
+								<simpleType>
+									<restriction base="string">
+										<enumeration value="I" /> <!-- IMMEDIATE Must take corrective action now -->
+										<enumeration value="S" />  <!-- SCHEDULE Schedule corrective action as soon as possible -->
+										<enumeration value="N" /> <!-- NORMAL Schedule corrective action during normal working hours -->
+										<enumeration value="D" /> <!--  DEFER Corrective action can wait for the next maintenance window -->
+										<enumeration value="O" /> <!-- OPTIONAL Corrective action can be taken at any time -->
+									</restriction>
+								</simpleType>
+							</element>
+                            <!--Severity - See restrictions for values. -->
+                            <element name="severity" minOccurs="1" maxOccurs="1">
+                                <simpleType>
+                                    <restriction base="string">
+                                        <enumeration value="F" /> <!-- FATAL Unrecoverable error has occurred -->
+                                        <enumeration value="E" />  <!-- ERROR Unrecoverable error.  Lost of function, but system can still run -->
+                                        <enumeration value="W" /> <!-- WARNING Non-critical failure or impending failure -->
+                                        <enumeration value="I" /> <!--  INFO Informational message only. No action required -->
+                                    </restriction>
+                                </simpleType>
+                            </element>
+							<!--Call Home - true = call home; false = don't call home
+							                Default is false -->
+							<element name="call_home" minOccurs="0" maxOccurs="1">
+                               <simpleType>
+                                    <restriction base="string">
+                                        <enumeration value="Y" />
+                                        <enumeration value="N" /> 
+                                    </restriction>
+                                </simpleType>
+                            </element>
+                            <!--Customer Notification - true = notify customer; false = don't notify customer.
+                                                        Default is false -->
+                            <element name="cust_notification" minOccurs="0" maxOccurs="1">
+                               <simpleType>
+                                    <restriction base="string">
+                                        <enumeration value="Y" />
+                                        <enumeration value="N" /> 
+                                    </restriction>
+                                </simpleType>
+                            </element>
+                            <!-- FRU Class - Class of the FRU this alert is for -->
+                            <element name="fru_class" type="string" minOccurs="0" maxOccurs="1" />
+                            <!-- FRU List - List of FRUs this alert can be for -->
+                            <element name="fru_list" type="string" minOccurs="0" maxOccurs="1" />
+                            <!--  Priority - priority of this alert versus other alerts (smallest is highest priority)-->
+                            <element name="priority" type="integer" minOccurs="0" maxOccurs="1" />
+						</all>
+						<attribute name="id" type="ID" use="required" />
+					</complexType>
+				</element>
+
+			</sequence>
+		</complexType>
+	</element>
+
+
+</schema>

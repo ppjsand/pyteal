@@ -1,0 +1,238 @@
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2011     
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+import unittest 
+from ibm.teal import teal
+from ibm.teal.registry import get_service, SERVICE_ALERT_DELIVERY, SERVICE_EVENT_Q
+from ibm.teal.util.journal import Journal
+from ibm.teal.test.teal_unittest import TealTestCase
+from datetime import datetime, timedelta
+from ibm.teal.event import EVENT_ATTR_REC_ID, EVENT_ATTR_EVENT_ID,\
+    EVENT_ATTR_TIME_OCCURRED, EVENT_ATTR_TIME_LOGGED, EVENT_ATTR_SRC_COMP,\
+    EVENT_ATTR_SRC_LOC, EVENT_ATTR_SRC_LOC_TYPE, EVENT_ATTR_RAW_DATA_FMT,\
+    EVENT_ATTR_RAW_DATA, Event
+from ibm.teal.location import Location
+from ibm.teal.control_msg import ControlMsg, CONTROL_MSG_TYPE_FLUSH,\
+    CONTROL_MSG_ATTR_CREATION_TIME
+
+    
+class GearRulesetExecution(TealTestCase):
+    '''Test running GEAR rulesets'''
+    
+    def test_defect_x000001a(self):
+        ''' Ensure x000001a does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/x000001/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        event_q.put_nowait(self._crt_isnm_event(1, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD01', None ))
+        event_q.put_nowait(self._crt_isnm_event(2, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD02', None ))
+        event_q.put_nowait(self._crt_isnm_event(3, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD14', None ))
+        event_q.put_nowait(self._crt_isnm_event(4, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD04', None ))
+        event_q.put_nowait(self._crt_flush(100))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/x000001/alert_output_a.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp)))
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+    
+    def test_defect_x000001b(self):
+        ''' Ensure that x000001b does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/x000001/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        #event_q.put_nowait(self._crt_isnm_event(1, 'BD700041', 'BB03-FR007-SN000-DR1-HB0-LD01', None ))
+        event_q.put_nowait(self._crt_isnm_event(2, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD02', None ))
+        event_q.put_nowait(self._crt_isnm_event(3, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD14', None ))
+        event_q.put_nowait(self._crt_isnm_event(4, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD04', None ))
+        event_q.put_nowait(self._crt_flush(100))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/x000001/alert_output_b.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp)))
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+    
+    def test_defect_x000001c(self):
+        ''' Ensure that x000001c does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/x000001/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        #event_q.put_nowait(self._crt_isnm_event(1, 'BD700041', 'BB03-FR007-SN000-DR1-HB0-LD01', None ))
+        #event_q.put_nowait(self._crt_isnm_event(2, 'BD700041', 'BB03-FR007-SN000-DR1-HB0-LD02', None ))
+        event_q.put_nowait(self._crt_isnm_event(3, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD14', None ))
+        event_q.put_nowait(self._crt_isnm_event(4, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD04', None ))
+        event_q.put_nowait(self._crt_flush(100))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/x000001/alert_output_c.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp)))
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+    
+    def test_defect_x000001d(self):
+        ''' Ensure that x000001d does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/x000001/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        #event_q.put_nowait(self._crt_isnm_event(1, 'BD700041', 'BB03-FR007-SN000-DR1-HB0-LD01', None ))
+        #event_q.put_nowait(self._crt_isnm_event(2, 'BD700041', 'BB03-FR007-SN000-DR1-HB0-LD02', None ))
+        event_q.put_nowait(self._crt_isnm_event(3, 'BD700041', 'FR007-CG03-SN000-DR1-HB0-OM20-LD14', None ))
+        #event_q.put_nowait(self._crt_isnm_event(4, 'BD700041', 'BB03-FR007-SN000-DR1-HB0-LD04', None ))
+        event_q.put_nowait(self._crt_flush(100))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/x000001/alert_output_d.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp)))
+        #self.assertTrue(j_out.wait_for_entries(1, seconds=10))
+        #j_out.save('data/gear_ruleset_test/bugs/x000001/alert_output_d.json')
+        #print j_out
+        #print j_out
+        #print j_exp
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+    
+    
+    def test_defect_172183(self):
+        ''' Ensure that defect 172183 does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/d172183/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        event_q.put_nowait(self._crt_isnm_event(1, 'BD500031', 'FR007-CG03-SN001-DR0-HB0-LL01', 'FR007-CG03-SN001-DR0-HB3-LL01'  ))
+        event_q.put_nowait(self._crt_isnm_event(2, 'BD50002F', 'FR007-CG03-SN001-DR0-HB0-LL01', 'FR007-CG03-SN001-DR0-HB3-LL01'  ))
+        event_q.put_nowait(self._crt_isnm_event(3, 'BD50002F', 'FR007-CG03-SN001-DR0-HB6-LL01', 'FR007-CG03-SN001-DR0-HB3-LL04'  ))
+        event_q.put_nowait(self._crt_isnm_event(4, 'BD700027', 'FR007-CG03-SN001-DR0-HB0-LL01', 'FR007-CG03-SN001-DR0-HB3-LL01'  ))
+        event_q.put_nowait(self._crt_flush(10))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/d172183/alert_output.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp), seconds=20))
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+    
+    def test_defect_173776(self):
+        ''' Ensure that defect 173776 does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/d173776/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        event_q.put_nowait(self._crt_isnm_event(1, 'BD700025', 'FR007-CG03-SN000-DR0-HB1-OM20-LD15', 'FR007-CG03-SN016-DR0-HB0-OM20-LD15'  ))
+        event_q.put_nowait(self._crt_isnm_event(2, 'BD700041', 'FR007-CG03-SN000-DR0-HB1-OM20-LD15', 'FR007-CG03-SN016-DR0-HB0-OM20-LD15'  ))
+        event_q.put_nowait(self._crt_flush(10))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/d173776/alert_output.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp), seconds=20))
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+    
+    def test_defect_173863(self):
+        ''' Ensure that defect 173863 does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/d173776/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        event_q.put_nowait(self._crt_isnm_event(1, 'BD700040', 'FR007-CG03-SN000-DR0-HB1-OM20-LD14', 'FR007-CG03-SN000-DR0-HB0-OM20-LD15'  ))
+        event_q.put_nowait(self._crt_isnm_event(2, 'BD70003F', 'FR007-CG03-SN000-DR0-HB1-OM20-LD14', 'FR007-CG03-SN000-DR0-HB0-OM20-LD15'  ))
+        #event_q.put_nowait(self._crt_isnm_event(3, 'BD50002F', 'BB03-FR007-SN001-DR0-HB6-LL01', 'BB03-FR007-SN001-DR0-HB3-LL04'  ))
+        #event_q.put_nowait(self._crt_isnm_event(4, 'BD700027', 'BB03-FR007-SN001-DR0-HB0-LL01', 'BB03-FR007-SN001-DR0-HB3-LL01'  ))
+        event_q.put_nowait(self._crt_flush(10))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/d173863/alert_output.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp), seconds=20))
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+   
+    def test_defect_173874(self):
+        ''' Ensure that defect 173874 does not get regressed '''
+        myteal = teal.Teal('data/gear_ruleset_test/bugs/d173776/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        event_q = get_service(SERVICE_EVENT_Q)
+        event_q.put_nowait(self._crt_isnm_event(1, 'BD700054', 'FR007-CG03-SN000-DR0-HB0-OM20-LR01', 'FR007-CG03-SN000-DR1-HB1-OM20-LR00'  ))
+        event_q.put_nowait(self._crt_isnm_event(2, 'BD700054', 'FR007-CG03-SN000-DR0-HB0-OM20-LR00', 'FR007-CG03-SN000-DR2-HB1-OM20-LR00'  ))
+        event_q.put_nowait(self._crt_flush(10))
+
+        listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
+        for listener in listeners:
+            if listener.get_name() == 'ListenerJournal':
+                j_out = listener.journal
+               
+        j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/d173874/alert_output.json')      
+        self.assertTrue(j_out.wait_for_entries(len(j_exp), seconds=20))
+        self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
+        myteal.shutdown()
+        return
+    
+    def _crt_isnm_event(self, rec_id, event_id, src_loc, neighbor_loc, time=0):
+        right_now = datetime.now()+ timedelta(seconds=time)
+        crt_dict = {}
+        crt_dict[EVENT_ATTR_REC_ID] = rec_id
+        crt_dict[EVENT_ATTR_EVENT_ID] = event_id
+        crt_dict[EVENT_ATTR_TIME_OCCURRED] = right_now
+        crt_dict[EVENT_ATTR_TIME_LOGGED] = right_now + timedelta(seconds=1)
+        crt_dict[EVENT_ATTR_SRC_COMP] = 'CNM'
+        crt_dict[EVENT_ATTR_SRC_LOC] = src_loc
+        crt_dict[EVENT_ATTR_SRC_LOC_TYPE] = 'H'
+        crt_dict[EVENT_ATTR_RAW_DATA_FMT] = long('0x5445535400000001',16)
+        crt_dict[EVENT_ATTR_RAW_DATA] = 'When in the course'
+        event = Event(in_dict=crt_dict)
+        if neighbor_loc is None:
+            event.raw_data['neighbor_loc'] = None
+        else:
+            event.raw_data['neighbor_loc'] = Location('H', neighbor_loc)
+        event.raw_data['local_port'] = '2'
+        event.raw_data['local_torrent'] = '3'
+        event.raw_data['local_planar'] = '4'
+        event.raw_data['local_om'] = '5'
+        event.raw_data['nbr_port'] = '6'
+        event.raw_data['nbr_torrent'] = '7'
+        event.raw_data['nbr_planar'] = '8'
+        event.raw_data['nbr_om'] = '9'
+        event.raw_data['encl_mtms'] = '10'
+        event.raw_data['pwr_ctrl_mtms'] = '11'
+        event.raw_data['eed_loc_info'] = '12'
+        return event
+    
+    def _crt_flush(self, time=0):
+        ''' create a flush command msg '''
+        return ControlMsg(CONTROL_MSG_TYPE_FLUSH, {CONTROL_MSG_ATTR_CREATION_TIME: datetime.now()+ timedelta(seconds=time)})
+            
+
+if __name__ == "__main__":
+    unittest.main()

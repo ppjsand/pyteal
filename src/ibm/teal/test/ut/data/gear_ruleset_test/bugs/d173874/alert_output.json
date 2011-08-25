@@ -1,0 +1,25 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BDFF0040", 
+        "associations": [
+          "C:E:1", 
+          "C:E:2"
+        ], 
+        "creation_time": "2011-04-04 17:52:16.312000", 
+        "event_loc": "FR007-CG03-SN000-DR0-HB0-OM20", 
+        "event_loc_type": "H", 
+        "reason": "Faulty optical module in frame FR007 cage CG03 (superNode SN000 drawer DR0) hub HB0 (Faulty Optical Module)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a hub chip.\nRecord the alert ID.\nCall IBM service.\nReplace the FRU according to the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

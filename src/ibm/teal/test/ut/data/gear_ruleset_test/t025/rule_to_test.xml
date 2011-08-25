@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Duration 1 second
+
+ARC = 1, 6, 2, 2
+Initial duration = 1 
+E1 t1  start   2011-01-31 21:40:00.100000
+E2 t1  0
+E3 t1  0
+E4 t1  0
+E5 t1  0
+E6 t3  2  >1 past end, (not 6, but more than 1) 
+              but 5/2 = 2.5 >= 2 so extends due to arrival rate 2   
+              suppress E1 so no A1
+duration now 3
+E7 t3  2  suppress E2 so no A2
+E8 t4  3
+E9 t4  3 
+EA t5  4 > 3 past end, 6/2 = 1.5 < 2 so close pool
+             in new pool suppress E3 not in pool so NOP
+duration now 1
+EB t9  8 > 1 past end, 1/4 = 0.250 < 1 so don't extend time and close pool
+initial duration = 1
+EC t10  start suppresses E8, E9
+FLUSH 
+
+Should get A3, A4, A5, A6, A7, A8, A9, AA, AB, AC
+ -->
+<gear_ruleset>
+<pool_control>
+   <arrival_rate_extension window_min="5" window_max="5" arrival_rate="1" extension="2"/>
+</pool_control>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="E0000001" name="E1"/>
+   <event id="E0000002" name="E2"/>
+   <event id="E0000003" name="E3"/>
+   <event id="E0000004" name="E4"/>
+   <event id="E0000005" name="E5"/>
+   <event id="E0000006" name="E6"/>
+   <event id="E0000007" name="E7"/>
+   <event id="E0000008" name="E8"/>
+   <event id="E0000009" name="E9"/>
+   <event id="E0000010" name="E10"/>
+   <event id="E0000011" name="E11"/>
+   <event id="E0000012" name="E12"/>
+</events>
+<analyze>
+   <!-- Start base setup  -->
+   <rule name="E1">
+      <condition>
+         <event_equals id="E1"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+   <rule name="E2">
+      <condition>
+         <event_equals id="E2"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+   <rule name="E3">
+      <condition>
+         <event_equals id="E3"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 03"/>
+      </action>
+   </rule>
+   <rule name="E4">
+      <condition>
+         <event_equals id="E4"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 04"/>
+      </action>
+   </rule>
+   <rule name="E5">
+      <condition>
+         <event_equals id="E5"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 05"/>
+      </action>
+   </rule>
+   <rule name="E6">
+      <condition>
+         <event_equals id="E6"/>
+      </condition>
+      <action>
+         <suppress_events ids="E1"/>
+         <create_alert id="Alert 06"/>
+      </action>
+   </rule>
+   <rule name="E7">
+      <condition>
+         <event_equals id="E7"/>
+      </condition>
+      <action>
+         <suppress_events ids="E2"/>
+         <create_alert id="Alert 07"/>
+      </action>
+   </rule>
+   <rule name="E8">
+      <condition>
+         <event_equals id="E8"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 08"/>
+      </action>
+   </rule>
+   <rule name="E9">
+      <condition>
+         <event_equals id="E9"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 09"/>
+      </action>
+   </rule>
+   <rule name="E10">
+      <condition>
+         <event_equals id="E10"/>
+      </condition>
+      <action>
+         <suppress_events ids="E3"/>
+         <create_alert id="Alert 10"/>
+      </action>
+   </rule>
+   <rule name="E11">
+      <condition>
+         <event_equals id="E11"/>
+      </condition>
+      <action>
+         <suppress_events ids="E4"/>
+         <create_alert id="Alert 11"/>
+      </action>
+   </rule>
+   <rule name="E12">
+      <condition>
+         <event_equals id="E12"/>
+      </condition>
+      <action>
+         <suppress_events ids="E8,E9"/>
+         <create_alert id="Alert 12"/>
+      </action>
+   </rule>   
+</analyze>
+</gear_ruleset>

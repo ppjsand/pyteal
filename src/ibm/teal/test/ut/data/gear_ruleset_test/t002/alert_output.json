@@ -1,0 +1,66 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "Alert 01", 
+        "associations": [
+          "C:E:1"
+        ], 
+        "creation_time": "2011-01-30 22:32:01.296000", 
+        "event_loc": "MB", 
+        "event_loc_type": "C",   
+        "reason": "This is Alert 01", 
+        "rec_id": 1, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest002", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "Alert 01", 
+        "associations": [
+          "C:E:6", 
+          "C:E:7", 
+          "C:E:3"
+        ], 
+        "creation_time": "2011-01-30 22:32:03.312000", 
+        "event_loc": "MB", 
+        "event_loc_type": "C", 
+        "reason": "This is Alert 01", 
+        "rec_id": 2, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest002", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "3": {
+      "data": {
+        "alert_id": "Alert 01", 
+        "associations": [
+          "C:E:8"
+        ], 
+        "creation_time": "2011-01-30 22:32:05.328000", 
+        "event_loc": "MB", 
+        "event_loc_type": "C", 
+        "reason": "This is Alert 01", 
+        "rec_id": 3, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest002", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BDFF0070", 
+        "associations": [
+          "C:E:4", 
+          "C:E:2", 
+          "C:E:3"
+        ], 
+        "creation_time": "2011-03-13 20:05:20.968000", 
+        "event_loc": "FR007-CG03-SN000-DR1-HB0-OM20-LD02", 
+        "event_loc_type": "H", 
+        "reason": "HFI Network Fault (Network Fault)", 
+        "rec_id": 1, 
+        "recommendation": "Record the alert ID.\nCall your next level of support and inform them that there is a general network problem and give them the alert ID.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

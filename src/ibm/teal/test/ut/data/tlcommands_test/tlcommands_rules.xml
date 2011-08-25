@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="Event 01" />
+   <event id="Event 02" />
+   <event id="Event 03" />
+   <event id="Event 04" />
+   <event id="Event 05" />
+   <event id="Event 06" />
+</events>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <condition>
+         <event_equals id="Event 02"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="Event 01, Event 03, Event 04, Event 05, Event 06"/>
+        <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+ </analyze>
+</gear_ruleset>

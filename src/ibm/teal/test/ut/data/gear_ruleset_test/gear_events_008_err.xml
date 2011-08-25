@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<pool_control>
+  <initial_duration default="300"/>
+</pool_control>
+<events>
+   <event id="Example5" comp="PS" name="REFNAME"/>
+   <event id="Example1" pool_extension_time="3" min_time_in_pool="5"/>
+</events>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <event_equals id="Example5" comp="CNM"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="Example2" comp="CNM"/>
+      </action>
+   </rule>
+</analyze>
+</gear_ruleset>

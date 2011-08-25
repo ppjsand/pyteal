@@ -1,0 +1,50 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "Alert 01", 
+        "associations": [
+          "S:E:2", 
+          "C:E:2"
+        ], 
+        "creation_time": "2010-09-30 22:43:19.234000", 
+        "event_loc": "MB-SL1-ET1-PT1", 
+        "event_loc_type": "C", 
+        "fru_loc": "fruit", 
+        "raw_data": "This is not evaluate exceptoin :)", 
+        "reason": "reason from config3", 
+        "rec_id": 1, 
+        "recommendation": "try again", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest060c", 
+        "state": "New", 
+        "urgency": "I"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "Alert 01", 
+        "associations": [
+          "S:E:3", 
+          "C:E:3"
+        ], 
+        "creation_time": "2010-09-30 22:43:19.234000", 
+        "event_loc": "MB-SL1-ET1-PT2", 
+        "event_loc_type": "C", 
+        "fru_loc": "fruit", 
+        "raw_data": "This is not evaluate exceptoin :)", 
+        "reason": "reason from config3", 
+        "rec_id": 2, 
+        "recommendation": "try again", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest060c", 
+        "state": "New", 
+        "urgency": "I"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<!-- Test is to work with this missing
+<gear_control>
+  <default_event_comp value="NM"/>
+</gear_control>
+ -->
+<description>This is a description</description>
+<pool_control>
+  <initial_duration default="300"/>
+</pool_control>
+<events>
+   <event id="Example5" comp='TC'/>
+   <event id="Example2" comp='TC'/>
+   <event id="Example1" pool_extension_time="3" min_time_in_pool="5" comp='TC'/>   
+</events>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <event_equals id="Example5" comp="TC"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="Example2" comp="TC"/>
+      </action>
+   </rule>
+</analyze>
+</gear_ruleset>
+<!-- 
+<pool_control>
+   <pool_default_duration minimum="4" maximum="20" force_value="5"/>
+</pool_control>
+-->

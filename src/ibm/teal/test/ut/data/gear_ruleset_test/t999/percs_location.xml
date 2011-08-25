@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<cluster ver="1.0"
+    xmlns="http://www.ibm.com/teal" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.ibm.com/teal ../../../../xml/location.xsd ">
+  
+    <location id="D" type="device" separator="##">
+        <simple>
+            <component type="node"/>
+            <component type="device"/>
+            <component type="major"/>
+            <component type="minor"/>
+        </simple>
+    </location>
+
+    <location id="A" type="application" separator="##">
+        <simple>
+            <component type="node"/>            
+            <component type="application"/>
+            <component type="pid"/>
+            <component type="identifier"/>
+        </simple>
+    </location>
+
+    <location id="J" type="job" separator="##">
+        <simple>
+            <component type="stepId"/>
+            <component type="node"/>
+            <component type="task"/>
+        </simple>
+    </location>
+
+    <location id="F" type="frame" separator="-">
+        <complex>
+            <component type="frame" id="FR" min="0">
+                <compref ref="cage"/>
+            </component>    
+            <component type="cage" id="CG" min="1" max="32"/>
+        </complex>
+    </location>
+
+    <location id="H" type="hardware" separator="-">
+        <complex>
+            <!-- Level 1 -->
+            <component type="buildingBlock" id="BB" min="1" max="65">
+                <compref ref="frame" />
+
+            <!-- Level 2 -->
+            </component><component type="frame" id="SN" min="1" max="193">
+                <compref ref="supernode"/>
+            </component>
+
+            <!-- Level 3 -->
+            <component type="supernode" id="SN" min="1" max="512">
+                <compref ref="drawer"/>
+            </component>
+
+            <!-- Level 4 -->
+            <component type="drawer" id="DR" min="1" max="12">            
+                    <compref ref="hub"/>
+            </component>        
+
+            <!-- Level 5 -->
+            <component type="hub" id="HB" min="1" max="8">
+                <compref ref="localPort"/>
+                <compref ref="remotePort"/>
+                <compref ref="nodePort"/>
+            </component>
+
+            <!-- Level 6 -->
+            <component type="localPort" id="LL" min="1" max="8"/>
+            <component type="remotePort" id="LR" min="1" max="32"/>
+            <component type="nodePort" id="LD" min="1" max="16"/>
+
+        </complex>
+    </location>
+    
+    <location id="P" type="pseries" separator="-">
+        <complex>
+            <!-- Level 1 -->            
+            <component type="frame" id="U" min="1">
+                <compref ref="epoPanel"/>
+                <compref ref="bpa"/>
+                <compref ref="wcu"/>
+                <compref ref="fdt"/>
+                <compref ref="p7ih"/>
+                <compref ref="diskEnclosure"/>
+            </component>
+            
+            <!-- Level 2 --> 
+            <component type="epoPanel" id="D" min="1" max="1">
+                <compref ref="bpaConnector"/>
+            </component>
+            <component type="bpa" id="P" min="1" max="2">
+                <compref ref="lineCord"/>
+                <compref ref="bpr"/>
+                <compref ref="bpf"/>
+                <compref ref="bpch"/>
+                <compref ref="bpd"/>
+            </component>                               
+            <component type="wcu" id="P" min="3" max="6">
+                <compref ref="mda"/>
+            </component>
+            <component type="fdt" id="P" min="7" max="8">
+                <compref ref="fdtControlCard"/>
+            </component>
+            <component type="diskEnclosure" id="DE" min="1" max="6">
+                <compref ref="dca"/>
+                <compref ref="backplane"/>                
+            </component>
+            
+            <!-- Level 3 -->                
+            <component type="p7ih" id="DR" min="1" max="12">
+                <compref ref="processorFru"/>
+            </component>
+            <component type="bpaConnector" id="T" min="1" max="2"/>
+            <component type="lineCord" id="J" min="1" max="2"/>
+            <component type="bpr" id="E" min="1" max="6"/>
+            <component type="bpf" id="A" min="1" max="4"/>
+            <component type="bpch" id="C" min="1" max="1">
+                <compref ref="bpchConnector"/>
+            </component>    
+            <component type="bpd" id="C" min="2" max="2">
+                <compref ref="bpdConnector"/>
+            </component>
+            <component type="mda" id="C" min="1" max="1">
+                <compref ref="mdaConnector"/>
+            </component>    
+            <component type="fdtControlCard" id="C" min="1" max="1"/>
+            <component type="dca" id="E" min="1" max="2">
+                <compref ref="upicConnector"/>
+            </component> 
+            <component type="backplane" id="P" min="1" max="3">
+                <compref ref="fan"/>
+                <compref ref="carrier"/>
+                <compref ref="portCard"/>
+            </component>
+            
+            <!-- Level 4 -->
+            <component type="bpchConnector" id="T" min="1" max="42"/>
+            <component type="bpdConnector" id="T" min="1" max="26"/>
+            <component type="mdaConnector" id="T" min="1" max="2"/>
+            <component type="processorFru" id ="P" min="1" max="1">
+                <compref ref="dcca" />
+                <compref ref="vpd"/>
+                <compref ref="dimm"/>
+                <compref ref="pciRiser"/>
+                <compref ref="procModule"/>
+                <compref ref="ioModule"/>
+            </component>
+            <component type="upicConnector" id="T" min="1" max="2"/> 
+            <component type="fan" id="A" min="1" max="12"/>
+            <component type="carrier" id="C" min="1" max="56">
+                <compref ref="drive"/>
+            </component>
+            <component type="portCard" id="C" min="4" max="29">
+                <compref ref="sasPort"/>
+            </component>    
+            
+            <!-- Level 5 -->
+            <component type="dcca" id="C" min="147" max="148">
+                <compref ref="hmcConnector"/>
+                <compref ref="dccaConnector"/>
+                <compref ref="battery"/>
+            </component>
+            <component type="vpd" id="C" min="146" max="146"/>
+            <component type="dimm" id="C" min="18" max="145"/>
+            <component type="pciRiser" id="C" min="1" max="17">
+                <compref ref="pciSlot"/>
+            </component>
+            <component type="procModule" id="PM" min="0" max="7">
+                <compref ref="processor"/>
+            </component>
+            <component type="ioModule" id="IM" min="0" max="7">
+                <compref ref="ioHub"/>
+            </component>
+            <component type="drive" id="D" min="1" max="4"/>   
+            <component type="sasPort" id="T" min="1" max="4"/>   
+                
+            <!-- Level 6 -->
+            <component type="pciSlot" id="C" min="1" max="1"/>
+            <component type="processor" id="PR" min="0" max="3"/>
+            <component type="ioHub" id="IH" min="0" max="3">
+                <compref ref="lrLink"/>
+                <compref ref="dLinks"/>
+            </component>
+                
+            <component type="hmcConnector" id="T" min="2" max="3"/>
+            <component type="dccaConnector" id="T" min="1" max="4"/>
+            <component type="battery" id="E" min="1" max="1"/>
+
+            <!-- Level 7 -->
+            <component type="dLinks" id="T" min="1" max="17">
+                <compref ref="dLink"/>
+            </component>
+            <component type="lrLink" id="T" min="9" max="9"/>
+            
+            <!-- Level 8 -->    
+            <component type="dLink" id="T" min="1" max="8"/>
+        </complex>    
+    </location>
+    
+</cluster>

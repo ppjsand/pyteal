@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://www.ibm.com/teal" 
+    xmlns:teal="http://www.ibm.com/teal" 
+    elementFormDefault="qualified">
+    
+    <xsd:element name="tables" type="teal:tablesType">
+                <xsd:unique name="TableIdCheck">
+                    <xsd:selector xpath=".//teal:table"/>
+                    <xsd:field xpath="@id"/>
+                </xsd:unique>
+    </xsd:element>
+    
+    <xsd:complexType name="tablesType">
+        <xsd:sequence>
+            <xsd:element name="table" type="teal:tableType" minOccurs="1" maxOccurs="unbounded">
+                <xsd:unique name="ColumnIdCheck">
+                    <xsd:selector xpath=".//teal:column"/>
+                    <xsd:field xpath="@name"/>
+                </xsd:unique>
+            </xsd:element>            
+        </xsd:sequence>
+        <xsd:attribute name="version" type="xsd:float" use="optional"/>    
+    </xsd:complexType> 
+
+    <xsd:complexType name="tableType">
+        <xsd:sequence>
+            <xsd:element name="column" type="teal:columnType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="id" type="xsd:nonNegativeInteger" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="columnType">
+        <xsd:attribute name="name" type="xsd:string" use="required"/> 
+        <xsd:attribute name="type" use="required">                                    
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="INTEGER"/> 
+                    <xsd:enumeration value="BIGINT"/>
+                    <xsd:enumeration value="CHAR"/>
+                    <xsd:enumeration value="VARCHAR"/>
+                    <xsd:enumeration value="TEXT"/>
+                    <xsd:enumeration value="LOC"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="size" type="xsd:positiveInteger" use="optional"/>
+    </xsd:complexType>
+        
+
+
+</xsd:schema>

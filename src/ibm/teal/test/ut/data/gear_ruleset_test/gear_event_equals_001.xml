@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="NM"/>
+</gear_control>
+<events>
+   <event id="BE700025a" name="DLINKDOWN" pool_extension_time="1" min_time_in_pool="3"/>
+   <event id="BE700021" name="DLINKREADY" pool_extension_time="1" min_time_in_pool="3"/>
+   <event id="Example5" />
+   <event id="Example2" />
+   <event id="Example1" pool_extension_time="3" min_time_in_pool="5"/>   
+</events>
+<constants>
+   <constant name="DLINKDOWN2" type="event_id" value="BE700029"/>
+   <constant name="DLINKREADYb" type="event_id" value="BE700031"/>
+   <constant name="DLNKCTRLIN" type="set_of_event_ids" value="BE70003D, BE700041"/>
+   <constant name="Toaster" type="set_of_event_ids" value="DLINKDOWN, DLINKREADY" />
+</constants>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <event_equals id="Example5"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="Example2"/>
+      </action>
+   </rule>
+</analyze>
+</gear_ruleset>
+<!-- 
+<pool_control>
+   <pool_default_duration minimum="4" maximum="20" force_value="5"/>
+</pool_control>
+-->

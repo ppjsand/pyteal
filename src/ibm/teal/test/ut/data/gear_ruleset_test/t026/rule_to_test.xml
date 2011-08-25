@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Events 2, 6, 8, and 10 are bad
+
+Duration 1 second
+
+ARC = 1, 6, 2, 2
+Initial duration = 1 
+    E1 t1  start   2011-01-31 21:40:00.100000
+    E2 t1  0
+xxx E3 t1  0
+    E4 t1  0
+    E5 t1  0
+xxx E6 t3  2   Suppression not done, so E1 not suppressed so will be A1
+    E7 t3  2 > 1 past end; not 6 but at least 1 in window
+                           4/2 = 2.0 >= 2 so extends by 2
+                           suppress E2 so no A2 
+duration now 3
+xxx E8 t4  3
+    E9 t4  3 
+xxx EA t5  4 
+    EB t9  8 > 3 past end, 6/8 < 2 -> don't extend time and close pool
+initial duration = 1
+EC t10  start suppresses E8, E9 but not in same pool 
+FLUSH 
+
+Should get A1, A4, A5, A7, A9, AB and 4 bad location alerts(3,6,8,A)
+ -->
+<gear_ruleset>
+<pool_control>
+   <arrival_rate_extension window_min="5" window_max="5" arrival_rate="1" extension="2"/>
+</pool_control>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="E0000001" name="E1"/>
+   <event id="E0000002" name="E2"/>
+   <event id="E0000003" name="E3"/>
+   <event id="E0000004" name="E4"/>
+   <event id="E0000005" name="E5"/>
+   <event id="E0000006" name="E6"/>
+   <event id="E0000007" name="E7"/>
+   <event id="E0000008" name="E8"/>
+   <event id="E0000009" name="E9"/>
+   <event id="E0000010" name="E10"/>
+   <event id="E0000011" name="E11"/>
+   <event id="E0000012" name="E12"/>
+</events>
+<analyze>
+   <on_error type="location" alert_id='BD00FFF0' event_loc="A:sys##prog##pid#test025"/>
+   <!-- Start base setup  -->
+   <rule name="E1">
+      <condition>
+         <event_equals id="E1"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+   <rule name="E2">
+      <condition>
+         <event_equals id="E2"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+   <rule name="E3">
+      <condition>
+         <event_equals id="E3"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 03" event_loc="GEAR[last_condition_event.rpt_loc]"/>
+      </action>
+   </rule>
+   <rule name="E4">
+      <condition>
+         <event_equals id="E4"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 04" event_loc="GEAR[last_condition_event.ext.neighbor_loc]"/>
+      </action>
+   </rule>
+   <rule name="E5">
+      <condition>
+         <event_equals id="E5"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 05"/>
+      </action>
+   </rule>
+   <rule name="E6">
+      <condition>
+         <event_equals id="E6"/>
+      </condition>
+      <action>
+         <suppress_events ids="E1"/>
+         <create_alert id="Alert 06"/>
+      </action>
+   </rule>
+   <rule name="E7">
+      <condition>
+         <event_equals id="E7"/>
+      </condition>
+      <action>
+         <suppress_events ids="E2"/>
+         <create_alert id="Alert 07"/>
+      </action>
+   </rule>
+   <rule name="E8">
+      <condition>
+         <event_equals id="E8"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 08"/>
+      </action>
+   </rule>
+   <rule name="E9">
+      <condition>
+         <event_equals id="E9"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 09"/>
+      </action>
+   </rule>
+   <rule name="E10">
+      <condition>
+         <event_equals id="E10"/>
+      </condition>
+      <action>
+         <suppress_events ids="E3"/>
+         <create_alert id="Alert 10"/>
+      </action>
+   </rule>
+   <rule name="E11">
+      <condition>
+         <event_equals id="E11"/>
+      </condition>
+      <action>
+         <suppress_events ids="E4"/>
+         <create_alert id="Alert 11"/>
+      </action>
+   </rule>
+   <rule name="E12">
+      <condition>
+         <event_equals id="E12"/>
+      </condition>
+      <action>
+         <suppress_events ids="E8,E9"/>
+         <create_alert id="Alert 12"/>
+      </action>
+   </rule>   
+</analyze>
+</gear_ruleset>

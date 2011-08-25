@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<tns:eventMetadata xmlns:tns="http://www.ibm.com/teal/eventmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/eventmeta ../../../../../xml/eventmeta.xsd ">
+  <tns:event id="idvalue0" comp="TST">
+    <tns:message>This is test message 0</tns:message>
+    <tns:description>This is a description</tns:description>
+  </tns:event>
+</tns:eventMetadata> 

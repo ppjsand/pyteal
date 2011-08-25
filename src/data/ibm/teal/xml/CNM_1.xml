@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<tables>
+    <table name="" id="2">
+        <column name="eed_loc_info" type="TEXT" size="64"/>
+        <column name="encl_mtms" type="TEXT" size="20"/>
+        <column name="pwr_ctrl_mtms" type="TEXT" size="20"/>
+        <column name="neighbor_loc" type="LOC"/>
+        <column name="recovery_file_path" type="TEXT" size="32"/>        
+        <column name="isnm_raw_data" type="VARCHAR" size="1024"/> 
+        <column name="local_port" type="VARCHAR" size="256"/>
+        <column name="local_torrent" type="VARCHAR" size="256"/>
+        <column name="local_planar" type="VARCHAR" size="256"/>
+        <column name="local_om1" type="VARCHAR" size="256"/>
+        <column name="local_om2" type="VARCHAR" size="256"/>
+        <column name="nbr_port" type="VARCHAR" size="256"/>
+        <column name="nbr_torrent" type="VARCHAR" size="256"/>
+        <column name="nbr_planar" type="VARCHAR" size="256"/>
+        <column name="nbr_om1" type="VARCHAR" size="256"/>
+        <column name="nbr_om2" type="VARCHAR" size="256"/>
+        <column name="global_counter" type="BIGINT"/>
+    </table>
+</tables>

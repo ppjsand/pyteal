@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="Event 01" name="ME1"/>
+   <event id="Event 02" name="ME2"/>
+   <event id="Event 03" name="ME3" pool_extension_time="3" min_time_in_pool="5"/>   
+   <event id="Event 04" name="ME4"/>
+   <event id="Event 05" name="ME5" min_time_in_pool="10"/>
+</events>
+<constants>
+   <constant name="ME1and3" type="set_of_event_ids" value="ME1,Event 03"/>
+</constants>
+<analyze>
+   <rule name="Sample Rule alert creation">
+      <description>If Event 01 or 03 create Alert 01</description>
+      <condition>
+           <any_events num="2" ids="ME1" scope="C:pciSlot" 
+             instance_loc_comp="C:port" instances="[1,2] or [3,4]"
+             unique_loc="true"/>
+      </condition>
+      <action>
+        <description>Create alert (and suppress Event 01 and Event 03)</description>
+        <suppress_events events="GEAR[condition_events]"/>
+        <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+</analyze>
+<pool_closure>
+    <rule name="Make everything an alert">
+        <condition>
+           <true/>
+        </condition>
+        <action>
+           <suppress_events events="GEAR[condition_events]"/>
+           <create_alert id="Alert US"/>
+        </action>
+    </rule>
+</pool_closure>
+</gear_ruleset>

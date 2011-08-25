@@ -1,0 +1,140 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2010,2011
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# locale setup
+import os
+import gettext
+from ibm.teal.checkpoint_mgr import get_current_min_checkpoint_rec_id
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import sys
+import itertools
+from optparse import OptionParser
+
+from ibm.teal import Teal, registry, event, alert 
+from ibm.teal.database import db_interface
+from ibm.teal.util import command
+
+if __name__ == '__main__':
+    # Parse the command line        
+    parser = command.TealOptionParser([])
+    parser.add_option('-i','--ids',
+                        type='string',
+                        action='store',
+                        dest='recid_list',
+                        default=None,
+                        help=_('A single event id or a comma-separated list of event ids'))
+    parser.add_option('-o','--older-than',
+                        type='string',
+                        action='store',
+                        dest='query_time',
+                        default=None,
+                        help=_('The time condition_qry in the format YYYY-MM-DD-HH:MM::SS'))
+    (options, args) = parser.parse_args()
+
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tlrmevent.log', msgLevel='warning', data_only=True)
+
+    # Prepare to use the database
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+    cnxn = db.get_connection()
+    cursor = cnxn.cursor()
+
+    where_flds = []
+    
+    if options.recid_list is not None:
+        recid_where = '${0} IN ({1})'.format(event.EVENT_ATTR_REC_ID, options.recid_list)
+        delete_recid_where = 'AND ' + recid_where 
+    else:
+        delete_recid_where = ''
+
+    if options.query_time is not None:
+        try:
+            time_range = parser.validate_timestamp(options.query_time)
+        except BaseException,be:
+            registry.get_logger().exception(be)
+            parser.error(_('Invalid timestamp for {0}: {1}').format('--older-than', options.query_time))
+
+        older_where = "AND ${0} < '{1}'".format(event.EVENT_ATTR_TIME_LOGGED, time_range[0])
+        where_flds.append(event.EVENT_ATTR_TIME_LOGGED)
+    else:
+        older_where = ''
+
+    # The event cannot have any associations to an alert
+    a2e_qry = db.gen_select([alert.ALERT2EVENT_ATTR_T_EVENT_RECID], 
+                            db_interface.TABLE_ALERT2EVENT)
+    
+    # The event cannot be the last event checkpointed
+    ckpt_recid = get_current_min_checkpoint_rec_id()
+    if ckpt_recid is not None:
+        ckpt_where = 'AND ${0} < {1}'.format(event.EVENT_ATTR_REC_ID, ckpt_recid)
+    else:
+        ckpt_where = '' 
+
+    # Delete the rest of the events
+    delete_where = '${0} NOT IN ({1}) {2} {3} {4}'.format(event.EVENT_ATTR_REC_ID,
+                                                                            a2e_qry,
+                                                                            ckpt_where,
+                                                                            delete_recid_where,
+                                                                            older_where)
+    where_flds.append(event.EVENT_ATTR_REC_ID)
+
+    delete_events = db.gen_delete(db_interface.TABLE_EVENT_LOG,
+                                  where=delete_where,
+                                  where_fields=where_flds)
+
+    cursor.execute(delete_events)
+    events_deleted = cursor.rowcount
+
+    if options.recid_list is not None:
+        # Determine which events are left
+        events_qry = db.gen_select([event.EVENT_ATTR_REC_ID],
+                                   db_interface.TABLE_EVENT_LOG,
+                                   where=recid_where,
+                                   where_fields=[event.EVENT_ATTR_REC_ID])
+                
+        # Determine which specified events have associations to alerts
+        assoc_events_qry = db.gen_select([alert.ALERT2EVENT_ATTR_ALERT_RECID,
+                                          alert.ALERT2EVENT_ATTR_ASSOC_TYPE,
+                                          alert.ALERT2EVENT_ATTR_T_EVENT_RECID],
+                                          db_interface.TABLE_ALERT2EVENT,
+                                          where='${0} IN ({1})'.format(alert.ALERT2EVENT_ATTR_T_EVENT_RECID, options.recid_list),
+                                          where_fields=[alert.ALERT2EVENT_ATTR_T_EVENT_RECID],
+                                          order=alert.ALERT2EVENT_ATTR_T_EVENT_RECID)
+        cursor.execute(assoc_events_qry)
+        alert_assocs = cursor.fetchall()
+        
+        for event_recid, in cursor.execute(events_qry):
+            print >>sys.stderr, _("Event '{0}' cannot be removed.").format(event_recid)
+            
+            if ckpt_recid is not None and event_recid >= ckpt_recid:
+                print >>sys.stderr, _("\tReason: Event is within the checkpointed events.  (event rec_id {0} >= checkpoint rec_id {1})").format(event_recid, ckpt_recid)
+                
+            # And it may have other active associations with other Alerts
+            for (alert_recid, assoc_type, t_event_recid) in itertools.ifilter(lambda x: x[2] == event_recid, alert_assocs):                
+                print >>sys.stderr, _("\tReason: Event is associated with Alert '{0}'").format(alert_recid)
+            
+    # Commit changes to db 
+    cnxn.commit()
+
+    # All done, now shut down TEAL gracefully
+    t.shutdown()
+
+    if events_deleted == 1:
+        print _('\n{0} event removed').format(events_deleted)
+    else:
+        print _('\n{0} events removed').format(events_deleted)

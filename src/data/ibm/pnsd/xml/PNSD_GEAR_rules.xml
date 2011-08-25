@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gear_ruleset>
+    <description>PNSD Rules</description>
+    <gear_control>
+        <default_event_comp value="PNSD"/>
+    </gear_control>
+    <events>
+        <event id="PNSD0001" name="RetransmitThreshold" /> 
+    </events>
+    <pool_control>
+        <initial_duration default="5"/>
+        <max_duration default ="60"/>
+    </pool_control>
+    <analyze>
+        <rule name="RetransmitThresholdExceeded" >
+            <condition>
+                <event_equals id="RetransmitThreshold"/>
+            </condition>
+            <action>
+                <create_alert id="PNSD0001" use_metadata="false"
+                              msg_template="Packet retransmit threshold has been exceeded on node $node" 
+                              raw_data="GEAR[last_condition_event.ext.raw_data]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="E"
+                              />
+            </action>
+        </rule>    
+    </analyze>
+</gear_ruleset> 
+ 

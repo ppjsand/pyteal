@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<alerts>
+   <alert id="Alert2"/>
+   <alert id="Alert1" name="George" pool_extension_time="12" min_time_in_pool="7"/>
+</alerts>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <or>
+            <event_equals id="Example5" comp="NM"/>
+            <any_events num="3" ids="Example5" comp="NM"/>
+            <all_events ids="Example5" comp="NM"/>
+            <event_occurred id="Example2" num="1"/>
+         </or>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="Example2" comp="NM"/>
+      </action>
+   </rule>
+</analyze>
+</gear_ruleset>

@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventMetadata  xmlns:tns="http://www.ibm.com/teal/eventmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/eventmeta ../../../../../xml/eventmeta.xsd ">>
+  <!-- Version: 20110817a; Source: errList.20110808.v3.csv -->
+
+  <event id="BD000000" comp="CNM">
+    <description>event: INVMINOR:Invalid Minor Number</description>
+    <message>Invalid Minor Number</message>
+  </event>
+
+  <!--  Set when a Master broadcast is not received before the Counter Invalid Trigger goes off or if there is a Master ID conflict. -->
+  <event id="BD304001" comp="CNM">
+    <description>event: GC_INVALID:Global Counter invalid: this counter went invalid</description>
+    <message>Global Counter invalid: this counter went invalid</message>
+  </event>
+
+  <!-- Per Torrent review -> do not call home; other errors will explain it. 
+
+Set when a broadcast is received with an ID matching the Local ID. -->
+  <event id="BD304002" comp="CNM">
+    <description>event: GC_ID:Global Counter ID conflict</description>
+    <message>Global Counter ID conflict</message>
+  </event>
+
+  <!-- Do not call home -> other errors will explain it.
+
+Set when this counter assumes Mastership based on the takeover trigger. -->
+  <event id="BD304003" comp="CNM">
+    <description>event: GC_MASTER:Global Counter Takeover: this counter has assumed mastership</description>
+    <message>Global Counter Takeover: this counter has assumed mastership</message>
+  </event>
+
+  <!-- Do not call home -> other errors will explain it
+This Backup/Master counter has been made stale by a higher Master ID
+received from a broadcast packet. -->
+  <event id="BD304004" comp="CNM">
+    <description>event: GC_STALE:Global Counter Stale: counter has been made stale by higher ID</description>
+    <message>Global Counter Stale: counter has been made stale by higher ID</message>
+  </event>
+
+  <!-- Set whenever a new Local ID is created after being made stale and that ID will overflow the next time the Range Constant is added to it. The current local ID has not overflowed but will do so the next time it is made stale. -->
+  <event id="BD304005" comp="CNM">
+    <description>event: GC_OVERFLOW:Global Counter ID overflow.</description>
+    <message>Global Counter ID overflow.</message>
+  </event>
+
+  <event id="BD200006" comp="CNM">
+    <description>event: MRT_UE:Multicast Route Table Array Uncorrectable Error</description>
+    <message>Multicast Route Table Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD200007" comp="CNM">
+    <description>event: MRT_CE:Multicast Route Table Array Correctable Error</description>
+    <message>Multicast Route Table Array Correctable Error</message>
+  </event>
+
+  <event id="BD200008" comp="CNM">
+    <description>event: MIA_UE:Multicast Input Array Uncorrectable Error</description>
+    <message>Multicast Input Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD200009" comp="CNM">
+    <description>event: MOA_UE:Multicast Output Array Uncorrectable Error</description>
+    <message>Multicast Output Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD20000A" comp="CNM">
+    <description>event: MIA_CE:Multicast Input Array Correctable Error</description>
+    <message>Multicast Input Array Correctable Error</message>
+  </event>
+
+  <event id="BD20000B" comp="CNM">
+    <description>event: MOA_CE:Multicast Output Array Correctable Error</description>
+    <message>Multicast Output Array Correctable Error</message>
+  </event>
+
+  <event id="BD20000C" comp="CNM">
+    <description>event: MC_PTO:Multicast Packet Timeout Error</description>
+    <message>Multicast Packet Timeout Error</message>
+  </event>
+
+  <event id="BD20000D" comp="CNM">
+    <description>event: MC_HWERR:Multicast Hardware Internal Error</description>
+    <message>Multicast Hardware Internal Error</message>
+  </event>
+
+  <event id="BD40000E" comp="CNM">
+    <description>event: HFI_RRFIFOLS_UE:HFI Ramp Route Request FIFO Uncorrectable Error; left side</description>
+    <message>HFI Ramp Route Request FIFO Uncorrectable Error; left side</message>
+  </event>
+
+  <event id="BD40000F" comp="CNM">
+    <description>event: HFI_RRFIFORS_UE:HFI Ramp Route Request FIFO Uncorrectable Error; right side</description>
+    <message>HFI Ramp Route Request FIFO Uncorrectable Error; right side</message>
+  </event>
+
+  <event id="BD400010" comp="CNM">
+    <description>event: HFI_SRT2_UE:HFI Ramp SRT2 Hub Route Table Uncorrectable Error</description>
+    <message>HFI Ramp SRT2 Hub Route Table Uncorrectable Error</message>
+  </event>
+
+  <event id="BD400011" comp="CNM">
+    <description>event: HFI_SRT1SN_UE:HFI Ramp SRT1 Supernode Route Table Uncorrectable Error</description>
+    <message>HFI Ramp SRT1 Supernode Route Table Uncorrectable Error</message>
+  </event>
+
+  <event id="BD400012" comp="CNM">
+    <description>event: HFI_SRT1IRVLS_UE:HFI Ramp SRT1 Indirect Route Validity Table UE; left side</description>
+    <message>HFI Ramp SRT1 Indirect Route Validity Table UE; left side</message>
+  </event>
+
+  <event id="BD400013" comp="CNM">
+    <description>event: HFI_SRT1IRVRS_UE:HFI Ramp SRT1 Indirect Route Validity Table UE; right side</description>
+    <message>HFI Ramp SRT1 Indirect Route Validity Table UE; right side</message>
+  </event>
+
+  <event id="BD400014" comp="CNM">
+    <description>event: HFI_SRTA_CE:HFI Ramp SRT Array Correctable Error</description>
+    <message>HFI Ramp SRT Array Correctable Error</message>
+  </event>
+
+  <event id="BD400015" comp="CNM">
+    <description>event: HFI_SRT_HWERR:HFI Ramp SRT Hardware Internal Error</description>
+    <message>HFI Ramp SRT Hardware Internal Error</message>
+  </event>
+
+  <event id="BD400016" comp="CNM">
+    <description>event: HFI_DOWN:HFI Down</description>
+    <message>HFI Down</message>
+  </event>
+
+  <event id="BD400017" comp="CNM">
+    <description>event: HFI_INLL_PE:HFI Ramp Input Port Linked List Parity Error</description>
+    <message>HFI Ramp Input Port Linked List Parity Error</message>
+  </event>
+
+  <event id="BD400018" comp="CNM">
+    <description>event: HFI_INPAIFA_CE:HFI Ramp Input Port Async IF Array Correctable Error</description>
+    <message>HFI Ramp Input Port Async IF Array Correctable Error</message>
+  </event>
+
+  <event id="BD400019" comp="CNM">
+    <description>event: HFI_INPA_CE:HFI Ramp Input Port Array Correctable Error</description>
+    <message>HFI Ramp Input Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD40001A" comp="CNM">
+    <description>event: HFI_INPAIFA_UE:HFI Ramp Input Port Array Uncorrectable Error</description>
+    <message>HFI Ramp Input Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD40001B" comp="CNM">
+    <description>event: HFI_OUTPAIFA_CE:HFI Ramp Output Port Async IF Array Correctable Error</description>
+    <message>HFI Ramp Output Port Async IF Array Correctable Error</message>
+  </event>
+
+  <event id="BD40001C" comp="CNM">
+    <description>event: HFI_OUTPAIFA_UE:HFI Ramp Output Port Async IF Array Uncorrectable Error</description>
+    <message>HFI Ramp Output Port Async IF Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD40001D" comp="CNM">
+    <description>event: HFI_INPAIFA_UE:HFI Ramp Input Port Async IF Array Uncorrectable Error</description>
+    <message>HFI Ramp Input Port Async IF Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD40001E" comp="CNM">
+    <description>event: HFI_OUTPA_CE:HFI Ramp Output Port Array Correctable Error</description>
+    <message>HFI Ramp Output Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD40001F" comp="CNM">
+    <description>event: HFI_OUTPA_UE:HFI Ramp Output Port Array Uncorrectable Error</description>
+    <message>HFI Ramp Output Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD400020" comp="CNM">
+    <description>event: HFI_SENDER_HANG:HFI Ramp Output Port Sender Hang</description>
+    <message>HFI Ramp Output Port Sender Hang</message>
+  </event>
+
+  <event id="BD700021" comp="CNM">
+    <description>event: DLNK_READY:D Link Port Ready</description>
+    <message>D Link Port Ready</message>
+  </event>
+
+  <event id="BD700022" comp="CNM">
+    <description>event: DLNK_PLANE_WC:D Link Port Lane Width Change</description>
+    <message>D Link Port Lane Width Change</message>
+  </event>
+
+  <event id="BD700023" comp="CNM">
+    <description>event: LRLNK_READY:LR Link Port Ready</description>
+    <message>LR Link Port Ready</message>
+  </event>
+
+  <event id="BD700024" comp="CNM">
+    <description>event: LRLNK_PLANE_WC:LR Link Port Lane Width Change</description>
+    <message>LR Link Port Lane Width Change</message>
+  </event>
+
+  <event id="BD700025" comp="CNM">
+    <description>event: DLNK_DOWN:D Link Port Down</description>
+    <message>D Link Port Down</message>
+  </event>
+
+  <event id="BD700026" comp="CNM">
+    <description>event: LRLNK_DOWN:LR Link Port Down</description>
+    <message>LR Link Port Down</message>
+  </event>
+
+  <event id="BD700027" comp="CNM">
+    <description>event: LLLNK_DOWN:Llocal Link Port Down</description>
+    <message>Llocal Link Port Down</message>
+  </event>
+
+  <event id="BD500028" comp="CNM">
+    <description>event: LLLNK_IPLL_PE:Llocal Port Input Port Linked List Parity Error</description>
+    <message>Llocal Port Input Port Linked List Parity Error</message>
+  </event>
+
+  <event id="BD500029" comp="CNM">
+    <description>event: LLNK_IPAIFA_UE:Llocal Port Input Port Async IF Array Uncorrectable Error</description>
+    <message>Llocal Port Input Port Async IF Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD50002A" comp="CNM">
+    <description>event: LLNK_IPAIFA_CE:Llocal Port Input Port Async IF Array Correctable Error</description>
+    <message>Llocal Port Input Port Async IF Array Correctable Error</message>
+  </event>
+
+  <event id="BD50002B" comp="CNM">
+    <description>event: LLNK_IPA_UE:Llocal Port Input Port Array Uncorrectable Error</description>
+    <message>Llocal Port Input Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD50002C" comp="CNM">
+    <description>event: LLNK_IPA_CE:Llocal Port Input Port Array Correctable Error</description>
+    <message>Llocal Port Input Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD50002D" comp="CNM">
+    <description>event: LLNK_OUTPA_UE:Llocal Port Output Port Array Uncorrectable Error</description>
+    <message>Llocal Port Output Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD50002E" comp="CNM">
+    <description>event: LLNK_OUTPA_CE:Llocal Port Output Port Array Correctable Error</description>
+    <message>Llocal Port Output Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD50002F" comp="CNM">
+    <description>event: LLNK_IPBUF_OF:Llocal Input Port Buffer Overflow</description>
+    <message>Llocal Input Port Buffer Overflow</message>
+  </event>
+
+  <event id="BD500030" comp="CNM">
+    <description>event: LLNK_IPVC_HANG:Llocal Input Port VC Hang</description>
+    <message>Llocal Input Port VC Hang</message>
+  </event>
+
+  <event id="BD500031" comp="CNM">
+    <description>event: LLNK_IPUNEX_FLIT:Llocal Input Port Unexpected Flit Type</description>
+    <message>Llocal Input Port Unexpected Flit Type</message>
+  </event>
+
+  <event id="BD500032" comp="CNM">
+    <description>event: LLNK_IPVC_DEADLOCK:Llocal Input Port VC Deadlock Case</description>
+    <message>Llocal Input Port VC Deadlock Case</message>
+  </event>
+
+  <event id="BD500033" comp="CNM">
+    <description>event: LLNK_OUTPCR_OF:Llocal Port Output Port Credit Overflow</description>
+    <message>Llocal Port Output Port Credit Overflow</message>
+  </event>
+
+  <event id="BD500034" comp="CNM">
+    <description>event: LLNK_OUTPSENDER_HANG:Llocal Port Output Port Sender Hang</description>
+    <message>Llocal Port Output Port Sender Hang</message>
+  </event>
+
+  <event id="BD500035" comp="CNM">
+    <description>event: LLNK_OUTP_HWERR:Llocal Port Output Port Hard Failure</description>
+    <message>Llocal Port Output Port Hard Failure</message>
+  </event>
+
+  <event id="BD700036" comp="CNM">
+    <description>event: DLNK_INCRC:D Link Inbound Port CRC Threshold Exceeded</description>
+    <message>D Link Inbound Port CRC Threshold Exceeded</message>
+  </event>
+
+  <event id="BD700037" comp="CNM">
+    <description>event: DLNK_DROPFLIT:D Link Port Dropped Flit Threshold Exceeded</description>
+    <message>D Link Port Dropped Flit Threshold Exceeded</message>
+  </event>
+
+  <event id="BD700038" comp="CNM">
+    <description>event: DLNK_TOTREPLAY:D Link Port Total Replay Threshold Exceeded</description>
+    <message>D Link Port Total Replay Threshold Exceeded</message>
+  </event>
+
+  <event id="BD700039" comp="CNM">
+    <description>event: DLNK__FLITRETRY:D Link Port Same Flit Retry Threshold Exceeded</description>
+    <message>D Link Port Same Flit Retry Threshold Exceeded</message>
+  </event>
+
+  <event id="BD70003A" comp="CNM">
+    <description>event: DLNK_LINKUP_THRES:D Link Port Link Up Threshold Exceeded</description>
+    <message>D Link Port Link Up Threshold Exceeded</message>
+  </event>
+
+  <event id="BD70003B" comp="CNM">
+    <description>event: DLNK_INLL_PE:D Link Input Port Linked List Parity Error</description>
+    <message>D Link Input Port Linked List Parity Error</message>
+  </event>
+
+  <event id="BD70003C" comp="CNM">
+    <description>event: DLNK_PCR_OF:D Link Port Credit Overflow</description>
+    <message>D Link Port Credit Overflow</message>
+  </event>
+
+  <event id="BD70003D" comp="CNM">
+    <description>event: DLNK_PBUF_OF:D Link Port Buffer Overflow</description>
+    <message>D Link Port Buffer Overflow</message>
+  </event>
+
+  <event id="BD70003E" comp="CNM">
+    <description>event: DLNK_PVC_DEADLOCK:D Link Port VC Deadlock Case</description>
+    <message>D Link Port VC Deadlock Case</message>
+  </event>
+
+  <event id="BD70003F" comp="CNM">
+    <description>event: DLNK_PUNEX_FLIT:D Link Port Unexpected Flit Type</description>
+    <message>D Link Port Unexpected Flit Type</message>
+  </event>
+
+  <event id="BD700040" comp="CNM">
+    <description>event: DLNK_SENDER_HANG:D Link Port Sender Hang</description>
+    <message>D Link Port Sender Hang</message>
+  </event>
+
+  <event id="BD700041" comp="CNM">
+    <description>event: DLNK_IPVC_HANG:D Link Port Input Port VC Hang Timeout</description>
+    <message>D Link Port Input Port VC Hang Timeout</message>
+  </event>
+
+  <event id="BD700042" comp="CNM">
+    <description>event: DLNK_IPAIFA_UE:D Link Input Port Async IF Array Uncorrectable Error</description>
+    <message>D Link Input Port Async IF Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD700043" comp="CNM">
+    <description>event: DLNK_IPAIFA_CE:D Link Input Port Async IF Array Correctable Error</description>
+    <message>D Link Input Port Async IF Array Correctable Error</message>
+  </event>
+
+  <event id="BD700044" comp="CNM">
+    <description>event: DLNK_IPA_UE:D Link Input Port Array Uncorrectable Error</description>
+    <message>D Link Input Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD700045" comp="CNM">
+    <description>event: DLNK_IPA_CE:D Link Input Port Array Correctable Error</description>
+    <message>D Link Input Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD700046" comp="CNM">
+    <description>event: DLNK_OPA_UE:D Link Output Port Array Uncorrectable Error</description>
+    <message>D Link Output Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD700047" comp="CNM">
+    <description>event: DLNK_OPA_CE:D Link Output Port Array Correctable Error</description>
+    <message>D Link Output Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD700048" comp="CNM">
+    <description>event: DLNK_OPAIFA_UE:D Link Output Port Async IF Array Uncorrectable Err</description>
+    <message>D Link Output Port Async IF Array Uncorrectable Err</message>
+  </event>
+
+  <event id="BD700049" comp="CNM">
+    <description>event: DLNK_OPAIFA_CE:D Link Output Port Async IF Array Correctable Error</description>
+    <message>D Link Output Port Async IF Array Correctable Error</message>
+  </event>
+
+  <event id="BD70004A" comp="CNM">
+    <description>event: DLNK_HWERR:D Link Port Hard Failure</description>
+    <message>D Link Port Hard Failure</message>
+  </event>
+
+  <event id="BD70004B" comp="CNM">
+    <description>event: DLNK_PRT1A_UE:D Port PRT1 Array Uncorrectable Error</description>
+    <message>D Port PRT1 Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD70004C" comp="CNM">
+    <description>event: DLNK_PRT1A_CE:D Port PRT1 Array Correctable Error</description>
+    <message>D Port PRT1 Array Correctable Error</message>
+  </event>
+
+  <event id="BD70004D" comp="CNM">
+    <description>event: LRLNK_INCRC:LR Link Inbound Port CRC Threshold Exceeded</description>
+    <message>LR Link Inbound Port CRC Threshold Exceeded</message>
+  </event>
+
+  <event id="BD70004E" comp="CNM">
+    <description>event: LRLNK_DROPFLIT:LR Link Port Dropped Flit Threshold Exceeded</description>
+    <message>LR Link Port Dropped Flit Threshold Exceeded</message>
+  </event>
+
+  <event id="BD70004F" comp="CNM">
+    <description>event: LRLNK_TOTREPLAY:LR Link Port Total Replay Threshold Exceeded</description>
+    <message>LR Link Port Total Replay Threshold Exceeded</message>
+  </event>
+
+  <event id="BD700050" comp="CNM">
+    <description>event: LRLNK__FLITRETRY:LR Link Port Same Flit Retry Threshold Exceeded</description>
+    <message>LR Link Port Same Flit Retry Threshold Exceeded</message>
+  </event>
+
+  <event id="BD700051" comp="CNM">
+    <description>event: LRLNK_LINKUP_THRES:LR Link Port Link Up Threshold Exceeded</description>
+    <message>LR Link Port Link Up Threshold Exceeded</message>
+  </event>
+
+  <event id="BD700052" comp="CNM">
+    <description>event: LRLNK_INLL_PE:LR Link Input Port Linked List Parity Error</description>
+    <message>LR Link Input Port Linked List Parity Error</message>
+  </event>
+
+  <event id="BD700053" comp="CNM">
+    <description>event: LRLNK_PCR_OF:LR Link Port Credit Overflow</description>
+    <message>LR Link Port Credit Overflow</message>
+  </event>
+
+  <event id="BD700054" comp="CNM">
+    <description>event: LRLNK_PBUF_OF:LR Link Port Buffer Overflow</description>
+    <message>LR Link Port Buffer Overflow</message>
+  </event>
+
+  <event id="BD700055" comp="CNM">
+    <description>event: LRLNK_PVC_DEADLOCK:LR Link Port VC Deadlock Case</description>
+    <message>LR Link Port VC Deadlock Case</message>
+  </event>
+
+  <event id="BD700056" comp="CNM">
+    <description>event: LRLNK_PUNEX_FLIT:LR Link Port Unexpected Flit Type</description>
+    <message>LR Link Port Unexpected Flit Type</message>
+  </event>
+
+  <event id="BD700057" comp="CNM">
+    <description>event: LRLNK_SENDER_HANG:LR Link Port Sender Hang</description>
+    <message>LR Link Port Sender Hang</message>
+  </event>
+
+  <event id="BD700058" comp="CNM">
+    <description>event: LRLNK_IPVC_HANG:LR Link Port Input Port VC Hang Timeout</description>
+    <message>LR Link Port Input Port VC Hang Timeout</message>
+  </event>
+
+  <event id="BD700059" comp="CNM">
+    <description>event: LRLNK_IPAIFA_UE:LR Link Input Port Async IF Array Uncorrectable Error</description>
+    <message>LR Link Input Port Async IF Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD70005A" comp="CNM">
+    <description>event: LRLNK_IPAIFA_CE:LR Link Input Port Async IF Array Correctable Error</description>
+    <message>LR Link Input Port Async IF Array Correctable Error</message>
+  </event>
+
+  <event id="BD70005B" comp="CNM">
+    <description>event: LRLNK_IPA_UE:LR Link Input Port Array Uncorrectable Error</description>
+    <message>LR Link Input Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD70005C" comp="CNM">
+    <description>event: LRLNK_IPA_CE:LR Link Input Port Array Correctable Error</description>
+    <message>LR Link Input Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD70005D" comp="CNM">
+    <description>event: LRLNK_OPA_UE:LR Link Output Port Array Uncorrectable Error</description>
+    <message>LR Link Output Port Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD70005E" comp="CNM">
+    <description>event: LRLNK_OPA_CE:LR Link Output Port Array Correctable Error</description>
+    <message>LR Link Output Port Array Correctable Error</message>
+  </event>
+
+  <event id="BD70005F" comp="CNM">
+    <description>event: LRLNK_OPAIFA_UE:LR Link Output Port Async IF Array Uncorrectable Error</description>
+    <message>LR Link Output Port Async IF Array Uncorrectable Error</message>
+  </event>
+
+  <event id="BD700060" comp="CNM">
+    <description>event: LRLNK_OPAIFA_CE:LR Link Output Port Async IF Array Correctable Error</description>
+    <message>LR Link Output Port Async IF Array Correctable Error</message>
+  </event>
+
+  <event id="BD700061" comp="CNM">
+    <description>event: LRLNK_HWERR:LR Link Port Hard Failure</description>
+    <message>LR Link Port Hard Failure</message>
+  </event>
+
+  <!-- Needs finer granularity -->
+  <event id="BD700062" comp="CNM">
+    <description>event: DLNK_OMI:D Link Port Optical Module Interrupt</description>
+    <message>D Link Port Optical Module Interrupt</message>
+  </event>
+
+  <!-- Needs finer granularity -->
+  <event id="BD700063" comp="CNM">
+    <description>event: LR_OMI:LR Link Port Optical Module Interrupt</description>
+    <message>LR Link Port Optical Module Interrupt</message>
+  </event>
+
+  <event id="BD7000A0" comp="CNM">
+    <description>event: DLNK_WDITH9:D Link up with 9 lanes</description>
+    <message>D Link up with 9 lanes</message>
+  </event>
+
+  <event id="BD7000A1" comp="CNM">
+    <description>event: DLNK_WIDTH8:D Link up with 8 lanes</description>
+    <message>D Link up with 8 lanes</message>
+  </event>
+
+  <event id="BD7000A8" comp="CNM">
+    <description>event: LRLNK_WIDTH5:LR Link up with 5 lanes</description>
+    <message>LR Link up with 5 lanes</message>
+  </event>
+
+  <event id="BD7000A9" comp="CNM">
+    <description>event: LRLNK_WIDTH4:LR Link up with 4 lanes</description>
+    <message>LR Link up with 4 lanes</message>
+  </event>
+
+  <event id="BD880074" comp="CNM">
+    <description>event: OMTX_TEMPHIGH:TX optical module Temp High</description>
+    <message>TX optical module Temp High</message>
+  </event>
+
+  <event id="BD880075" comp="CNM">
+    <description>event: OMTX_TEMPLOW:TX optical module Temp Low</description>
+    <message>TX optical module Temp Low</message>
+  </event>
+
+  <event id="BD880076" comp="CNM">
+    <description>event: OMTX_33LOW:TX optical module Vcc3.3 High</description>
+    <message>TX optical module Vcc3.3 High</message>
+  </event>
+
+  <event id="BD880077" comp="CNM">
+    <description>event: OMTX_33HIGH:TX optical module Vcc3.3 Low</description>
+    <message>TX optical module Vcc3.3 Low</message>
+  </event>
+
+  <event id="BD880078" comp="CNM">
+    <description>event: OMTX_25LOW:TX optical module Vcc2.5 High</description>
+    <message>TX optical module Vcc2.5 High</message>
+  </event>
+
+  <event id="BD880079" comp="CNM">
+    <description>event: OMTX_25HIGH:TX optical module Vcc2.5 Low</description>
+    <message>TX optical module Vcc2.5 Low</message>
+  </event>
+
+  <event id="BD88007A" comp="CNM">
+    <description>event: OMRX_TEMPHIGH:RX optical module Temp High</description>
+    <message>RX optical module Temp High</message>
+  </event>
+
+  <event id="BD88007B" comp="CNM">
+    <description>event: OMRX_TEMPLOW:RX optical module Temp Low</description>
+    <message>RX optical module Temp Low</message>
+  </event>
+
+  <event id="BD88007C" comp="CNM">
+    <description>event: OMRX_33LOW:RX optical module Vcc3.3 High</description>
+    <message>RX optical module Vcc3.3 High</message>
+  </event>
+
+  <event id="BD88007D" comp="CNM">
+    <description>event: OMRX_33HIGH:RX optical module Vcc3.3 Low</description>
+    <message>RX optical module Vcc3.3 Low</message>
+  </event>
+
+  <event id="BD88007E" comp="CNM">
+    <description>event: OMRX_25LOW:RX optical module Vcc2.5 High</description>
+    <message>RX optical module Vcc2.5 High</message>
+  </event>
+
+  <event id="BD88007F" comp="CNM">
+    <description>event: OMRX_25HIGH:RX optical module Vcc2.5 Low</description>
+    <message>RX optical module Vcc2.5 Low</message>
+  </event>
+
+  <event id="BD880180" comp="CNM">
+    <description>event: OMTX_LOS:TX Loss of Signal</description>
+    <message>TX Loss of Signal</message>
+  </event>
+
+  <event id="BD880181" comp="CNM">
+    <description>event: OMTX_FAULT:TX Fault</description>
+    <message>TX Fault</message>
+  </event>
+
+  <event id="BD880182" comp="CNM">
+    <description>event: OMTX_BCHIGH:TX Bias Current High</description>
+    <message>TX Bias Current High</message>
+  </event>
+
+  <event id="BD880183" comp="CNM">
+    <description>event: OMTX_LOPLOW:TX Light Output Power Low</description>
+    <message>TX Light Output Power Low</message>
+  </event>
+
+  <event id="BD880184" comp="CNM">
+    <description>event: OMTX_BCLOW:TX Bias Current Low</description>
+    <message>TX Bias Current Low</message>
+  </event>
+
+  <event id="BD880185" comp="CNM">
+    <description>event: OMTX_LOPHIGH:TX Light Output Power High</description>
+    <message>TX Light Output Power High</message>
+  </event>
+
+  <event id="BD880186" comp="CNM">
+    <description>event: OMRX_LOS:RX Loss of Signal</description>
+    <message>RX Loss of Signal</message>
+  </event>
+
+  <event id="BD880187" comp="CNM">
+    <description>event: OMRX_LIPLOW:RX Light Input Power Low</description>
+    <message>RX Light Input Power Low</message>
+  </event>
+
+  <event id="BD880188" comp="CNM">
+    <description>event: OMRX_LIPHIGH:RX Light Input Power High</description>
+    <message>RX Light Input Power High</message>
+  </event>
+
+  <!-- A summary of SRCs 0x14020400 - 0x1402455 over multiple voltages and octants. -->
+  <event id="BD0204F0" comp="BPA">
+    <description>event: OV_OCTANT:Overvoltage event in Octant</description>
+    <message>Overvoltage event in Octant</message>
+  </event>
+
+  <!-- A summary of SRCs 0x14020456 - 0x1402460 over multiple voltages at a CEC level. -->
+  <event id="BD0204FF" comp="BPA">
+    <description>event: OV_CEC:Overvoltage event in CEC</description>
+    <message>Overvoltage event in CEC</message>
+  </event>
+
+  <!-- A summary of SRCs 0x14020300 - 0x1402355 over multiple voltages and octants. -->
+  <event id="BD0203F0" comp="BPA">
+    <description>event: OC_OCTANT:Overcurrent event in an Octant</description>
+    <message>Overcurrent event in an Octant</message>
+  </event>
+
+  <!-- A summary of SRCs 0x14020356 - 0x1402360 over multiple voltages at a CEC level. -->
+  <event id="BD0203FF" comp="BPA">
+    <description>event: OC_CEC:Overcurrent event in a CEC</description>
+    <message>Overcurrent event in a CEC</message>
+  </event>
+
+  <event id="BD022C51" comp="BPA">
+    <description>event: DCCA1:DEFECTIVE DCCA_01</description>
+    <message>DEFECTIVE DCCA_01</message>
+  </event>
+
+  <event id="BD022C52" comp="BPA">
+    <description>event: DCCA2:DEFECTIVE DCCA_02</description>
+    <message>DEFECTIVE DCCA_02</message>
+  </event>
+
+  <event id="BD022069" comp="BPA">
+    <description>event: DCA_NOAIR:NO_AIR_FLOW_IN_ALL_DCA</description>
+    <message>NO_AIR_FLOW_IN_ALL_DCA</message>
+  </event>
+
+  <event id="BD020085" comp="BPA">
+    <description>event: DCA_OT:LOGIC_OverTemp_DCA_OFF</description>
+    <message>LOGIC_OverTemp_DCA_OFF</message>
+  </event>
+
+  <event id="BD010001" comp="CNM">
+    <description>event: TORRENT_POWERON:Torrent Functional Power-On</description>
+    <message>Torrent Functional Power-On</message>
+  </event>
+
+  <event id="BD010011" comp="CNM">
+    <description>event: TORRENT_POWEROFF:Torrent Functional Power-Off</description>
+    <message>Torrent Functional Power-Off</message>
+  </event>
+
+  <!-- Reported in Alert listener -->
+  <event id="BD0000FF" comp="CNM">
+    <description>event: NOSFP:Cannot connect to primary or backup HMC</description>
+    <message>Cannot connect to primary or backup HMC</message>
+  </event>
+
+  <!-- Reported by CNM -->
+  <event id="BD000010" comp="CNM">
+    <description>event: NONBR:No Neighbor Found</description>
+    <message>No Neighbor Found</message>
+  </event>
+
+  <!-- TEAL found a problem with CNM's location format -->
+  <event id="BD00FFF0" comp="CNM">
+    <description>event: ON_ERROR_LOC:on_error - location</description>
+    <message>on_error - location</message>
+  </event>
+
+  <event id="BDFF0040" comp="CNM">
+    <description>event: FAULTY_OPTICAL_MODULE:Faulty Optical Module</description>
+    <message>Faulty Optical Module</message>
+  </event>
+
+  <event id="BDFF004A" comp="CNM">
+    <description>event: FAULTY_HFIRAMPS:Both ramps faulty in HFI hub</description>
+    <message>Both ramps faulty in HFI hub</message>
+  </event>
+
+  <event id="BDFF0050" comp="CNM">
+    <description>event: FAULTY_HUB:Faulty Network Hub</description>
+    <message>Faulty Network Hub</message>
+  </event>
+
+  <!-- In a drawer, 2 Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <event id="BDFF0055" comp="CNM">
+    <description>event: FAULTY_LRCABASSY_PARTIAL:Faulty LR-link cable assembly - 48 or more links</description>
+    <message>Faulty LR-link cable assembly - 48 or more links</message>
+  </event>
+
+  <!-- In a drawer, all Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <event id="BDFF0056" comp="CNM">
+    <description>event: FAULTY_LRCABASSY:Faulty LR-link cable assembly - full</description>
+    <message>Faulty LR-link cable assembly - full</message>
+  </event>
+
+  <!-- In a drawer, all Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <event id="BDFF0057" comp="CNM">
+    <description>event: FAULTY_LRCABASSY2:Faulty LR-link cable assembly - 64 or more links</description>
+    <message>Faulty LR-link cable assembly - 64 or more links</message>
+  </event>
+
+  <!-- In a drawer, all Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <event id="BDFF0058" comp="CNM">
+    <description>event: FAULTY_LRCABASSY3:Faulty LR-link cable assembly - 128 or more links</description>
+    <message>Faulty LR-link cable assembly - 128 or more links</message>
+  </event>
+
+  <event id="BDFF0060" comp="CNM">
+    <description>event: SUSPECT_DRAWER:Suspicious Drawer</description>
+    <message>Suspicious Drawer</message>
+  </event>
+
+  <event id="BDFF0061" comp="CNM">
+    <description>event: SUSPECT_SUPERNODE:Suspicious SuperNode</description>
+    <message>Suspicious SuperNode</message>
+  </event>
+
+  <event id="BDFF0062" comp="CNM">
+    <description>event: SUSPECT_FRAME:Suspicious Frame</description>
+    <message>Suspicious Frame</message>
+  </event>
+
+  <event id="BDFF0070" comp="CNM">
+    <description>event: NETWORKFAULT:Network Fault</description>
+    <message>Network Fault</message>
+  </event>
+
+  <event id="BDFF0080" comp="CNM">
+    <description>event: BOUNCINGDLNK:Bouncing D-Link</description>
+    <message>Bouncing D-Link</message>
+  </event>
+
+  <event id="BDFF0082" comp="CNM">
+    <description>event: BOUNCINGLRLNK:Bouncing LR-Link</description>
+    <message>Bouncing LR-Link</message>
+  </event>
+
+  <event id="BDFF00A0" comp="CNM">
+    <description>event: RANDOM_DLNK_FRAME:Random D-links in a Frame</description>
+    <message>Random D-links in a Frame</message>
+  </event>
+
+  <event id="BDFF00A1" comp="CNM">
+    <description>event: RANDOM_LRNK_FRAME:Random LR-links in a Frame</description>
+    <message>Random LR-links in a Frame</message>
+  </event>
+
+  <event id="BDFF00A2" comp="CNM">
+    <description>event: RANDOM_OM_FRAME:Random Optical Modules in a Frame</description>
+    <message>Random Optical Modules in a Frame</message>
+  </event>
+
+  <event id="BDFF00A5" comp="CNM">
+    <description>event: RANDOM_DLNK_SUPERNODE:Random D-links in a SuperNode</description>
+    <message>Random D-links in a SuperNode</message>
+  </event>
+
+  <event id="BDFF00A6" comp="CNM">
+    <description>event: RANDOM_LRNK_SUPERNODE:Random LR-links in a SuperNode</description>
+    <message>Random LR-links in a SuperNode</message>
+  </event>
+
+  <event id="BDFF00A7" comp="CNM">
+    <description>event: RANDOM_OM_SUPERNODE:Random Optical Modules in a SuperNode</description>
+    <message>Random Optical Modules in a SuperNode</message>
+  </event>
+
+  <event id="BDFF00AA" comp="CNM">
+    <description>event: RANDOM_DLNK_DRWR:Random D-links in a Drawer</description>
+    <message>Random D-links in a Drawer</message>
+  </event>
+
+  <event id="BDFF00AB" comp="CNM">
+    <description>event: RANDOM_LRNK_DRWR:Random LR-links in a Drawer</description>
+    <message>Random LR-links in a Drawer</message>
+  </event>
+
+  <event id="BDFF00AC" comp="CNM">
+    <description>event: RANDOM_OM_DRWR:Random Optical Modules in a Drawer</description>
+    <message>Random Optical Modules in a Drawer</message>
+  </event>
+</eventMetadata>

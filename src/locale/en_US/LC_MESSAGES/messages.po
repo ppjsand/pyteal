@@ -1,0 +1,295 @@
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2011     
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2011-05-17 17:29+CDT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: en_US\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ../ibm/teal/teal.py:600
+msgid "fully qualified TEAL config file/directory - optional"
+msgstr ""
+
+#: ../ibm/teal/teal.py:601
+msgid "fully qualified log file"
+msgstr ""
+
+#: ../ibm/teal/teal.py:603
+msgid "<debug | info | warning | error | critical> - optional [default: info]"
+msgstr ""
+
+#: ../ibm/teal/teal.py:609
+msgid "run as a daemon"
+msgstr ""
+
+#: ../ibm/teal/teal.py:611
+msgid "<now | begin | timed | lastproc> [default: now]"
+msgstr ""
+
+#: ../ibm/teal/teal.py:624
+msgid "Query parameters used to limit the range of events."
+msgstr ""
+
+#: ../ibm/teal/teal.py:625
+msgid "Commit alerts in historic mode [default=False]"
+msgstr ""
+
+#: ../ibm/teal/teal.py:632
+msgid "Arguments '{0}' cannot be specified"
+msgstr ""
+
+#: ../ibm/teal/teal.py:635
+msgid "--historic and --daemon are mutually exclusive"
+msgstr ""
+
+#: ../ibm/teal/teal.py:646
+msgid "Query option is only valid in historic mode"
+msgstr ""
+
+#: ../ibm/teal/teal.py:649
+msgid "Commit option is only valid in historic mode"
+msgstr ""
+
+#: ../ibm/teal/teal.py:661
+msgid "Restart option is only valid in realtime mode"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:106
+msgid "Invalid scope specified: {0}"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:147
+msgid "Location specification \"{0}\" is invalid"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:178
+msgid "Invalid timestamp for {0}: {1}"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:230
+msgid "Invalid value(s) for {0}: {1}"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:287
+msgid "Invalid field specified: {0}"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:291
+msgid "Invalid operation specified for field \"{0}\": {1}"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:311
+msgid "Invalid query string specified"
+msgstr ""
+
+#: tlchalert:40
+msgid "The record id of the alert. (use tllsalert)"
+msgstr ""
+
+#: tlchalert:47
+msgid "The new alert state. (close is the only valid value at this time."
+msgstr ""
+
+#: tlchalert:52
+msgid "Invalid id specified"
+msgstr ""
+
+#: tlchalert:55
+msgid "Must specify at least one attribute to change"
+msgstr ""
+
+#: tlchalert:66
+msgid "Cannot close alert. Reason: {0}"
+msgstr ""
+
+#: tllsalert:36
+msgid ""
+"Valid query values and their operations and formats:\n"
+"    \n"
+"rec_id        - =           - A single id or a comma-separated list of ids (equals-only)\n"
+"\n"
+"alert_id      - =           - A single id or a comma-separated list of ids (equals-only)\n"
+"\n"
+"creation_time - =,<.>,>=,<= - A time value in the format YYYY-MM-DD-HH:MM:SS\n"
+"\n"
+"severity      - =           - The severity level, listed in order of severity:\n"
+"                              \tF=fatal, E=error, W=warning, I=info (equals-only)\n"
+"\n"
+"urgency       - =           - The urgency of the alert, listed in order of urgency:\n"
+"\t                     \tI=immediate, S=schedule, N=normal, D=defer, O=optional\n"
+"\t\t\t\t(equals-only)\n"
+"\n"
+"event_loc     - =           - A location in the format <location type>:<location>.\n"
+"                               The location is optional; otherwise all events\n"
+"                               with the same location type will be included\n"
+"\n"
+"event_scope   - =           - A scoping value for the specified reporting location type\n"
+"\n"
+"src_name      - =           - A single value or a comma-separated list of values\n"
+"\n"
+msgstr ""
+
+#: tllsalert:130
+msgid "Query parameters used to limit the range of alerts listed. See list of valid values below"
+msgstr ""
+
+#: tllsalert:137
+msgid "Output format of alert: json,csv,text [default = %default]"
+msgstr ""
+
+#: tllsalert:142
+msgid "Print the associated events and alerts for the matching alert"
+msgstr ""
+
+#: tllsalert:147
+msgid "Print all open and closed alerts"
+msgstr ""
+
+#: tllsalert:152
+msgid "Print only closed alerts"
+msgstr ""
+
+#: tllsalert:157
+msgid "Print the duplicate alerts also"
+msgstr ""
+
+#: tllsalert:162
+msgid "Cannot specify both --all and --closed options"
+msgstr ""
+
+#: tllsalert:165
+msgid "Cannot specify --with-assoc with 'brief' formatting"
+msgstr ""
+
+#: tllsevent:37
+msgid ""
+"Valid query values and their operations and formats:\n"
+"    \n"
+"rec_id        - =,<.>,>=,<= - A single id or a comma-separated list of ids (equals-only)\n"
+"\n"
+"event_id      - =           - A single id or comma-separated list of event ids\n"
+"\n"
+"time_occurred - =,<.>,>=,<= - A time value in the format YYYY-MM-DD-HH:MM:SS\n"
+"\n"
+"time_logged   - =,<.>,>=,<= - A time value in the format YYYY-MM-DD-HH:MM:SS\n"
+"\n"
+"src_comp      - =           - A single component or a comma-separated list of components\n"
+"\n"
+"src_loc       - =           - A location in the format <location type>:<location>. location can \n"
+"                              be omitted to return all locations of the specified type\n"
+"\n"
+"src_scope     - =           - A scoping value for the specified reporting location type\n"
+"\n"
+"rpt_comp      - =           - A single component or a comma-separated list of components\n"
+"\n"
+"rpt_loc       - =           - A location in the format <location type>:<location>. location \n"
+"                              can be omitted to return all locations of the specified type\n"
+"\n"
+"rpt_scope     - =           - A scoping value for the specified reporting location type\n"
+msgstr ""
+
+#: tllsevent:100
+msgid "Query parameters used to limit the range of events listed. See list of valid values below"
+msgstr ""
+
+#: tllsevent:107
+msgid "Output format of event: json,csv,text [default = %default]"
+msgstr ""
+
+#: tllsevent:112
+msgid "Include extended event data in output"
+msgstr ""
+
+#: tllsevent:118
+msgid "Cannot use --extended option with 'brief' format"
+msgstr ""
+
+#: tlrmalert:42
+msgid "A single alert id or a comma-separated list of alert ids"
+msgstr ""
+
+#: tlrmalert:48 tlrmevent:45
+msgid "The time condition_qry in the format YYYY-MM-DD-HH:MM::SS"
+msgstr ""
+
+#: tlrmalert:124
+msgid "Alert '{0}' cannot be removed."
+msgstr ""
+
+#: tlrmalert:141
+msgid ""
+"\n"
+"{0} unique alert removed"
+msgstr ""
+
+#: tlrmalert:143
+msgid ""
+"\n"
+"{0} unique alerts removed"
+msgstr ""
+
+#: tlrmevent:39
+msgid "A single event id or a comma-separated list of event ids"
+msgstr ""
+
+#: tlrmevent:120
+msgid "Event '{0}' cannot be removed."
+msgstr ""
+
+#: tlrmevent:127
+msgid "\tReason: Event is associated with Alert '{0}'"
+msgstr ""
+
+#: tlrmevent:136
+msgid ""
+"\n"
+"{0} event removed"
+msgstr ""
+
+#: tlrmevent:138
+msgid ""
+"\n"
+"{0} events removed"
+msgstr ""
+
+#: tlvfyrule:46
+msgid "verify the rule using this alert metadata specification"
+msgstr ""
+
+#: tlvfyrule:58
+msgid "verifying a rule that also processes alerts"
+msgstr ""
+
+#: tlvfyrule:63
+msgid "verify the rule assuming these configuration attributes"
+msgstr ""
+
+#: tlvfyrule:68
+msgid "if valid provide a cross reference of id usage"
+msgstr ""
+
+#: tlvfyrule:72
+msgid "rule file to process must be specified"
+msgstr ""
+

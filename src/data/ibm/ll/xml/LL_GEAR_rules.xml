@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gear_ruleset>
+    <description>Loadleveler Rules</description>
+    <gear_control>
+        <default_event_comp value="LL"/>
+    </gear_control>
+    <events>
+        <event id="LL001000" name="ScheddDown" /> 
+        <event id="LL001001" name="StartdDown" /> 
+        <event id="LL001003" name="CentralMgrDown" /> 
+        <event id="LL001004" name="RsrcMgrDown" /> 
+        <event id="LL001005" name="RegionMgrDown" /> 
+        <event id="LL002001" name="JobStepReject" /> 
+        <event id="LL002002" name="JobStepVacate" /> 
+    </events>
+    <pool_control>
+        <initial_duration default="5"/>
+        <max_duration default ="60"/>
+    </pool_control>
+    <analyze>
+        <rule name="ScheddFailure" >
+            <condition>
+                <event_equals id="ScheddDown"/>
+            </condition>
+            <action>
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="GEAR[last_condition_event.ext.message]" 
+                              raw_data="GEAR[last_condition_event.ext.detail]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="GEAR[last_condition_event.ext.msg_type]"
+                              />
+            </action>
+        </rule>    
+        <rule name="StartdFailure" >
+            <condition>
+                <event_equals id="StartdDown"/>
+            </condition>
+            <action>
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="GEAR[last_condition_event.ext.message]" 
+                              raw_data="GEAR[last_condition_event.ext.detail]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="GEAR[last_condition_event.ext.msg_type]"
+                              />
+            </action>
+        </rule>    
+        <rule name="CentralMgrFailure" >
+            <condition>
+                <event_equals id="CentralMgrDown"/>
+            </condition>
+            <action>
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="GEAR[last_condition_event.ext.message]" 
+                              raw_data="GEAR[last_condition_event.ext.detail]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="GEAR[last_condition_event.ext.msg_type]"
+                              />
+            </action>
+        </rule>    
+        <rule name="RsrcMgrFailure" >
+            <condition>
+                <event_equals id="RsrcMgrDown"/>
+            </condition>
+            <action>
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="GEAR[last_condition_event.ext.message]" 
+                              raw_data="GEAR[last_condition_event.ext.detail]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="GEAR[last_condition_event.ext.msg_type]"
+                              />
+            </action>
+        </rule>    
+        <rule name="RegionMgrFailure" >
+            <condition>
+                <event_equals id="RegionMgrDown"/>
+            </condition>
+            <action>
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="GEAR[last_condition_event.ext.message]" 
+                              raw_data="GEAR[last_condition_event.ext.detail]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="GEAR[last_condition_event.ext.msg_type]"
+                              />
+            </action>
+        </rule>    
+        <rule name="JobRejectFailure" >
+            <condition>
+                <event_equals id="JobStepReject"/>
+            </condition>
+            <action>
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="GEAR[last_condition_event.ext.message]" 
+                              raw_data="GEAR[last_condition_event.ext.detail]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="GEAR[last_condition_event.ext.msg_type]"
+                              />
+            </action>
+        </rule>    
+         <rule name="JobVacateFailure" >
+            <condition>
+                <event_equals id="JobStepVacate"/>
+            </condition>
+            <action>
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="GEAR[last_condition_event.ext.message]" 
+                              raw_data="GEAR[last_condition_event.ext.detail]"
+                              recommendation="Call next level of support"
+                              urgency="N"
+                              severity="GEAR[last_condition_event.ext.msg_type]"
+                              />
+            </action>
+        </rule>    
+    </analyze>
+</gear_ruleset> 
+ 

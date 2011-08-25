@@ -1,0 +1,25 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BD700041", 
+        "associations": [
+          "S:E:1", 
+          "C:E:2"  
+        ], 
+        "creation_time": "2011-03-09 13:44:00.296000",  
+        "event_loc": "FR007-CG03-SN000-DR0-HB1-OM20-LD15", 
+        "event_loc_type": "H", 
+        "reason": "D-link hang between frame FR007 cage CG03 (superNode SN000 drawer DR0) hub HB1 port LD15 and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Input Port VC Hang Timeout)",  
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a D-Link.\nRecord the alert ID and call IBM Service.\nLog on to the Management Server.\nTo isolate to the proper FRU, run Link Diags and perform the actions that it recommends.\nIf no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

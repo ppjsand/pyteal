@@ -1,0 +1,141 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "Alert 03", 
+        "associations": [
+          "S:E:6", 
+          "S:E:7", 
+          "S:E:2", 
+          "S:E:3", 
+          "C:E:5"
+        ], 
+        "creation_time": "2010-10-29 09:13:54.828000", 
+        "event_loc": "MB-SL1", 
+        "event_loc_type": "C", 
+        "fru_loc": "fru_loc2", 
+        "raw_data": "This is another test", 
+        "reason": "Motherboard MB pciSlot SL1 ethernetCard $ethernetCard port $port", 
+        "rec_id": 1, 
+        "recommendation": "try again", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest065a", 
+        "state": "New", 
+        "urgency": "I"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "Alert US", 
+        "associations": [
+          "S:E:1", 
+          "C:E:1"
+        ], 
+        "creation_time": "2010-10-29 09:13:54.828000", 
+        "event_loc": "MB-SL1-ET1", 
+        "event_loc_type": "C", 
+        "reason": "This is an Unsupressed alert", 
+        "rec_id": 2, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest065a", 
+        "state": "New", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "3": {
+      "data": {
+        "alert_id": "Alert US", 
+        "associations": [
+          "S:E:4", 
+          "C:E:4"
+        ], 
+        "creation_time": "2010-10-29 09:13:54.828000", 
+        "event_loc": "MB-SL1-ET1", 
+        "event_loc_type": "C", 
+        "reason": "This is an Unsupressed alert", 
+        "rec_id": 3, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest065a", 
+        "state": "New", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "4": {
+      "data": {
+        "alert_id": "Alert US", 
+        "associations": [
+          "S:E:5", 
+          "S:E:6", 
+          "S:E:7", 
+          "S:E:2", 
+          "S:E:3", 
+          "C:E:5"
+        ], 
+        "creation_time": "2010-10-29 09:13:54.828000", 
+        "event_loc": "MB-SL1-ET1", 
+        "event_loc_type": "C", 
+        "reason": "This is an Unsupressed alert", 
+        "rec_id": 4, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest065a", 
+        "state": "New", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "5": {
+      "data": {
+        "alert_id": "Alert US", 
+        "associations": [
+          "S:E:7", 
+          "S:E:8", 
+          "S:E:2", 
+          "C:E:8"
+        ], 
+        "creation_time": "2010-10-29 09:13:54.828000", 
+        "event_loc": "MB-SL1-ET1", 
+        "event_loc_type": "C", 
+        "reason": "This is an Unsupressed alert", 
+        "rec_id": 5, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest065a", 
+        "state": "New", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "6": {
+      "data": {
+        "alert_id": "Alert US", 
+        "associations": [
+          "S:E:9", 
+          "C:E:9"
+        ], 
+        "creation_time": "2010-10-29 09:13:54.828000", 
+        "event_loc": "MB-SL1-ET1", 
+        "event_loc_type": "C", 
+        "reason": "This is an Unsupressed alert", 
+        "rec_id": 6, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest065a", 
+        "state": "New", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

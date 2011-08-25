@@ -1,0 +1,191 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2010,2011
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# locale setup
+import os
+import gettext
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import sys
+import json
+import csv
+
+from ibm.teal import Teal
+from ibm.teal import registry
+from ibm.teal import event
+from ibm.teal import extdata
+from ibm.teal import metadata
+from ibm.teal.util import command
+from ibm.teal.database import db_interface
+
+query_text = _('''Valid query values and their operations and formats:
+    
+rec_id        - =,<.>,>=,<= - A single id or a comma-separated list of ids (equals-only)
+
+event_id      - =           - A single id or comma-separated list of event ids
+
+time_occurred - =,<.>,>=,<= - A time value in the format YYYY-MM-DD-HH:MM:SS
+
+time_logged   - =,<.>,>=,<= - A time value in the format YYYY-MM-DD-HH:MM:SS
+
+src_comp      - =           - A single component or a comma-separated list of components
+
+src_loc       - =           - A location in the format <location type>:<location>. location can 
+                              be omitted to return all locations of the specified type
+
+src_scope     - =           - A scoping value for the specified reporting location type
+
+rpt_comp      - =           - A single component or a comma-separated list of components
+
+rpt_loc       - =           - A location in the format <location type>:<location>. location 
+                              can be omitted to return all locations of the specified type
+
+rpt_scope     - =           - A scoping value for the specified reporting location type
+''')
+
+
+# Query fields, opeations and list information for parser
+qry_info = [('rec_id',command.EQUALITY_OPS,True,command.FIELD_TYPE_INT),
+            ('event_id',['='],True,command.FIELD_TYPE_STRING),
+            ('time_occurred',command.EQUALITY_OPS,False,command.FIELD_TYPE_TIMESTAMP),
+            ('time_logged',command.EQUALITY_OPS,False,command.FIELD_TYPE_TIMESTAMP),
+            ('src_comp',['='],True,command.FIELD_TYPE_STRING),
+            ('src_loc',['='],False,command.FIELD_TYPE_STRING),
+            ('src_scope',['='],False,command.FIELD_TYPE_STRING),
+            ('rpt_comp',['='],True,command.FIELD_TYPE_STRING),
+            ('rpt_loc',['='],False,command.FIELD_TYPE_STRING),
+            ('rpt_scope',['='],False,command.FIELD_TYPE_STRING),
+           ]
+
+def build_query(query):
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+    
+    if (query):
+        where_str = query[0]
+        where_fields = query[1]
+    else:
+        where_str = None
+        where_fields = None
+        
+    return db.gen_select(event.EVENT_COLS,db_interface.TABLE_EVENT_LOG,where=where_str,where_fields=where_fields,order=event.EVENT_ATTR_REC_ID)
+
+if __name__ == '__main__':
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tllsevent.log', msgLevel='warning', data_only=True)
+
+    # Parse the command line        
+    parser = command.TealOptionParser(qry_info,epilog=query_text)
+    parser.add_option('-q','--query',
+                        type='string',
+                        action='callback',
+                        callback=parser.query_str_check,
+                        dest='query',
+                        default="",
+                        help=_('Query parameters used to limit the range of events listed. See list of valid values below'))
+    parser.add_option('-f','--format',
+                        type='choice',
+                        choices=['brief','text','json','csv'],
+                        default='brief',
+                        action='store',
+                        dest='output_format',
+                        help=_('Output format of event: json,csv,text [default = %default]'))
+    parser.add_option('-e','--extended',
+                        action='store_true',
+                        dest='extended_format',
+                        default=False,
+                        help=_('Include extended event data in output'))
+    (options, args) = parser.parse_args()
+    #print options,args
+    
+    # Validate option combinations
+    if (options.output_format == 'brief') and options.extended_format:
+        parser.error(_("Cannot use --extended option with 'brief' format"))
+    
+    # Prepare to use the database
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+    cnxn = db.get_connection()
+    cursor = cnxn.cursor()
+    select = build_query(options.query)
+    
+    # Execute the query and display the information
+    #print 'Query = ',select
+    metadata_dict = registry.get_service(registry.SERVICE_EVENT_METADATA)
+    columns = event.EVENT_COLS[0:-2]
+    
+    if (options.output_format == 'csv'):
+        print ','.join(columns)
+        
+    for row in cursor.execute(select):
+        columns = event.EVENT_COLS[0:-2]
+        results = dict(zip(columns,row))
+        if (options.extended_format):
+            # Check if there is specific component extended data
+            if (row.raw_data_fmt != 0):
+                try:
+                    ext_results = extdata.ExtensionData(row.raw_data_fmt, row.rec_id, row.raw_data)
+                    ext_items = [('ext.'+d[0],d[1]) for d in ext_results.iteritems() if d[0] != 'raw_data']
+                    results.update(ext_items)
+                    (keys,items) = zip(*ext_items)
+                    columns.extend(sorted(keys))
+                except Exception,e:
+                    print e
+            else:
+                # No special extended data, just show the raw data as is
+                columns.append('raw_data')
+                results['raw_data'] =  row.raw_data
+            
+        
+        if (options.output_format == 'json'):
+            writer = command.JSONEventEncoder()
+            print writer.encode(results)
+            
+        elif (options.output_format == 'csv'):
+            writer = csv.DictWriter(sys.stdout,columns,quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(results)
+            
+        elif (options.output_format == 'brief'):
+            print '{0:5d}: {1} {2} {3}:{4}'.format(results[event.EVENT_ATTR_REC_ID],
+                                                   results[event.EVENT_ATTR_EVENT_ID],
+                                                   results[event.EVENT_ATTR_TIME_LOGGED],
+                                                   results[event.EVENT_ATTR_SRC_LOC_TYPE],
+                                                   results[event.EVENT_ATTR_SRC_LOC])
+
+        else:
+            print '==================================================='
+            for c in columns:
+                if c in results:
+                    if c == event.EVENT_ATTR_EVENT_ID:
+                        event_id = results[c]
+
+                        # Augment the user id with the event id message
+                        try:
+                                # Event messages are based scoped to source component and event id
+                                src_comp = results[event.EVENT_ATTR_SRC_COMP]
+                                
+                                # Write with users message if available
+                                event_msg = '- ' + metadata_dict[(src_comp, event_id)][metadata.META_EVENT_MSG]
+                        except:
+                                # No message available for Event ID
+                                event_msg = ""
+                                
+                        print c,':',event_id,event_msg
+                    else:
+                        print c,':',results[c]
+                        
+    # All done, now shut down TEAL gracefully
+    t.shutdown()
+    

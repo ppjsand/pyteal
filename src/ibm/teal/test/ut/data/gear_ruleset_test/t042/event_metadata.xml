@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<tns:eventMetadata xmlns:tns="http://www.ibm.com/teal/eventmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/eventmeta ../../../../../xml/eventmeta.xsd ">
+  <tns:event id="Event 01" comp="CNM">
+    <tns:message>This is test message 1</tns:message>
+  </tns:event>
+  <tns:event id="Event 02" comp="CNM">
+    <tns:message>This is test message 2</tns:message>
+  </tns:event>
+  <tns:event id="Event 03" comp="CNM">
+    <tns:message>This is test message 3</tns:message>
+  </tns:event>
+  <tns:event id="Event 04" comp="CNM">
+    <tns:message>This is test message 4</tns:message>
+  </tns:event>
+  <tns:event id="Event 05" comp="CNM">
+    <tns:message>This is test message 5</tns:message>
+  </tns:event>
+  <tns:event id="Event 06" comp="CNM">
+    <tns:message>This is test message 6</tns:message>
+  </tns:event>
+  <tns:event id="Event 07" comp="CNM">
+    <tns:message>This is test message 7</tns:message>
+  </tns:event>
+  <tns:event id="Event 08" comp="CNM">
+    <tns:message>This is test message 8</tns:message>
+  </tns:event>
+  <tns:event id="Event 09" comp="CNM">
+    <tns:message>This is test message 9</tns:message>
+  </tns:event>
+  <tns:event id="Event 10" comp="CNM">
+    <tns:message>This is test message 10</tns:message>
+  </tns:event>
+  <tns:event id="Event 11" comp="CNM">
+    <tns:message>This is test message 11</tns:message>
+  </tns:event>
+  <tns:event id="Event 12" comp="CNM">
+    <tns:message>This is test message 12</tns:message>
+  </tns:event>
+  <tns:event id="Event 13" comp="CNM">
+    <tns:message>This is test message 13</tns:message>
+  </tns:event>
+  <tns:event id="Event 14" comp="CNM">
+    <tns:message>This is test message 14</tns:message>
+  </tns:event>
+</tns:eventMetadata>

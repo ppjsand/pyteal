@@ -1,0 +1,29 @@
+#!/bin/bash
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2011     
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# Run in eclipse
+# --- set argument to top src directory
+# --- set directory to run in as the bin (or sbin directory)
+
+
+TOPDIR=$1
+MSGDIR=$TOPDIR/locale
+MSGCAT=$MSGDIR/en_US/LC_MESSAGES
+mkdir -p $MSGDIR
+
+files="tl* ../ibm/teal/util/command.py ../ibm/teal/teal.py"
+
+pygettext.py -p $MSGDIR -a -v $files
+sed -e 's/CHARSET/UTF-8/' -e 's/ENCODING/en_US/' $MSGDIR/messages.pot > $MSGCAT/messages.po
+msgfmt.py -o $MSGCAT/messages.mo $MSGCAT/messages.po

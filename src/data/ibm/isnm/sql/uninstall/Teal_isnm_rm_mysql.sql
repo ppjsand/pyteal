@@ -1,0 +1,1 @@
+ALTER TABLE x_CNM_1_2 DROP FOREIGN KEY teal_isnm_fk;

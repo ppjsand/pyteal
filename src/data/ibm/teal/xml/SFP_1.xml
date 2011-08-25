@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<tables>
+    <table name="" id="1">
+        <column name="prob_num" type="INTEGER"/>
+        <column name="description" type="VARCHAR" size="256"/>
+        <column name="call_home" type="CHAR" size="1"/>
+        <column name="fru_list" type="VARCHAR" size="1536"/>
+        <column name="sfp_raw_data" type="VARCHAR" size="2048"/>
+    </table>
+</tables>

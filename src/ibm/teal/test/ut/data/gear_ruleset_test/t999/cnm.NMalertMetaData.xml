@@ -1,0 +1,1230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alertMetadata xmlns:tns="http://www.ibm.com/teal/alertmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/alertmeta ../../../../../../xml/alertmeta.xsd ">
+  <!-- Invalid Minor Number -->
+  <alert id="00000000">
+    <msg_template>Problem with network management reporting in frame $FR cage $CG</msg_template>
+    <recommendation>Record the alert ID.
+Call your next level of support and inform them that there is a problem with the network manager and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>I</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>SYM:HFI_LNM</fru_list>
+  </alert>
+  <!-- Global Counter invalid: this counter went invalid -->
+  <alert id="BE304001">
+    <msg_template>Problem with global counter in frame $FR cage $CG</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Global Counter Takeover: this counter has assumed mastership -->
+  <alert id="BE304003">
+    <msg_template>Problem with global counter in frame $FR cage $CG</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- Global Counter Stale: counter has been made stale by higher ID -->
+  <alert id="BE304004">
+    <msg_template>Problem with global counter in frame $FR cage $CG</msg_template>
+    <recommendation>Record the alert ID.
+Call your next level of support and inform them that there is a problem with a global counter and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>SYM:HFI_CTR</fru_list>
+  </alert>
+  <!-- Global Counter ID overflow. -->
+  <alert id="BE304005">
+    <msg_template>Problem with global counter in frame $FR cage $CG</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Route Table Array Uncorrectable Error -->
+  <alert id="BE200006">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Route Table Array Correctable Error -->
+  <alert id="BE200007">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Input Array Uncorrectable Error -->
+  <alert id="BE200008">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Output Array Uncorrectable Error -->
+  <alert id="BE200009">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Input Array Correctable Error -->
+  <alert id="BE20000A">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Output Array Correctable Error -->
+  <alert id="BE20000B">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Packet Timeout Error -->
+  <alert id="BE20000C">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Multicast Hardware Internal Error -->
+  <alert id="BE20000D">
+    <msg_template>Problem with multicast route table in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Route Request FIFO Uncorrectable Error; left side -->
+  <alert id="BE40000E">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Route Request FIFO Uncorrectable Error; right side -->
+  <alert id="BE40000F">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp SRT2 Hub Route Table Uncorrectable Error -->
+  <alert id="BE400010">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp SRT1 Supernode Route Table Uncorrectable Error -->
+  <alert id="BE400011">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp SRT1 Indirect Route Validity Table UE; left side -->
+  <alert id="BE400012">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp SRT1 Indirect Route Validity Table UE; right side -->
+  <alert id="BE400013">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp SRT Array Correctable Error -->
+  <alert id="BE400014">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp SRT Hardware Internal Error -->
+  <alert id="BE400015">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Down -->
+  <alert id="BE400016">
+    <msg_template>HFI down in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Input Port Linked List Parity Error -->
+  <alert id="BE400017">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Input Port Async IF Array Correctable Error -->
+  <alert id="BE400018">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Input Port Array Correctable Error -->
+  <alert id="BE400019">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Input Port Array Uncorrectable Error -->
+  <alert id="BE40001A">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Output Port Async IF Array Correctable Error -->
+  <alert id="BE40001B">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Output Port Async IF Array Uncorrectable Error -->
+  <alert id="BE40001C">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Input Port Async IF Array Uncorrectable Error -->
+  <alert id="BE40001D">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Output Port Array Correctable Error -->
+  <alert id="BE40001E">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Output Port Array Uncorrectable Error -->
+  <alert id="BE40001F">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- HFI Ramp Output Port Sender Hang -->
+  <alert id="BE400020">
+    <msg_template>Problem with HFI ramp in frame $FR cage $CG hub $HB</msg_template>
+    <recommendation>Record the alert ID.
+Call your next level of support and inform them that there is a general network problem and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_NET</fru_list>
+  </alert>
+  <!-- D Link Port Ready -->
+  <alert id="BE700021">
+    <msg_template>NA</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- D Link Port Lane Width Change -->
+  <alert id="BE700022">
+    <msg_template>NA</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- LR Link Port Ready -->
+  <alert id="BE700023">
+    <msg_template>NA</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- LR Link Port Lane Width Change -->
+  <alert id="BE700024">
+    <msg_template>NA</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- D Link Port Down -->
+  <alert id="BE700025">
+    <msg_template>D-link down between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Down -->
+  <alert id="BE700026">
+    <msg_template>LR-link down between frame $FR cage $CG hub $HB port $LR and frame $NFR cage $NCG hub $NHB port $NLR</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- Llocal Link Port Down -->
+  <alert id="BE700027">
+    <msg_template>LL-link down in frame $FR cage $CG</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Llocal Port Input Port Linked List Parity Error -->
+  <alert id="BE500028">
+    <msg_template>LL-link internal problem in frame $FR cage $CG hub $HB port $LL</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Llocal Port Input Port Async IF Array Uncorrectable Error -->
+  <alert id="BE500029">
+    <msg_template>LL-link internal problem in frame $FR cage $CG hub $HB port $LL</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Llocal Port Input Port Async IF Array Correctable Error -->
+  <alert id="BE50002A">
+    <msg_template>LL-link internal problem in frame $FR cage $CG hub $HB port $LL</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Llocal Port Input Port Array Uncorrectable Error -->
+  <alert id="BE50002B">
+    <msg_template>LL-link internal problem in frame $FR cage $CG hub $HB port $LL</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Llocal Port Input Port Array Correctable Error -->
+  <alert id="BE50002C">
+    <msg_template>LL-link internal problem in frame $FR cage $CG hub $HB port $LL</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Llocal Port Output Port Array Uncorrectable Error -->
+  <alert id="BE50002D">
+    <msg_template>LL-link internal problem in frame $FR cage $CG hub $HB port $LL</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Llocal Port Output Port Array Correctable Error -->
+  <alert id="BE50002E">
+    <msg_template>LL-link internal problem in frame $FR cage $CG hub $HB port $LL</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Inbound Port CRC Threshold Exceeded -->
+  <alert id="BE700036">
+    <msg_template>D-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Dropped Flit Threshold Exceeded -->
+  <alert id="BE700037">
+    <msg_template>D-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Total Replay Threshold Exceeded -->
+  <alert id="BE700038">
+    <msg_template>D-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Same Flit Retry Threshold Exceeded -->
+  <alert id="BE700039">
+    <msg_template>D-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Link Up Threshold Exceeded -->
+  <alert id="BE70003A">
+    <msg_template>D-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Input Port Linked List Parity Error -->
+  <alert id="BE70003B">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Credit Overflow -->
+  <alert id="BE70003C">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Buffer Overflow -->
+  <alert id="BE70003D">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port VC Deadlock Case -->
+  <alert id="BE70003E">
+    <msg_template>D-link deadlock between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Unexpected Flit Type -->
+  <alert id="BE70003F">
+    <msg_template>D-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Sender Hang -->
+  <alert id="BE700040">
+    <msg_template>D-link hang between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Port Input Port VC Hang Timeout -->
+  <alert id="BE700041">
+    <msg_template>D-link hang between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- D Link Input Port Async IF Array Uncorrectable Error -->
+  <alert id="BE700042">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Input Port Async IF Array Correctable Error -->
+  <alert id="BE700043">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Input Port Array Uncorrectable Error -->
+  <alert id="BE700044">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Input Port Array Correctable Error -->
+  <alert id="BE700045">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Output Port Array Uncorrectable Error -->
+  <alert id="BE700046">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Output Port Array Correctable Error -->
+  <alert id="BE700047">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Output Port Async IF Array Uncorrectable Err -->
+  <alert id="BE700048">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Output Port Async IF Array Correctable Error -->
+  <alert id="BE700049">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Port Hard Failure -->
+  <alert id="BE70004A">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Port PRT1 Array Uncorrectable Error -->
+  <alert id="BE70004B">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Port PRT1 Array Correctable Error -->
+  <alert id="BE70004C">
+    <msg_template>D-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Inbound Port CRC Threshold Exceeded -->
+  <alert id="BE70004D">
+    <msg_template>LR-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Dropped Flit Threshold Exceeded -->
+  <alert id="BE70004E">
+    <msg_template>LR-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Total Replay Threshold Exceeded -->
+  <alert id="BE70004F">
+    <msg_template>LR-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Same Flit Retry Threshold Exceeded -->
+  <alert id="BE700050">
+    <msg_template>LR-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Link Up Threshold Exceeded -->
+  <alert id="BE700051">
+    <msg_template>LR-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Input Port Linked List Parity Error -->
+  <alert id="BE700052">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Credit Overflow -->
+  <alert id="BE700053">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Buffer Overflow -->
+  <alert id="BE700054">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port VC Deadlock Case -->
+  <alert id="BE700055">
+    <msg_template>LR-link deadlock between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Unexpected Flit Type -->
+  <alert id="BE700056">
+    <msg_template>LR-link problem between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Sender Hang -->
+  <alert id="BE700057">
+    <msg_template>LR-link hang between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Port Input Port VC Hang Timeout -->
+  <alert id="BE700058">
+    <msg_template>LR-link hang between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_RDG, SYM:HFI_CAB, SYM:CBL_CONT, FRU:LOCAL, FRU:NBR</fru_list>
+  </alert>
+  <!-- LR Link Input Port Async IF Array Uncorrectable Error -->
+  <alert id="BE700059">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Input Port Async IF Array Correctable Error -->
+  <alert id="BE70005A">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Input Port Array Uncorrectable Error -->
+  <alert id="BE70005B">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Input Port Array Correctable Error -->
+  <alert id="BE70005C">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Output Port Array Uncorrectable Error -->
+  <alert id="BE70005D">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Output Port Array Correctable Error -->
+  <alert id="BE70005E">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Output Port Async IF Array Uncorrectable Error -->
+  <alert id="BE70005F">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Output Port Async IF Array Correctable Error -->
+  <alert id="BE700060">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Port Hard Failure -->
+  <alert id="BE700061">
+    <msg_template>LR-link internal problem in frame $FR cage $CG hub $HB port $LD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- D Link Port Optical Module Interrupt -->
+  <!-- Needs finer granularity -->
+  <alert id="BE700062">
+    <msg_template>D-link optical module interupt between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- LR Link Port Optical Module Interrupt -->
+  <!-- Needs finer granularity -->
+  <alert id="BE700063">
+    <msg_template>LR-link optical module interupt between frame $FR cage $CG hub $HB port $LD and frame $NFR cage $NCG hub $NHB port $NLD</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Replace the according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:LOCAL</fru_list>
+  </alert>
+  <!-- Over current detected -->
+  <alert id="BE607001">
+    <msg_template>PLACE HOLDER</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>W</severity>
+    <urgency>I</urgency>
+    <call_home></call_home>
+    <cust_notification></cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- Over temperature severe warning; system will be powered off. -->
+  <alert id="BE609002">
+    <msg_template>PLACE HOLDER</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>W</severity>
+    <urgency>I</urgency>
+    <call_home></call_home>
+    <cust_notification></cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- System recovered from Over Temperature condition. -->
+  <alert id="BE609003">
+    <msg_template>PLACE HOLDER</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>W</severity>
+    <urgency>I</urgency>
+    <call_home></call_home>
+    <cust_notification></cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- System will be powered off within 10 minutes. -->
+  <alert id="BE609004">
+    <msg_template>PLACE HOLDER</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>W</severity>
+    <urgency>I</urgency>
+    <call_home></call_home>
+    <cust_notification></cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- System recovered from Over Temperature warning. -->
+  <alert id="BE609005">
+    <msg_template>PLACE HOLDER</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>W</severity>
+    <urgency>I</urgency>
+    <call_home></call_home>
+    <cust_notification></cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+  <!-- UEPO Power Cycled. -->
+  <alert id="BE60A001">
+    <msg_template>PLACE HOLDER</msg_template>
+    <recommendation>This event should not have generated an alert.
+Record the alert ID.
+Call your next level of service and indicate that there is a problem with event analysis and give them the alert ID.</recommendation>
+    <severity>W</severity>
+    <urgency>I</urgency>
+    <call_home></call_home>
+    <cust_notification></cust_notification>
+    <fru_list>NA</fru_list>
+  </alert>
+</alertMetadata>

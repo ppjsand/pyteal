@@ -1,0 +1,46 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BD700027", 
+        "associations": [
+          "S:E:1", 
+          "S:E:2", 
+          "C:E:4"
+        ], 
+        "creation_time": "2011-02-13 16:26:45.484000", 
+        "event_loc": "FR007-CG03-SN001-DR0-HB0-LL01", 
+        "event_loc_type": "H", 
+        "reason": "LL-link down in frame FR007 cage CG03 (superNode SN001 drawer DR0) (Llocal Link Port Down)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a hub chip.\nRecord the alert ID.\nCall IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "BD50002F", 
+        "associations": [
+          "C:E:3"
+        ], 
+        "creation_time": "2011-02-13 16:26:45.484000", 
+        "event_loc": "FR007-CG03-SN001-DR0-HB6-LL01", 
+        "event_loc_type": "H", 
+        "reason": "LL-link problem in frame FR007 cage CG03 (superNode SN001 drawer DR0) hub HB6 port LL01 (Llocal Input Port Buffer Overflow)", 
+        "rec_id": 2, 
+        "recommendation": "There is a problem with a hub chip.\nRecord the alert ID.\nCall IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

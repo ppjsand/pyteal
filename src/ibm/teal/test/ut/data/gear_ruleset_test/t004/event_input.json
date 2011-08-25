@@ -1,0 +1,103 @@
+[
+  {
+    "1": {
+      "data": {
+	"rec_id": "1",
+      "event_id": "EF000001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000001 rawdata", 
+      "src_comp": "CNM",   
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "2": {
+      "data": {
+	"rec_id": "2",
+      "event_id": "EF000002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "3": {
+      "data": {
+	"rec_id": "3",
+      "event_id": "EF000003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "4": {
+      "data": {
+	"rec_id": "4",
+      "event_id": "EFS00001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "5": {
+      "data": {
+	"rec_id": "5",
+      "event_id": "EFS00002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "6": {
+      "data": {
+	"rec_id": "6",
+      "event_id": "EFS00003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "7": {
+      "data": {
+        "msg_type": "Flush", 
+        "creation_time": "2011-01-31 21:40:01.100000" 
+      }, 
+      "delay": "0", 
+      "type": "control_msg"
+    }
+  }
+]
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tables>
+    <table name="" id="1">
+        <column name="time_occurred" type="BIGINT"/>
+        <column name="time_logged"   type="BIGINT"/>
+        <column name="msg_type"      type="CHAR" size="1"/>
+        <column name="message"       type="VARCHAR" size="1024"/>
+        <column name="detail"        type="VARCHAR" size="1024"/>        
+    </table>
+</tables>
+

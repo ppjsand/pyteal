@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="EF000001" comp="CNM" min_time_in_pool="500"/>
+   <event id="EF000002" comp="CNM" min_time_in_pool="500"/>
+   <event id="EF000003" comp="CNM" min_time_in_pool="500"/>
+   <event id="EFS00001" comp="CNM" min_time_in_pool="500"/>
+   <event id="EFS00002" comp="CNM" min_time_in_pool="500"/>
+   <event id="EFS00003" comp="CNM" min_time_in_pool="500"/>
+   <event id="E0000001" comp="CNM"/>
+   <event id="E0000002" comp="CNM" name="E2"/>
+   <event id="E0000003" comp="CNM" name="E3"/>
+   <event id="E0000004" comp="CNM" name="Everyveryveryveryveryverylongname4"/>
+   <event id="E0000005" comp="CNM" name="E5"/>
+</events>
+<constants>
+   <constant name="E1" type="event_id" value="E0000001"/>
+   <constant name="E4" type="event_id" value="E0000004"/>
+   <constant name="E1andE4" type="set_of_event_ids" value="E1,Everyveryveryveryveryverylongname4"/>
+   <constant name="E1E2E3E4" type="set_of_event_ids" value="E1,E2,E3,E3,E4"/>
+</constants>
+<analyze>
+   <!-- Start base setup  -->
+   <rule name="EFS000001 suppressions">
+      <condition>
+            <event_equals id="EF000001" comp="CNM"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00001" comp="CNM"/>
+        <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+   <rule name="EFS000002 suppressions">
+      <condition>
+            <event_equals id="EF000002" comp="CNM"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00002" comp="CNM"/>
+        <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+   <rule name="EFS000003 suppressions">
+      <condition>
+            <event_equals id="EF000003" comp="CNM"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00003" comp="CNM"/>
+        <create_alert id="Alert 03"/>
+      </action>
+   </rule>   
+   <!-- END BASE SETUP ... at this point should have 
+        EF000001, EF000002, and EF000003 moving forward
+        EFS00001, EFS00002, and EFS00003 moving forward and suppressed by one above
+        
+        This should create 3 alerts (1,2,3) each with one condition event and one suppression
+    -->
+    <!-- NOTE INPUT EVENT DATA CHANGE: Added raw data entry for neighbor_loc to all E0000005 events -->
+
+   <!--  Subtest 1: 
+             
+             Test any_events with unique instance and instance loc comp
+           There is no control over the locations being used in the overall matching, so identical and 
+           non-scoped (full) location will be used.   There will be not matches
+             
+             0 Alerts
+               
+                            
+    -->
+   <rule name="any_events unique_instance 1">
+      <condition>
+         <any_events ids="E1,E2" num="2" unique_instance="true" />
+      </condition>
+      <action>
+        <create_alert id="Alert 04"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 2: 
+             
+             Test any_events with unique instance and instance loc comp.  Scope the upper location to 
+        pciSlot and leave location match to be identical.   
+             
+             1 Alert:
+                1 alert with 4 CEs: 7, 8, 11, 12 ... the E1s and E2s on SL1 
+                  (condensed from 4 truth points) 
+               
+    -->
+   <rule name="any_events unique_instance 2">
+      <condition>
+         <any_events ids="E1,E2" num="2" unique_instance="true"  
+                     scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 05"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 3: 
+             
+             Test any_events with locations to ensure it can be used.   
+             
+             2 Alerts:
+                1 alert with 4 CEs the E1 with src loc MB-DM3 and the 3 E5s (all have neighbor loc MB-DM3
+                1 alert with 3 CEs the 3 E5s since unique wasn't specified 
+               
+    -->
+   <rule name="any_events locations 1">
+      <condition>
+         <any_events ids="E1,E5" num="2"  locations="GEAR[cur_event.src_loc], GEAR[cur_event.ext.neighbor_loc]" 
+                     />
+      </condition>
+      <action>
+        <create_alert id="Alert 06"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 4: 
+             
+             Test any_events with locations to ensure it can be used.  Try with unique with a scope.
+             
+             Consolidation is happening of locations and then of alerts since it picks the first location.
+             
+             1 Alert:
+                1 alert with 7 CEs that is the combination of the following: 
+                   1 palert with 6 CEs which are E1s (SL1+DM3) and E5s (SL2)
+                   1 palert with 6 CEs which are E1s (SL1+SL2) and E5s (DM3)
+                   1 palert with 5 CEs which are E1s (DM3) and E5s (SL2)
+               
+    -->
+   <rule name="any_events locations 2">
+      <condition>
+         <any_events ids="E1,E5" num="2"  locations="GEAR[cur_event.src_loc], GEAR[cur_event.ext.neighbor_loc]" 
+                     location_match="unique" scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 07"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 5: 
+             
+             Test any_events with locations to ensure it can be used.  Try with ignore
+             
+             
+             1 Alerts:
+                1 alert with 7 CEs ... all E1s and E5s.
+               
+    -->
+   <rule name="any_events locations 2">
+      <condition>
+         <any_events ids="E1,E5" num="2"  locations="GEAR[cur_event.src_loc], GEAR[cur_event.ext.neighbor_loc]" 
+                     location_match="ignore"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 08"/>
+      </action>
+   </rule>
+      
+</analyze>
+</gear_ruleset>

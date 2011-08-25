@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="EF000001" min_time_in_pool="500"/>
+   <event id="EF000002" min_time_in_pool="500"/>
+   <event id="EF000003" min_time_in_pool="500"/>
+   <event id="EFS00001" min_time_in_pool="500"/>
+   <event id="EFS00002" min_time_in_pool="500"/>
+   <event id="EFS00003" min_time_in_pool="500"/>
+   <event id="E0000001"/>
+   <event id="E0000002" name="E2"/>
+   <event id="E0000003" name="E3"/>
+   <event id="E0000004" name="Everyveryveryveryveryverylongname4"/>
+   <event id="E0000005" name="E5"/>
+</events>
+<constants>
+   <constant name="E1" type="event_id" value="E0000001"/>
+   <constant name="E4" type="event_id" value="E0000004"/>
+   <constant name="E1andE4" type="set_of_event_ids" value="E1,Everyveryveryveryveryverylongname4"/>
+   <constant name="E1E2E3E4" type="set_of_event_ids" value="E1,E2,E3,E4"/>
+</constants>
+<analyze>
+   <!-- Start base setup  -->
+   <rule name="EFS000001 suppressions">
+      <condition>
+            <event_equals id="EF000001"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00001"/>
+        <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+   <rule name="EFS000002 suppressions">
+      <condition>
+            <event_equals id="EF000002"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00002"/>
+        <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+   <rule name="EFS000003 suppressions">
+      <condition>
+            <event_equals id="EF000003"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00003"/>
+        <create_alert id="Alert 03"/>
+      </action>
+   </rule>   
+   <!-- END BASE SETUP ... at this point should have 
+        EF000001, EF000002, and EF000003 moving forward
+        EFS00001, EFS00002, and EFS00003 moving forward and suppressed by one above
+        
+        This should create 3 alerts (1,2,3) each with one condition event and one suppression
+    -->
+    <!-- NOTE INPUT EVENT DATA CHANGE: Added raw data entry for neighbor_loc to all E0000005 events -->
+    <!--  Subtest 1: 
+             Test that any_events works in the simplest case.   Specify one id (E1) and num = 1
+             so each E1 will create an alert.
+                                    
+             This should create 4 'Alert 04':
+                3 with one condition
+                1 with one condition and two suppressions
+    -->
+  <rule name="any_event basic 1">
+      <condition>
+            <any_events ids="E1" num="1"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 04"/>
+      </action>
+   </rule>
+    <!--  Subtest 2: 
+             Test that any_events works with two ids (E1 and E4) picking 2.  Location match defaults to 
+             identical, so only pairs of E1 and E4 at the same location will be considered true
+                                    
+             This should create 4 'Alert 05':
+                4 with two condition events (one E1 and one E2) 
+    -->
+   <rule name="any_event basic 2">
+      <condition>
+            <any_events ids="E1andE4" num="2"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 05"/>
+      </action>
+   </rule>
+    <!--  Subtest 3: 
+             Subtest 2 with scope specified at the pciSlot.   This will make it so that 
+             4 of the events are at the identical location 
+                                    
+             This should create 3 'Alert 06':
+                2 with two condition events (one E1 and one E2) 
+                1 with four condition events (two E1s and two E2s)
+    -->
+   <rule name="any_event basic 2">
+      <condition>
+            <any_events ids="E1andE4" num="2" scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 06"/>
+      </action>
+   </rule>
+    <!--  Subtest 4: 
+             Subtest 3 with unique_id specified as true.  This will give the same results
+             (using a different alert) that is arrived at via a different code path. 
+                                    
+             This should create 3 'Alert 07':
+                2 with two condition events (one E1 and one E2) 
+                1 with four condition events (two E1s and two E2s)
+    -->
+   <rule name="any_event basic 3">
+      <condition>
+            <any_events ids="E1andE4" num="2" scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 07"/>
+      </action>
+   </rule>
+    <!--  Subtest 5: 
+             
+             Look for 4 of 4 events:
+             
+             This should create 4 'Alert 08':
+                4 with four condition events (one each E1, E2, E3, E4) 
+    -->
+   <rule name="any_event basic 4">
+      <condition>
+            <any_events ids="E1E2E3E4" num="4"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 08"/>
+      </action>
+   </rule>
+    <!--  Subtest 6: 
+             
+             Look for 2 of 4 events with unique ports on the same pciSlot:
+             
+             This should create 1 'Alert 09':
+                1 with eight condition events all from same pciSlot but only 1 & 2 for ports 
+    -->
+   <rule name="any_event basic 4">
+      <condition>
+            <any_events ids="E1E2E3E4" num="2" unique_instance="true"
+               scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 09"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 7: 
+   
+             Look for 2 of 4 events with unique instances on unique pciSlots
+             
+             This should create 1 'Alert 10':
+                1 with sixteen condition events - all of them.  Since unique condenses 
+    -->
+   <rule name="any_event basic 4">
+      <condition>
+            <any_events ids="E1E2E3E4" num="2" unique_instance="true"
+               location_match="unique" scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 10"/>
+      </action>
+   </rule>
+</analyze>
+</gear_ruleset>

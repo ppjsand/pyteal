@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="NM"/>
+</gear_control>
+<events>
+   <event id="Example5" />
+   <event id="Example4" />
+   <event id="Example3" />
+   <event id="Example2" />
+   <event id="Example1" pool_extension_time="3" min_time_in_pool="5"/>   
+</events>
+<analyze>
+   <rule name="Alert 1">
+       <condition>
+           <event_equals id="Example1"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 01"/>
+       </action>
+    </rule>   
+    <rule name="Alert 2">
+       <condition>
+           <event_equals id="Example2"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 02"/>
+       </action>
+    </rule>
+    <rule name="Alert 3">
+       <condition>
+           <event_equals id="Example3"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 03"/>
+       </action>
+    </rule>
+    <rule name="Alert 4">
+       <condition>
+           <event_equals id="Example4"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 04"/>
+       </action>
+    </rule>
+    <rule name="Alert 5">
+       <condition>
+           <event_equals id="Example5"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 05"/>
+           <execute name="BadExecute" ext_class="ibm.teal.test.ut.data.checkpoint_test.G1_test_class.ExecuteBad"/>
+       </action>
+    </rule>
+ </analyze>
+</gear_ruleset>

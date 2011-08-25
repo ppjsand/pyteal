@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<tables version="1.0"
+    xmlns="http://www.ibm.com/teal" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.ibm.com/teal ../../../../../../../../xml/extension.xsd">
+
+    <table name="Test Data" id="0">
+        <column name="info" type="VARCHAR" size="16"/>
+    </table>
+    
+    <table name="Test Data" id="1">
+        <column name="info" type="CHAR" size="18"/>
+    </table>
+    
+    <table name="Test Data" id="2">
+        <column name="info" type="CHAR" size="20"/>
+    </table>
+    
+    <table name="Test Data" id="3">
+        <column name="neighbor" type="LOC"/>
+    </table>
+
+    <table name="Test Data" id="4">
+        <column name="number" type="INTEGER"/>
+    </table>
+
+    <table name="Test Data" id="5">
+        <column name="number" type="BIGINT"/>
+    </table>
+</tables>

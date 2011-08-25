@@ -1,0 +1,281 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2010,2011
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# locale setup
+import os
+import gettext
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import sys
+import csv
+
+from ibm.teal import Teal
+from ibm.teal import registry
+from ibm.teal import alert 
+from ibm.teal import metadata
+from ibm.teal.util import command
+from ibm.teal.database import db_interface
+
+query_text = _('''Valid query values and their operations and formats:
+    
+rec_id        - =           - A single id or a comma-separated list of ids (equals-only)
+
+alert_id      - =           - A single id or a comma-separated list of ids (equals-only)
+
+creation_time - =,<.>,>=,<= - A time value in the format YYYY-MM-DD-HH:MM:SS
+
+severity      - =           - The severity level, listed in order of severity:
+                              	F=fatal, E=error, W=warning, I=info (equals-only)
+
+urgency       - =           - The urgency of the alert, listed in order of urgency:
+	                     	I=immediate, S=schedule, N=normal, D=defer, O=optional
+				(equals-only)
+
+event_loc     - =           - A location in the format <location type>:<location>.
+                               The location is optional; otherwise all events
+                               with the same location type will be included
+
+event_scope   - =           - A scoping value for the specified reporting location type
+
+src_name      - =           - A single value or a comma-separated list of values
+
+''')
+
+
+# Query fields, operations and list information for parser
+qry_info = [('rec_id',command.EQUALITY_OPS,True, command.FIELD_TYPE_INT),
+            ('alert_id',['='],True,command.FIELD_TYPE_STRING),
+            ('creation_time',command.EQUALITY_OPS,False,command.FIELD_TYPE_TIMESTAMP),
+            ('severity','=',True,command.FIELD_TYPE_STRING),
+            ('urgency',['='],True,command.FIELD_TYPE_STRING),
+            ('event_loc',['='],False,command.FIELD_TYPE_STRING),
+            ('event_scope',['='],False,command.FIELD_TYPE_STRING),
+            ('src_name',['='],True,command.FIELD_TYPE_STRING),
+           ]
+
+def build_state_where(all_opt, closed_opt, dup_opt):
+    ''' Build the where clause for state and duplicate viewing '''
+    # Check if user wants open/closed or both
+    if all_opt:
+        state_str = ''
+    elif closed_opt:
+        state_str = '${0} = {1}'.format(alert.ALERT_ATTR_STATE, alert.ALERT_STATE_CLOSED)
+    else:
+        state_str = '${0} != {1}'.format(alert.ALERT_ATTR_STATE, alert.ALERT_STATE_CLOSED)
+        
+    # Determine if the user wants to see duplicates as well
+    if dup_opt:
+        pass # Don't limit to associations that are duplicate
+    else:
+        dup_where = "${0} = '{1}'".format(alert.ALERT2ALERT_ATTR_ASSOC_TYPE, alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE)
+        dup_select = db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
+                                   db_interface.TABLE_ALERT2ALERT,
+                                   dup_where,
+                                   [alert.ALERT2ALERT_ATTR_ASSOC_TYPE])
+        dup_where = '${0} NOT IN ({1})'.format(alert.ALERT_ATTR_REC_ID, dup_select)
+        if state_str:
+            state_str += (' AND ' + dup_where)
+        else:
+            state_str = dup_where
+        
+    return state_str
+    
+def build_query(query, state_str):
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+    
+    if (query):
+        if state_str:
+            where_str = query[0] + ' AND ' + state_str
+        else:
+            where_str = query[0]
+            
+        query[1].add(alert.ALERT_ATTR_STATE)
+        query[1].add(alert.ALERT_ATTR_REC_ID)
+        where_fields = query[1]
+    else:
+        where_str = state_str
+        where_fields = [alert.ALERT_ATTR_STATE, alert.ALERT_ATTR_REC_ID]
+        
+    return db.gen_select(alert.ALERT_COLS_SELECT,db_interface.TABLE_ALERT_LOG,where=where_str,where_fields=where_fields,order=alert.ALERT_ATTR_REC_ID)
+
+if __name__ == '__main__':
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tllsalert.log', msgLevel='warning', data_only=True)
+
+    # Parse the command line        
+    parser = command.TealOptionParser(qry_info,epilog=query_text)
+    parser.add_option('-q', '--query',
+                        type='string',
+                        action='callback',
+                        callback=parser.query_str_check,
+                        dest='query',
+                        default="",
+                        help=_('Query parameters used to limit the range of alerts listed. See list of valid values below'))
+    parser.add_option('-f', '--format',
+                        type='choice',
+                        choices=['brief','text','json','csv'],
+                        default='brief',
+                        action='store',
+                        dest='output_format',
+                        help=_('Output format of alert: json,csv,text [default = %default]'))
+    parser.add_option('-w', '--with-assoc',
+                        action='store_true',
+                        dest='with_assoc',
+                        default=False,
+                        help=_('Print the associated events and alerts for the matching alert'))
+    parser.add_option('-a', '--all',
+                        action='store_true',
+                        dest='all_alerts',
+                        default=False,
+                        help=_('Print all open and closed alerts'))
+    parser.add_option('-c', '--closed',
+                        action='store_true',
+                        dest='closed_alerts',
+                        default=False,
+                        help=_('Print only closed alerts'))
+    parser.add_option('-d', '--with-dups',
+                        action='store_true',
+                        dest='dup_alerts',
+                        default=False,
+                        help=_('Print the duplicate alerts also'))
+    (options, args) = parser.parse_args()
+    
+    # Validate option combinations
+    if options.all_alerts and options.closed_alerts:
+        parser.error(_('Cannot specify both --all and --closed options'))
+        
+    if options.with_assoc and options.output_format == 'brief':
+        parser.error(_("Cannot specify --with-assoc with 'brief' formatting"))
+
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+
+    # Build the query
+    state_str = build_state_where(options.all_alerts, 
+                                  options.closed_alerts, 
+                                  options.dup_alerts)
+    select = build_query(options.query, state_str)
+    
+    # Prepare to use the database
+    cnxn = db.get_connection()
+    cursor = cnxn.cursor()
+
+    #if associations needed then get all data and store in local dict
+    if (options.with_assoc == True):
+        cursor2 = cnxn.cursor()
+        
+        # Find all event associations for a particular alert
+        ev_whr = '${0} = ?'.format(alert.ALERT2EVENT_ATTR_ALERT_RECID)
+        ev_whr_flds = [alert.ALERT2EVENT_ATTR_ALERT_RECID]
+        event_assoc_qry = db.gen_select(alert.ALERT2EVENT_COLS,
+                                        db_interface.TABLE_ALERT2EVENT,
+                                        where=ev_whr,
+                                        where_fields=ev_whr_flds)
+         
+        # Find all alert associations for a particular alert
+        al_whr = '${0} = ?'.format(alert.ALERT2ALERT_ATTR_ALERT_RECID)
+        al_whr_flds = [alert.ALERT2ALERT_ATTR_ALERT_RECID]
+        alert_assoc_qry = db.gen_select(alert.ALERT2ALERT_COLS,
+                                        db_interface.TABLE_ALERT2ALERT,
+                                        where=al_whr,
+                                        where_fields=al_whr_flds)
+
+    # Execute the query and display the information
+    #print 'Query = ',select
+    metadata = registry.get_service(registry.SERVICE_ALERT_METADATA)
+
+    columns = alert.ALERT_COLS_SELECT
+    result_cols = columns
+    if (options.output_format == 'csv'):
+        if options.with_assoc:
+            result_cols.append('associations')
+            
+        print ','.join(result_cols)    
+        writer = csv.DictWriter(sys.stdout,result_cols,quoting=csv.QUOTE_MINIMAL)
+        
+    for row in cursor.execute(select):
+        alert_recid = row[0]
+        alert_id = row[1]
+
+        results = dict(zip(columns,row))
+        
+        if options.with_assoc:
+            tmp_dict = {
+                          "C:A":[], 
+                          "C:E":[],
+                          "D:A":[],
+                          "S:A":[],
+                          "S:E":[]
+                          }
+            
+            # Get all of the associated events for this alert
+            for row in cursor2.execute(event_assoc_qry,alert_recid):
+                if row is not None and row[0] is not None:
+                    tmp_dict[row[1]+':E'].append(row[2])
+
+            # Get all of the associated events for this alert
+            for row in cursor2.execute(alert_assoc_qry,alert_recid):
+                if row is not None and row[0] is not None:
+                    tmp_dict[row[1]+':A'].append(row[2])
+
+            assoc_dict = {}
+            for a_type, a_list in tmp_dict.items():
+                    a_list.sort()
+                    assoc_dict[a_type] = '[' + ','.join(map(str, a_list)) + ']'
+                                                            
+            results['associations'] = assoc_dict
+            
+        if (options.output_format == 'json'):
+            writer = command.JSONEventEncoder()
+            print writer.encode(results) 
+
+        elif (options.output_format == 'csv'):
+            results[alert.ALERT_ATTR_REASON] = results[alert.ALERT_ATTR_REASON].replace('\n','').replace('\r','')
+            results[alert.ALERT_ATTR_RECOMMENDATION] = results[alert.ALERT_ATTR_RECOMMENDATION].replace('\n','').replace('\r','')
+            if results[alert.ALERT_ATTR_RAW_DATA]:
+                results[alert.ALERT_ATTR_RAW_DATA] = results[alert.ALERT_ATTR_RAW_DATA].replace('\n','').replace('\r','')
+            writer.writerow(results)
+
+        elif (options.output_format == 'brief'):
+            print '{0:5d}: {1} {2} {3}:{4}'.format(results[alert.ALERT_ATTR_REC_ID],
+                                                   results[alert.ALERT_ATTR_ALERT_ID],
+                                                   results[alert.ALERT_ATTR_CREATION_TIME],
+                                                   results[alert.ALERT_ATTR_EVENT_LOC_TYPE],
+                                                   results[alert.ALERT_ATTR_EVENT_LOC])
+
+        else:
+            print '==================================================='
+            for c in columns:
+                if c in results:
+                    if c == alert.ALERT_ATTR_REC_ID:
+                        index = results[c]
+                    if c == alert.ALERT_ATTR_ALERT_ID:
+                        alert_id = results[c]
+                        print c,':',alert_id
+                    else:
+                        print c,':',results[c]
+
+            if(options.with_assoc):
+                    print 'Condition Alerts:', assoc_dict['C:A']
+                    print 'Condition Events:', assoc_dict['C:E']
+                    print 'Duplicate Alerts:', assoc_dict['D:A']
+                    print 'Suppression Alerts:', assoc_dict['S:A']
+                    print 'Suppression Events:', assoc_dict['S:E']
+
+
+    # All done, now shut down TEAL gracefully
+    t.shutdown()
+    

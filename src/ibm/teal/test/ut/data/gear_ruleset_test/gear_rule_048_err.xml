@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<events>
+   <event id="Event 01" name="ME1" comp="CNM"/>
+   <event id="Event 02" comp="CNM"/>
+   <event id="Event 03" pool_extension_time="3" min_time_in_pool="5" comp="CNM"/>   
+   <event id="Event 04" comp="CNM"/>
+   <event id="Event 05" min_time_in_pool="10" comp="CNM"/>
+</events>
+<constants>
+   <constant name="ME1and3" type="set_of_event_ids" value="ME1,Event 03"/>
+   <constant name="ME5" type="event_id" value="Event 05"/>
+</constants>
+<analyze>
+   <rule name="Sample Rule alert creation">
+      <description>If Event 01 or 03 create Alert 01</description>
+      <condition>
+        <or>
+           <any_events num="23" ids="ME1, ME5" scope="C:port" comp="CNM"/>
+           <evaluate class="ibm.teal.test.ut.data.gear_ruleset_test.t046.test_class.Class046">
+              <parm name="Elvis" value="is in the building"/>
+              <parm name="cur_event" value="GEAR[cur_event]"/>
+              <parm name="name" value="GEAR[name]"/>
+              <parm name="mode" value="GEAR[mode]"/>
+              <parm name="neighbor" value="GEAR[cur_event.ext.neighbor]"/>
+              <parm name="src_loc" value="GEAR[cur_event.src_loc]"/>
+              <parm name="rpt_loc" value="GEAR[cur_event.rpt_loc]"/>
+              <parm name="event_id" value="GEAR[cur_event.event_id]"/>
+              <parm name="bad" value="GEAR[condition_event_ids]"/>
+           </evaluate>
+         </or>  
+      </condition>
+      <action>
+           <suppress_events events="GEAR[condition_events]"/>
+           <create_alert id="test"/>
+      </action>
+   </rule>
+   <rule name="Sample Rule alert creation 2">
+      <description>If Event 01 create Alert 01</description>
+      <condition>
+         <or>
+            <event_equals id="Event 01" comp="CNM"/>
+            <event_equals id="ME5" comp="CNM"/>
+            <event_equals id="Event 04" comp="CNM"/>
+         </or>
+      </condition>
+      <action>
+        <description>Create alert (and suppress Event 01 and Event 03)</description>
+        <suppress_events events="GEAR[condition_events]"/>
+        <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+</analyze>
+<pool_closure>
+    <rule name="Make everything an alert">
+        <condition>
+           <true/>
+        </condition>
+        <action>
+           <suppress_events events="GEAR[condition_events]"/>
+           <create_alert id="Alert US"/>
+        </action>
+    </rule>
+</pool_closure>
+</gear_ruleset>

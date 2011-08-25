@@ -1,0 +1,369 @@
+#!/usr/bin/perl
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2011     
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+=head1 NAME
+
+tltab - TEAL database table maintenance 
+
+=head1 SYNOPSIS
+
+tltab [[-d] [-r] -p <path>] [-c] [-h] 
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<-d|--dump>
+
+Dumps the teal tables to a tar file
+
+=item B<-r|--restore>
+
+Restores the tables from a tar file
+
+=item B<-c|--create>
+
+Drops the TEAL tables and recreates them. This will lose all
+previously stored data. B<Use with caution!>
+
+=item B<-p|--path> I<<path>>
+
+Location of the tar file used for dump/restore. For dump, a tar file will be
+created in the user-specifed directory. For restore, the tool will look for
+a tar file in the user-specified directory with the newest timestamp within its name.
+
+=item B<-h|--help>
+
+Print a brief help message and exits.
+
+=back
+
+=head1 DESCRIPTION
+
+B<tltab> allows the user to save, restore. and recreate the TEAL tables. 
+
+This command must be used in place of dumpxCATdb and restorexCATdb commands to save and restore the tables owned by TEAL.
+
+=cut
+
+BEGIN
+{
+    $::XCATROOT =
+        $ENV{'XCATROOT'} ? $ENV{'XCATROOT'}
+      : -d '/opt/xcat'   ? '/opt/xcat'
+      : '/usr';
+}
+use lib "$::XCATROOT/lib/perl";
+use Cwd;
+use POSIX;
+use File::Copy;
+use File::Find;
+use File::Temp;
+use File::Path;
+use File::Spec;
+use Getopt::Long qw(:config auto_help);
+use Module::Load;
+use Pod::Usage;
+use xCAT::Table;
+use strict;
+
+################################################################################
+# This set of routines will find the currently available TEAL datababase tables
+# and return them to the caller for processing
+################################################################################
+
+my @TEAL_BASE_PKGS = qw(x_tealeventlog 
+                        x_tealalertlog 
+                        x_tealalert2alert 
+                        x_tealalert2event 
+                        x_tealcheckpoint
+                        );
+
+my @TEAL_PKGS;
+my @TEAL_PKGS_TMP;
+
+sub table_wanted() {
+    if (/^(Teal_.*)\.pm/) {
+        my $pkgname = "xCAT_schema::$1";        
+        Module::Load::load $pkgname;
+        no strict 'refs';
+        my %tabspec = %{$pkgname.'::tabspec'};
+        foreach my $k (keys %tabspec) {
+            if ($k ~~ @TEAL_BASE_PKGS) {
+                # Skip it
+            } else {
+                push(@TEAL_PKGS_TMP, $k);
+            }
+        }
+    }
+}
+
+sub get_teal_tables {
+    # Find the defined tables in xCAT
+    my @schema_dir = ("$::XCATROOT/lib/perl/xCAT_schema");
+    File::Find::find(\&table_wanted, @schema_dir);
+    
+    # Create the list of tables making sure that the base tables
+    # are listed first and there are no duplicate tables in the list
+    my %no_dups = map { $_ => 1 } @TEAL_PKGS_TMP;
+    @TEAL_PKGS_TMP = sort keys %no_dups;
+    @TEAL_PKGS = @TEAL_BASE_PKGS;
+    push @TEAL_PKGS, @TEAL_PKGS_TMP;
+    
+    return @TEAL_PKGS
+}
+
+################################################################################
+# This set of routines finds all of the install/uninstall SQL scripts for the
+# installed TEAL components so they can be run during recreation of the tables
+################################################################################
+
+my @SQL_INSTALL_SCRIPT_DIRS;
+my @SQL_UNINSTALL_SCRIPT_DIRS;
+
+sub sql_wanted {
+    if (/^sql$/) {
+        my $install = "$File::Find::name/install";
+        my $uninstall = "$File::Find::name/uninstall";
+        push (@SQL_INSTALL_SCRIPT_DIRS, $install) if -e $install;
+        push (@SQL_UNINSTALL_SCRIPT_DIRS, $uninstall) if -e $uninstall;
+    }
+}
+
+sub get_sql_scripts {
+    my @data_dir = ("/opt/teal/data");
+    File::Find::find(\&sql_wanted, @data_dir);
+}
+
+sub run_scripts {    
+    for my $script_dir (@_) {
+        my $rc  = system("$::XCATROOT/sbin/runsqlcmd -d $script_dir");
+        if ($rc != 0) {
+            print  STDERR "Scripts failed in $script_dir: $rc\n";
+        }
+    }
+}
+
+################################################################################
+# Recreate the installed TEAL tables maintaining the constraints and triggers
+################################################################################
+
+sub recreate_db {
+    # Gather scripts and tables
+    get_sql_scripts();
+    my @tables = get_teal_tables();
+    
+    # Run uninstall scripts
+    run_scripts(@SQL_UNINSTALL_SCRIPT_DIRS);
+    
+    # Drop tables
+    my $working_dir = mkdtemp('/tmp/TEALDB_XXXXXX');
+    chmod 0733, $working_dir;
+    my $current_dir = getcwd;
+    
+    chdir $working_dir; 
+    
+    my $sql_file = "teal_drop_db.sql";   
+    open(my $sqlh, '>', $sql_file) || die "Could not create sql script";
+    
+    for my $table (@tables) {
+        print $sqlh "DROP TABLE $table;\n"
+    }
+    close $sqlh;
+    
+    my $rc =  system("$::XCATROOT/sbin/runsqlcmd -f teal_drop_db.sql");
+    if ($rc != 0) {
+        print STDERR "Failed to drop tables: rc = $rc\n"
+    }
+    
+    # Clean up
+    chdir $current_dir;
+    File::Path::remove_tree($working_dir);
+    
+    # Recreate tables (restart xCAT)
+    for my $table (@tables) {
+        xCAT::Table->new($table, CREATE => 1);
+    }
+    
+    # Run install scripts
+    run_scripts(@SQL_INSTALL_SCRIPT_DIRS);
+}
+
+################################################################################
+# Validate the user provided path making sure the tool can output to the directory
+################################################################################
+
+sub validate_user_path {
+    my $path = $_[0];
+    pod2usage(-message => "Path must be specified") if ($path eq '');
+    -w $path || pod2usage(-message => "$path is not writeable");
+    return File::Spec->rel2abs($path);
+}
+
+################################################################################
+# Create a TAR file of the backed up database tables
+################################################################################
+
+sub create_tar {
+    my $user_dir =  $_[0];    
+    my $now = POSIX::strftime "%Y %m %d %H %M %S", localtime;
+    $now =~ s/ //g; # Need to do this for SCCS control issues with timestamp string
+    my $tar_filename = "$user_dir/tltab_$now.tar";
+    print "TARFILE: $tar_filename\n";
+    `/bin/tar cf $tar_filename *.ixf *.txt`;
+}
+
+################################################################################
+# Extact a tar file from a user directory 
+################################################################################
+
+sub extract_tar {
+    my $user_dir = $_[0];
+    
+    my @tarfiles = glob "$user_dir/tltab_*.tar";
+
+    if (@tarfiles == 0) {
+        print STDERR "TAR file not present in $user_dir";
+        my @nofiles = ();
+        return @nofiles;
+    }
+    
+    my @sorted_tarfiles = reverse sort  @tarfiles;
+    
+    my $tarfile = @sorted_tarfiles[0];   
+    print STDOUT "Restoring from $tarfile\n";
+    
+    `/bin/tar xf $tarfile`;
+    
+    return glob "*.ixf *.txt";
+}
+
+################################################################################
+# Dump the database tables to a TAR file
+################################################################################
+
+sub dump_db {    
+    my $user_path = validate_user_path($_[0]);
+    
+    my $working_dir = mkdtemp('/tmp/TEALDB_XXXXXX');
+    chmod 0733, $working_dir;
+    my $current_dir = getcwd;
+    
+    chdir $working_dir; 
+    
+    my $sql_file = "teal_dump_db.sql";    
+    open(my $sqlh, '>', $sql_file) || die "Could not create sql script";
+    
+    foreach my $table (get_teal_tables()) {
+        print $sqlh "export to $working_dir/$table.ixf of ixf messages $working_dir/msgs.txt select * from $table;\n";
+    }
+    close $sqlh;
+    
+    my $rc = system("$::XCATROOT/sbin/runsqlcmd", "-f", $sql_file);
+    
+    if ($rc == 0) {
+        create_tar($user_path);
+    } else {
+        print STDERR "Failed to backup database tables\n";
+    }
+     
+    chdir $current_dir;
+    File::Path::remove_tree($working_dir);
+}
+
+################################################################################
+# Restore the database tables from a TAR file. The only tables that will be
+# restored are the ones currently defined by xCAT
+################################################################################
+
+sub restore_db {
+    my $user_path = validate_user_path($_[0]);
+    
+    my $working_dir = mkdtemp('/tmp/TEALDB_XXXXXX');
+    chmod 0733, $working_dir;
+    my $current_dir = getcwd;
+    
+    chdir $working_dir; 
+    
+    my @files = extract_tar($user_path);
+    
+    if (@files > 0) {
+        # Need to restore the tables in the proper order
+        my @tables = get_teal_tables();
+        
+        # Create the SQL script for the import of the tables
+        my $sql_file = "teal_restore_db.sql";    
+        open(my $sqlh, '>', $sql_file) || die "Could not create sql script";
+        
+        foreach my $table (@tables) {
+            my $file = "$table.ixf";
+            if ($file ~~ @files) {
+                print $sqlh "import from $working_dir/$table.ixf of ixf commitcount automatic messages $working_dir/tltab_msgs.txt insert_update into $table;\n";
+            }
+        }
+        close $sqlh;
+        
+        # Execute the SQL script importing the data into the current tables
+        my $rc = system("$::XCATROOT/sbin/runsqlcmd", "-f", $sql_file);
+        if ($rc != 0) {
+            print STDERR "Failed to restore all database tables\n";
+        }            
+    } else {
+        print STDERR "No files in TAR file\n"
+    }
+    
+    File::Copy::copy("$working_dir/tltab_msgs.txt", $user_path);
+    chdir $current_dir;
+    File::Path::remove_tree($working_dir);
+}
+################################################################################
+##################################   MAIN    ###################################
+################################################################################
+
+# Only runs with DB2 currently
+my $xcatcfg = xCAT::Table->get_xcatcfg();
+if ($xcatcfg =~ /^DB2:/) {
+} else {
+    pod2usage(-message => "Database engine must be DB2");
+}
+
+# Parse and validate the user options
+our $opt_dump;
+our $opt_restore;
+our $opt_create;
+our $opt_path;
+GetOptions("dump", "restore", "create","path=s") || pod2usage(-verbose => 2);
+pod2usage(-message => "Must specify an action") if !$opt_dump && !$opt_restore && !$opt_create;
+pod2usage(-message => "Can only specify one action") if ($opt_dump && $opt_restore) ||
+                                                        ($opt_dump && $opt_create)  || 
+                                                        ($opt_restore && $opt_create);
+
+# Execute the user-specified DB maintenance command
+if ($opt_dump) {
+    dump_db($opt_path);
+} elsif ($opt_restore) {
+    restore_db($opt_path);
+} else {
+    print STDOUT "WARNING: This will destroy the tables and all TEAL data. Do you wish to continue (y/n)? ";
+    my $ans = <STDIN>;
+    chomp $ans;
+    if ($ans eq 'y') {
+        recreate_db();
+    } else {
+        print STDOUT "Operation aborted by user.\n";
+    }
+}
+
+__END__
+

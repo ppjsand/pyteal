@@ -1,0 +1,157 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2011     
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# locale setup
+import os
+import gettext
+from ibm.teal.checkpoint_mgr import EVENT_CPF_NAME, EVENT_CPF_DATA,\
+    EVENT_CPF_EVENT_RECID, EVENT_CPF_STATUS, EVENT_CPF_CHKPT_ID
+from ibm.teal.event import EVENT_ATTR_REC_ID
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import sys
+import csv
+
+from ibm.teal import Teal
+from ibm.teal import registry
+from ibm.teal.util import command
+from ibm.teal.database import db_interface
+
+
+ALL_KEYS = [EVENT_CPF_CHKPT_ID, EVENT_CPF_NAME, EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA, 'comments', 'disable']
+TEXT_KEYS = [EVENT_CPF_NAME, EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA]
+CSV_KEYS = [EVENT_CPF_NAME, EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA]
+JSON_KEYS = [EVENT_CPF_NAME, EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA]
+
+
+def _brief_output(out_dict):   
+    if out_dict[EVENT_CPF_EVENT_RECID] is not None:
+        print '{0:20s} {1} {2:5d}'.format(out_dict[EVENT_CPF_NAME], out_dict[EVENT_CPF_STATUS], int(out_dict[EVENT_CPF_EVENT_RECID]))
+    else:
+        print '{0:20s} {1}  None'.format(out_dict[EVENT_CPF_NAME], out_dict[EVENT_CPF_STATUS])
+    return 
+
+def _text_output(out_dict):
+    print '==================================================='
+    for key in TEXT_KEYS:
+        print '{0} : {1}'.format(key, str(out_dict[key]))
+    return 
+
+def _json_output(out_dict):
+    writer = command.JSONEventEncoder()
+    print writer.encode(out_dict)
+    return
+            
+def _csv_output(out_dict):
+    writer = csv.DictWriter(sys.stdout, CSV_KEYS, quoting=csv.QUOTE_MINIMAL)
+    writer.writerow(out_dict)
+    return
+  
+def _output_line(out_format, out_dict):
+    # output generation 
+    if out_format == 'brief':
+        _brief_output(out_dict)
+    elif out_format == 'text':
+        _text_output(out_dict)
+    elif out_format == 'json':
+        _json_output(out_dict)
+    else: # out_format == 'csv'
+        _csv_output(out_dict)
+    return
+
+def _make_max_dict(keys, max_value):
+    tmp_dict = {}
+    if EVENT_CPF_CHKPT_ID in keys:
+        tmp_dict[EVENT_CPF_CHKPT_ID] = ''
+    if EVENT_CPF_NAME in keys:
+        tmp_dict[EVENT_CPF_NAME] = 'MAX_event_rec_id'
+    if EVENT_CPF_STATUS in keys:
+        tmp_dict[EVENT_CPF_STATUS] = ' '
+    if EVENT_CPF_EVENT_RECID in keys:
+        tmp_dict[EVENT_CPF_EVENT_RECID] = max_value
+    if EVENT_CPF_DATA in keys:
+        tmp_dict[EVENT_CPF_DATA] = ''
+    return tmp_dict
+
+if __name__ == '__main__':
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tllsckpt.log', msgLevel='warning', data_only=True)
+
+    # Parse the command line        
+    parser = command.TealOptionParser('usage: %prog [options]')
+    parser.add_option('-n', '--name',
+                        type='string',
+                        action='store',
+                        dest='name',
+                        default="",
+                        help=_('Name of checkpoint to list'))
+    parser.add_option('-f', '--format',
+                        type='choice',
+                        choices=['brief', 'text', 'json', 'csv'],
+                        default='brief',
+                        action='store',
+                        dest='output_format',
+                        help=_('Output format of checkpoints: json,csv,text [default = %default]'))
+    (options, args) = parser.parse_args()
+    
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+
+    # Prepare to use the database
+    cnxn = db.get_connection()
+    cursor = cnxn.cursor()
+    
+    # get the maximum 
+    event_max = None
+    try:
+        db.select_max(cursor, EVENT_ATTR_REC_ID, db_interface.TABLE_EVENT_LOG)
+        row = cursor.fetchone()
+        if row and row[0]:
+            event_max = str(row[0])
+    except:
+        pass
+        
+    if options.name:
+        where_str = '${0} = ?'.format(EVENT_CPF_NAME)
+        where_fields = [EVENT_CPF_NAME]
+        parms = (options.name)
+    else:
+        where_str = None
+        where_fields = None
+        parms = None
+        
+    use_keys = ALL_KEYS
+    if options.output_format == 'json':
+        use_keys = JSON_KEYS
+        
+    elif options.output_format == 'csv':
+        use_keys = CSV_KEYS
+    else:
+        use_keys = ALL_KEYS
+        
+    for row in db.select(cursor, use_keys, db_interface.TABLE_CHECKPOINT, 
+                         where=where_str, where_fields=where_fields, 
+                         order=None, parms=parms):
+        #print row
+        out_dict = dict(zip(use_keys, row))
+    
+        _output_line(options.output_format, out_dict)
+        
+    _output_line(options.output_format, _make_max_dict(use_keys, event_max))
+       
+    # All done, now shut down TEAL gracefully
+    t.shutdown()
+    

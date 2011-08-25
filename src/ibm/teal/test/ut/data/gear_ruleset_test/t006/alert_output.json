@@ -1,0 +1,94 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "Alert 01", 
+        "associations": [
+          "S:E:4", 
+          "C:E:1"
+        ], 
+        "creation_time": "2011-02-02 11:19:05.015000", 
+        "event_loc": "MB-SL1-ET1-PT1", 
+        "event_loc_type": "C", 
+        "reason": "This is Alert 01", 
+        "rec_id": 1, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest006", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "Alert 02", 
+        "associations": [
+          "S:E:5", 
+          "C:E:2"
+        ], 
+        "creation_time": "2011-02-02 11:19:05.015000", 
+        "event_loc": "MB-SL1-ET1-PT1", 
+        "event_loc_type": "C", 
+        "reason": "This is Alert 02", 
+        "rec_id": 2, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest006", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "3": {
+      "data": {
+        "alert_id": "Alert 03", 
+        "associations": [
+          "S:E:6", 
+          "C:E:3"
+        ], 
+        "creation_time": "2011-02-02 11:19:05.015000", 
+        "event_loc": "MB-SL1-ET1-PT1", 
+        "event_loc_type": "C", 
+        "reason": "This is Alert 03", 
+        "rec_id": 3, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest006", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "4": {
+      "data": {
+        "alert_id": "Alert 04", 
+        "associations": [
+          "S:E:22", 
+          "S:E:14", 
+          "S:E:16", 
+          "S:E:18", 
+          "S:E:10", 
+          "C:E:23", 
+          "C:E:24", 
+          "C:E:25"
+        ], 
+        "creation_time": "2011-02-02 11:19:05.093000", 
+        "event_loc": "MB-SL2-ET1-PT2", 
+        "event_loc_type": "C", 
+        "reason": "This is Alert 04", 
+        "rec_id": 4, 
+        "recommendation": "Recommend doing something", 
+        "severity": "W", 
+        "src_name": "AnalyzerTest006", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="TC"/>
+  <!-- <analyze_alerts id_regx="  Z  ,   B,Q"/> -->
+  <analyze_events id_regx=".*"/>
+</gear_control>
+<pool_control>
+  <initial_duration default="300"/>
+</pool_control>
+<events>
+   <event id="Example5" comp="PS" name="REFNAME"/>
+   <event id="Example2"/>
+   <event id="Example1" pool_extension_time="3" min_time_in_pool="5"/>   
+</events>
+<!-- Event analyzers only for first release
+<alerts>
+   <alert id="Alert2"/>
+   <alert id="Alert1" name="George" pool_extension_time="12" min_time_in_pool="7"/>
+</alerts>
+-->
+<constants>
+  <!--   <constant name="MyAlertConstant" type="alert_id" value="Alert2"/>-->
+   <constant name="MyEventConstant" type="event_id" value="Example2"/>
+ <!--    <constant name="MyAlertSet" type="set_of_alert_ids" value="Alert1, Alert2"/>-->
+   <constant name="MyEventSet" type="set_of_event_ids" value="Example1, Example2, Example5, Example1"/>
+</constants>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <event_equals id="Example5"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="Example2"/>
+      </action>
+   </rule>
+</analyze>
+</gear_ruleset>

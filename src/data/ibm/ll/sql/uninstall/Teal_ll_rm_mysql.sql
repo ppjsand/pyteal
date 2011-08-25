@@ -1,0 +1,1 @@
+ALTER TABLE x_LL_1_1 DROP FOREIGN KEY teal_ll_fk;

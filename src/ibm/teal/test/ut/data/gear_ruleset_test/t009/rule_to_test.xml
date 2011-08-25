@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="EF000001" min_time_in_pool="500"/>
+   <event id="EF000002" min_time_in_pool="500"/>
+   <event id="EF000003" min_time_in_pool="500"/>
+   <event id="EFS00001" min_time_in_pool="500"/>
+   <event id="EFS00002" min_time_in_pool="500"/>
+   <event id="EFS00003" min_time_in_pool="500"/>
+   <event id="E0000001"/>
+   <event id="E0000002" name="E2"/>
+   <event id="E0000003" name="E3"/>
+   <event id="E0000004" name="Everyveryveryveryveryverylongname4"/>
+   <event id="E0000005" name="E5"/>
+</events>
+<constants>
+   <constant name="E1" type="event_id" value="E0000001"/>
+   <constant name="E4" type="event_id" value="E0000004"/>
+   <constant name="E1andE4" type="set_of_event_ids" value="E1,Everyveryveryveryveryverylongname4"/>
+   <constant name="E1E2E3E4" type="set_of_event_ids" value="E1,E2,E3,E4"/>
+</constants>
+<analyze>
+   <!-- Start base setup  -->
+   <rule name="EFS000001 suppressions">
+      <condition>
+            <event_equals id="EF000001"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00001"/>
+        <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+   <rule name="EFS000002 suppressions">
+      <condition>
+            <event_equals id="EF000002"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00002"/>
+        <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+   <rule name="EFS000003 suppressions">
+      <condition>
+            <event_equals id="EF000003"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00003"/>
+        <create_alert id="Alert 03"/>
+      </action>
+   </rule>   
+   <!-- END BASE SETUP ... at this point should have 
+        EF000001, EF000002, and EF000003 moving forward
+        EFS00001, EFS00002, and EFS00003 moving forward and suppressed by one above
+        
+        This should create 3 alerts (1,2,3) each with one condition event and one suppression
+    -->
+    <!-- NOTE INPUT EVENT DATA CHANGE: Added raw data entry for neighbor_loc to all E0000005 events -->
+    <!--  Subtest 1: 
+             
+             Look for 2 of 4 events with unique ports on the same pciSlot where there is a port 1 and
+             a port 2 OR DM is 3 or 4.
+             
+             This should create 2 'Alert 09':
+                1 with eight condition events all from same pciSlot but only 1 & 2 for ports 
+                2 with the four events associated with DM3
+    -->
+   <rule name="any_event instances 1">
+      <condition>
+          <or>
+            <any_events ids="E1E2E3E4" num="2" instances="(1 &amp; 2)" instance_loc_comp="C:port"
+               scope="C:pciSlot"/>
+            <any_events ids="E1E2E3E4" num="2" instances="(3 | 4)" instance_loc_comp="C:dimm"
+               scope="C:dimm"/>
+          </or>
+      </condition>
+      <action>
+        <create_alert id="Alert 04"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 2: 
+             
+             Look for all 4 events occuring at the pci slot level
+             
+             Result should be 3 alerts:
+             1 with the 4 on MB-DM3 ... scoping had no effect
+             1 with the 4 on SL2
+             1 with the 8 on SL1
+    -->
+   <rule name="all_event instances 1">
+      <condition>
+           <all_events ids="E1E2E3E4" scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 05"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 3: 
+   
+           Test the event occurred works looking for 2 E1 with FULL scope
+           
+           There should be NO alerts since all are different
+             
+    -->
+   <rule name="event_occurred instances 1">
+      <condition>
+           <event_occurred id="E1" num="2"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 06"/>
+      </action>
+   </rule>
+   <!--  Subtest 4: 
+   
+            Test event occurred with scoping at the pci slot level
+            
+            Result should be 1 alert
+              1 alert with 2 condition events ... the E1s on SL1
+             
+    -->
+   <rule name="event_occurred instances 1">
+      <condition>
+           <event_occurred id="E1" num="2" scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 07"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 5:
+   
+          Test and using event_equals.   Should be true for E1 and E2 at identical locations
+          
+          Expect 4 alerts
+             1 alert with 2 condition events for DM3
+             1 alert with 2 condition events for SL1-ET1_PT1
+             1 alert with 2 condition events for SL2-ET1_PT2
+             1 alert with 2 condition events for SL2-ET1_PT2
+             
+    -->
+   <rule name="all_event instances 1">
+      <condition>
+         <and>
+             <event_equals id="E1"/>
+             <event_equals id="E2"/>
+         </and>
+      </condition>
+      <action>
+        <create_alert id="Alert 08"/>
+      </action>
+   </rule>
+   
+   <!--  Subtest 6: 
+             
+             Test and with location match of unique with the FULL location (no scope).
+               consolidation will occur based on truth_locs when creating the alerts.
+               
+               One alerts will be created: 
+               
+E1  7 MB-SL1-ET1-PT1, 11 MB-SL1-ET1-PT2, 15 MB-DM3, 19 MB-SL2-ET-PT1
+  OR
+E2  8 MB-SL1-ET1-PT1, 12 MB-SL1-ET1-PT2, 16 MB-DM3, 20 MB-SL2-ET-PT1
+
+1   7, 12   7, 12   MB-SL1-ET1-PT1 (1), MB-SL1-ET1-PT2 (2)   1,2  A      7, 12,  8, 11     7,  8, 11, 12 pAlert
+2   7, 16   7, 16   MB-SL1-ET1-PT1 (1), MB-DM3 (3)           1,3  B      7, 16,  8, 15     7,  8, 15, 16 pAlert
+3   7, 20   7, 20   MB-SL1-ET1-PT1 (1), MB-SL2-ET1-PT1 (4)   1,4  C      7, 20,  8, 19     7,  8, 19, 20 pAlert
+4  11,  8   8, 11   MB-SL1-ET1-PT1 (1), MB-SL1-ET1-PT2 (2)   1,2  A     x
+5  11, 16  11, 16   MB-SL1-ET1-PT2 (2), MB-DM3 (3)           2,3  D     11, 16, 15, 12    11, 12, 15, 16 pAlert
+6  11, 20  11, 20   MB-SL1-ET1-PT2 (2), MB-SL2-ET-PT1 (4)    2,4  E     11, 20, 12, 19    11, 12, 19, 20 pAlert
+7  15,  8   8, 15   MB-SL1-ET1-PT1 (1), MB-DM3 (3)           1,3  B     x
+8  15, 12  12, 15   MB-SL1-ET1-PT2 (2), MB-DM3 (3)           2,3  D     x
+9  15, 20  15, 20   MB-DM3 (3),         MB-SL2-ET1-PT1 (4)   3,4  F     15, 20, 19, 16    15, 16, 19, 20 pAlert
+10 19,  8   8, 19   MB-SL1-ET1-PT1 (1), MB-SL2-ET1-PT1 (4)   1,4  C     x
+11 19, 12  12, 19   MB-SL1-ET1-PT2 (2), MB-SL2-ET1-PT1 (4)   2,4  E     x
+12 19, 16  16, 19   MB-DM3 (3),         MB-SL2-ET1-PT1 (4)   3,4  F     x    
+ 
+ ALL overlap an unique, so it will combined into a single alert
+    -->
+   <rule name="all_event instances 1">
+      <condition>
+         <and location_match="unique">
+             <event_equals id="E1"/>
+             <event_equals id="E2"/>
+         </and>
+      </condition>
+      <action>
+        <create_alert id="Alert 09"/>
+      </action>
+   </rule>   
+   
+   <!--  Subtest 7: 
+             
+              
+             Test and with location match of unique with the FULL location (no scope).
+               consolidation will occur based on truth_locs when creating the alerts.
+               
+              One alert will be created: 
+               
+E1  7 MB-SL1-ET1-PT1, 11 MB-SL1-ET1-PT2, 15 MB-DM3, 19 MB-SL2-ET-PT1
+    OR 
+E2  8 MB-SL1-ET1-PT1, 12 MB-SL1-ET1-PT2, 16 MB-DM3, 20 MB-SL2-ET-PT1
+
+1   7, 12   7, 12   MB-SL1 (1), MB-SL1 (1)   1,1  x
+2   7, 16   7, 16   MB-SL1 (1), MB-DM3 (3)   1,3  A   7, 16, 11, 16,  8, 15, 12, 15 ->  7,  8, 11, 12, 15, 16 pAlert
+3   7, 20   7, 20   MB-SL1 (1), MB-SL2 (2)   1,2  B   7, 20, 11, 20,  8, 19, 12, 19 ->  7,  8, 11, 12, 19, 20 pAlert
+4  11,  8   8, 11   MB-SL1 (1), MB-SL1 (1)   1,1  x    
+5  11, 16  11, 16   MB-SL1 (1), MB-DM3 (3)   1,3  A  x  
+6  11, 20  11, 20   MB-SL1 (1), MB-SL2 (2)   1,2  B  x  
+7  15,  8   8, 15   MB-SL1 (1), MB-DM3 (3)   1,3  A  x    
+8  15, 12  12, 15   MB-SL1 (1), MB-DM3 (3)   1,3  A  x    
+9  15, 20  15, 20   MB-DM3 (3), MB-SL2 (2)   2,3  C  15, 20, 16, 19  ->                 15, 16, 19, 20 pAlert 
+10 19,  8   8, 19   MB-SL1 (1), MB-SL2 (2)   1,2  B  x  
+11 19, 12  12, 19   MB-SL1 (1), MB-SL2 (2)   1,2  B  x 
+12 19, 16  16, 19   MB-DM3 (3), MB-SL2 (2)   2,3  C  x                
+               
+               Which get combined into one because they overlap
+    -->
+   <rule name="all_event instances 1">
+      <condition>
+         <and location_match="unique" scope="C:pciSlot">
+             <event_equals id="E1"/>
+             <event_equals id="E2"/>
+         </and>
+      </condition>
+      <action>
+        <create_alert id="Alert 10"/>
+      </action>
+   </rule>
+      
+</analyze>
+</gear_ruleset>

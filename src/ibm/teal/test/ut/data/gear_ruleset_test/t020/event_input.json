@@ -1,0 +1,399 @@
+[
+  {
+    "1": {
+      "data": {
+	"rec_id": "1",
+      "event_id": "EF000001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000001 rawdata", 
+      "src_comp": "CNM",   
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "2": {
+      "data": {
+	"rec_id": "2",
+      "event_id": "EF000002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "3": {
+      "data": {
+	"rec_id": "3",
+      "event_id": "EF000003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "4": {
+      "data": {
+	"rec_id": "4",
+      "event_id": "EFS00001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "5": {
+      "data": {
+	"rec_id": "5",
+      "event_id": "EFS00002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "6": {
+      "data": {
+	"rec_id": "6",
+      "event_id": "EFS00003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "7": {
+      "data": {
+        "msg_type": "Flush", 
+        "creation_time": "2011-01-31 21:40:01.100000" 
+      }, 
+      "delay": "0", 
+      "type": "control_msg"
+    }, 
+    "8": {
+      "data": {
+	"rec_id": "7",
+      "event_id": "E0000001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "9": {
+      "data": {
+	"rec_id": "8",
+      "event_id": "E0000002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E002L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "10": {
+      "data": {
+	"rec_id": "9",
+      "event_id": "E0000003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "11": {
+      "data": {
+	"rec_id": "10",
+      "event_id": "E0000004",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "12": {
+      "data": {
+	"rec_id": "11",
+      "event_id": "E0000001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "13": {
+      "data": {
+	"rec_id": "12",
+      "event_id": "E0000002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E002L002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "14": {
+      "data": {
+	"rec_id": "13",
+      "event_id": "E0000003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E003L002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "15": {
+      "data": {
+	"rec_id": "14",
+      "event_id": "E0000004",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E004L002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "16": {
+      "data": {
+	"rec_id": "15",
+      "event_id": "E0000001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-DM3", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "17": {
+      "data": {
+	"rec_id": "16",
+      "event_id": "E0000002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E002L003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-DM3", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "18": {
+      "data": {
+	"rec_id": "17",
+      "event_id": "E0000003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E003L003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-DM3", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "19": {
+      "data": {
+	"rec_id": "18",
+      "event_id": "E0000004",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E004L003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-DM3", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "20": {
+      "data": {
+	"rec_id": "19",
+      "event_id": "E0000001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L004 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL2-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "21": {
+      "data": {
+	"rec_id": "20",
+      "event_id": "E0000002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E002L004 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL2-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "22": {
+      "data": {
+	"rec_id": "21",
+      "event_id": "E0000003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E003L004 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL2-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "23": {
+      "data": {
+	"rec_id": "22",
+      "event_id": "E0000004",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E004L004 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL2-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "24": {
+      "data": {
+	"rec_id": "23",
+      "event_id": "E0000005",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E005L005 rawdata", 
+      "raw_data_values": "neighbor_loc,Location,C:MB-DM3",
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL2-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "25": {
+      "data": {
+	"rec_id": "24",
+      "event_id": "E0000005",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E005L005 rawdata", 
+      "raw_data_values": "neighbor_loc,Location,C:MB-DM3",
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL2-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "26": {
+      "data": {
+	"rec_id": "25",
+      "event_id": "E0000005",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "raw_data_values": "neighbor_loc,Location,C:MB-SL1-ET1-PT1",
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL2-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "27": {
+      "data": {
+        "msg_type": "Flush", 
+        "creation_time": "2011-01-31 21:41:00.100000" 
+      }, 
+      "delay": "0", 
+      "type": "control_msg"
+    } 
+  }
+]
+

@@ -1,0 +1,105 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BD700025", 
+        "associations": [
+          "C:E:6"
+        ], 
+        "creation_time": "2011-01-30 22:15:08.281000", 
+        "event_loc": "BB03-FR006-SN001-DR0-HB3-LL05", 
+        "event_loc_type": "H", 
+        "reason": "D-link down between frame FR006 superNode SN001 drawer DR0 hub HB3 port $nodePort and frame $neighbor_frame superNode $neighbor_supernode drawer $neighbor_drawer hub $neighbor_hub port $neighbor_nodePort (D Link Port Down)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a D-Link.\nRecord the alert ID.\nLog on to the Management Server.\nTo isolate to the proper FRU, run Link Diags and perform the actions that it recommends.\nIf no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "BD700025", 
+        "associations": [
+          "C:E:4", 
+          "C:E:5"
+        ], 
+        "creation_time": "2011-01-30 22:15:08.281000", 
+        "event_loc": "BB03-FR007-SN001-DR0-HB3-LL04", 
+        "event_loc_type": "H", 
+        "reason": "D-link down between frame FR007 superNode SN001 drawer DR0 hub HB3 port $nodePort and frame $neighbor_frame superNode $neighbor_supernode drawer $neighbor_drawer hub $neighbor_hub port $neighbor_nodePort (D Link Port Down)", 
+        "rec_id": 2, 
+        "recommendation": "There is a problem with a D-Link.\nRecord the alert ID.\nLog on to the Management Server.\nTo isolate to the proper FRU, run Link Diags and perform the actions that it recommends.\nIf no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "3": {
+      "data": {
+        "alert_id": "BD50002F", 
+        "associations": [
+          "C:E:3"
+        ], 
+        "creation_time": "2011-01-30 22:15:08.281000", 
+        "event_loc": "BB03-FR007-SN001-DR0-HB3-LL01", 
+        "event_loc_type": "H", 
+        "reason": "LL-link problem in frame FR007 superNode SN001 drawer DR0 hub HB3 port LL01 (Llocal Input Port Buffer Overflow)", 
+        "rec_id": 3, 
+        "recommendation": "There is a problem with a hub chip.\nRecord the alert ID.\nCall IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "4": {
+      "data": {
+        "alert_id": "BD50002F", 
+        "associations": [
+          "C:E:2"
+        ], 
+        "creation_time": "2011-01-30 22:15:08.281000", 
+        "event_loc": "BB03-FR007-SN001-DR0-HB0-LL01", 
+        "event_loc_type": "H", 
+        "reason": "LL-link problem in frame FR007 superNode SN001 drawer DR0 hub HB0 port LL01 (Llocal Input Port Buffer Overflow)", 
+        "rec_id": 4, 
+        "recommendation": "There is a problem with a hub chip.\nRecord the alert ID.\nCall IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "5": {
+      "data": {
+        "alert_id": "BD500031", 
+        "associations": [
+          "C:E:1"
+        ], 
+        "creation_time": "2011-01-30 22:15:08.281000", 
+        "event_loc": "BB03-FR007-SN001-DR0-HB3-LL01", 
+        "event_loc_type": "H", 
+        "reason": "LL-link problem in frame FR007 superNode SN001 drawer DR0 hub HB3 port LL01 (Llocal Input Port Unexpected Flit Type)", 
+        "rec_id": 5, 
+        "recommendation": "There is a problem with a hub chip.\nRecord the alert ID.\nCall IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

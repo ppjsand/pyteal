@@ -1,0 +1,196 @@
+[
+  {
+    "1": {
+      "data": {
+	"rec_id": "1",
+      "event_id": "E0000001",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000001 rawdata", 
+      "src_comp": "CNM",   
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "2": {
+      "data": {
+	"rec_id": "2",
+      "event_id": "E0000002",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "3": {
+      "data": {
+	"rec_id": "3",
+      "event_id": "E0000003",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EF000003 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "rpt_comp": "CNM",  
+      "rpt_loc": "MB-SL-ET1-PT1", 
+      "rpt_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "4": {
+      "data": {
+	"rec_id": "4",
+      "event_id": "E0000004",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "5": {
+      "data": {
+	"rec_id": "5",
+      "event_id": "E0000005",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010EFS00002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:00.100000", 
+      "time_occurred": "2011-01-31 21:40:00.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "6": {
+      "data": {
+      "raw_data": "{'isnm_raw_data': '3_RECEIVE_NEIGHBOR_ID = 0xbe02029800000000 LR_PORT_23_LINK_UP_THRESHOLD = 0x0200000000000000 LR_PORT_23_PORT_READY = 0x8000000000000000 \\x1a\\x1a\\x1aLLLR23_LINK_STATUS732027717000000000\\x0f\\x1a\\x1a`', 'local_port': \"U7874.001.3456789-P1-R17,YU7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'eed_loc_info': 'c250mgrs20-pvt.ppd.pok.ibm.com:/var/opt/isnm/cnm/log', 'raw_data': None, 'encl_mtms': '9125-F2C/0286CE6', 'nbr_port': \"U7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'recovery_file_path': '/var/opt/isnm/cnm/log', 'nbr_om': \"U7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'local_torrent': \"U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'local_planar': \"U7874.001.4567890-PU7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'nbr_torrent': \"U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'pwr_ctrl_mtms': '78AC-100211S000', 'nbr_planar': \"U7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'local_om': \"U7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'neighbor_loc': 'FR008-CG03-SN001-DR0-HB1-LD10', 'neighbor_loc_type': 'C'}", 
+      "raw_data_fmt": "0x434e4d0080010002L", 
+	"rec_id": "6",
+      "event_id": "E0000006",
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "7": {
+      "data": {
+	"rec_id": "7",
+      "event_id": "E0000007",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:02.100000", 
+      "time_occurred": "2011-01-31 21:40:02.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "8": {
+      "data": {
+      "raw_data": "{'isnm_raw_data': '3_RECEIVE_NEIGHBOR_ID = 0xbe02029800000000 LR_PORT_23_LINK_UP_THRESHOLD = 0x0200000000000000 LR_PORT_23_PORT_READY = 0x8000000000000000 \\x1a\\x1a\\x1aLLLR23_LINK_STATUS732027717000000000\\x0f\\x1a\\x1a`', 'local_port': \"U7874.001.3456789-P1-R17,YU7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'eed_loc_info': 'c250mgrs20-pvt.ppd.pok.ibm.com:/var/opt/isnm/cnm/log', 'raw_data': None, 'encl_mtms': '9125-F2C/0286CE6', 'nbr_port': \"U7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'recovery_file_path': '/var/opt/isnm/cnm/log', 'nbr_om': \"U7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'local_torrent': \"U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'local_planar': \"U7874.001.4567890-PU7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'nbr_torrent': \"U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'pwr_ctrl_mtms': '78AC-100211S000', 'nbr_planar': \"U7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'local_om': \"U7874.001.5678901-P1-R17,YU7874.001.3456789-P1-R17',U7874.001.2345678-P1-RU7874.001.4567890-PU7874.001.5678901-P1-R17',YL55555,ABC123,TRMD\", 'neighbor_loc': 'FR008-CG03-SN001-DR0-HB1-LD10', 'neighbor_loc_type': 'Q'}", 
+      "raw_data_fmt": "0x434e4d0080010002L", 
+	"rec_id": "8",
+      "event_id": "E0000008",
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:03.100000", 
+      "time_occurred": "2011-01-31 21:40:03.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "9": {
+      "data": {
+	"rec_id": "9",
+      "event_id": "E0000009",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT1", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:03.100000", 
+      "time_occurred": "2011-01-31 21:40:03.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "10": {
+      "data": {
+	"rec_id": "10",
+      "event_id": "E0000010",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L001 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT55", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:04.100000", 
+      "time_occurred": "2011-01-31 21:40:04.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "11": {
+      "data": {
+	"rec_id": "11",
+      "event_id": "E0000011",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E001L002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:08.100000", 
+      "time_occurred": "2011-01-31 21:40:08.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "12": {
+      "data": {
+	"rec_id": "12",
+      "event_id": "E0000012",
+      "raw_data_fmt": "0x5445535400000000", 
+      "raw_data": "\\u0010E002L002 rawdata", 
+      "src_comp": "CNM",  
+      "src_loc": "MB-SL1-ET1-PT2", 
+      "src_loc_type": "C", 
+      "time_logged": "2011-01-31 21:40:10.100000", 
+      "time_occurred": "2011-01-31 21:40:10.100000"
+      }, 
+      "delay": "0", 
+      "type": "event"
+    }, 
+    "13": {
+      "data": {
+        "msg_type": "Flush", 
+        "creation_time": "2011-01-31 21:40:12.100000" 
+      }, 
+      "delay": "0", 
+      "type": "control_msg"
+    } 
+  }
+]
+

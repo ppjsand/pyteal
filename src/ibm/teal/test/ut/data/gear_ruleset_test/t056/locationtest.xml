@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<cluster ver="1.0"
+    xmlns="http://www.ibm.com/teal" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.ibm.com/teal ../../../../../xml/location.xsd">
+    
+    <location id="S" type="application" separator="##">
+        <simple>
+            <component type="node"/>            
+            <component type="application"/>
+            <component type="pid"/>
+        </simple>
+    </location>
+
+    <location id="C" type="test_complex" separator="-">
+        <complex>
+            <component type="motherboard" id="MB">
+                <compref ref="processor"/>
+                <compref ref="dimm"/>
+                <compref ref="pciSlot"/>
+            </component>
+            <component type="processor" id="PR" min="1" max="4"/>
+            <component type="dimm" id="DM" min="1" max="16"/>
+            <component type="pciSlot" id="SL" min="1" max="4">
+                <compref ref="ethernetCard"/>                
+            </component>
+            <component type="ethernetCard" id="ET" min="1" max="1">
+                <compref ref="port"/>                
+            </component>                            
+            <component type="port" id="PT" min="1" max="22"/>
+        </complex>
+    </location>
+    
+</cluster>

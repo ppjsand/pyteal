@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="Event 01" name="ME1"/>
+   <event id="Event 02" name="ME2"/>
+   <event id="Event 03" name="ME3" pool_extension_time="10"/>   
+   <event id="Event 04" name="ME4"/>
+   <event id="Event 05" name="ME5"/>
+   <event id="Event 06" name="ME6"/>
+</events>
+<constants>
+   <constant name="ME1and3" type="set_of_event_ids" value="ME1,Event 03"/>
+</constants>
+<analyze>
+   <rule name="Rule 1a">
+     <condition>
+       <event_equals id="Event 05"/>
+     </condition>
+     <action>
+        <suppress_events events="GEAR[condition_events]"/>
+        <suppress_events ids="Event 02, Event 04" ignore_loc="true"/>
+        <create_alert id="Alert 03" 
+                      severity="E"
+                      urgency="I"
+                      event_loc="GEAR[cur_event.src_loc]"
+                      event_loc_scope="C:processor"
+                      recommendation="try again"
+                      msg_template="GEAR[conf_dict.reason]"
+                      fru_loc="fru_loc2"
+                      raw_data="This is another test"/>
+      </action>
+   </rule>
+</analyze>
+<pool_closure>
+    <rule name="Make everything an alert">
+        <condition>
+           <true/>
+        </condition>
+        <action>
+           <suppress_events events="GEAR[last_condition_event]"/>
+           <create_alert id="Alert US" event_loc_scope="C:ethernetCard"/>
+        </action>
+    </rule>
+</pool_closure>
+</gear_ruleset>

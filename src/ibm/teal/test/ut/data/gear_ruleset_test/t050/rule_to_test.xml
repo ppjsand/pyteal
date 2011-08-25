@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="Event 01" name="ME1"/>
+   <event id="Event 02" name="ME2"/>
+   <event id="Event 03" name="ME3" pool_extension_time="3" min_time_in_pool="5"/>   
+   <event id="Event 04" name="ME4"/>
+   <event id="Event 05" name="ME5" min_time_in_pool="10"/>
+</events>
+<constants>
+   <constant name="ME1and3" type="set_of_event_ids" value="ME1,Event 03"/>
+</constants>
+<analyze>
+   <rule name="Sample Rule alert creation">
+      <description>If Event 01 or 03 create Alert 01</description>
+      <condition>
+        <and>
+         <any_events ids="GEAR[conf_dict.ids]" num="1"/>
+         <any_events ids="Event 02, Event 03" num ="1"/>
+        </and>
+      </condition>
+      <action>
+        <description>Create alert (and suppress Event 01 and Event 03)</description>
+        <suppress_events events="GEAR[last_condition_event]"/>
+        <create_alert id="GEAR[executed.ExecuteTest02.alert_id]" 
+                      severity="E"
+                      urgency="I"
+                      event_loc="GEAR[cur_event.src_loc]"
+                      recommendation="try again"
+                      msg_template="GEAR[conf_dict.reason]"
+                      fru_loc="fru_loc2"
+                      raw_data="This is another test"/>
+        <execute  name="ExecuteTest02" class="ibm.teal.test.ut.data.gear_ruleset_test.t050.test_class.Class050">
+          <parm name="last_condition_event" value="GEAR[last_condition_event]"/>
+          <parm name="this is" value="a test"/> 
+          <parm name="cur_event" value="GEAR[cur_event]"/>       
+        </execute>
+      </action>
+   </rule>
+</analyze>
+<pool_closure>
+    <rule name="Make everything an alert">
+        <condition>
+           <true/>
+        </condition>
+        <action>
+           <suppress_events events="GEAR[last_condition_event]"/>
+           <create_alert id="Alert US"/>
+        </action>
+    </rule>
+</pool_closure>
+</gear_ruleset>

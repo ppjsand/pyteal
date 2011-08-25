@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="Event 01" />
+   <event id="Event 02" />
+   <event id="Event 03" pool_extension_time="3" min_time_in_pool="5"/>   
+   <event id="Event 04"/>
+   <event id="Event 05" min_time_in_pool="10"/>
+</events>
+<analyze>
+   <rule name="Sample Rule alert creation">
+      <condition>
+         <or>
+            <event_equals id="Event 01"/>
+            <event_equals id="Event 03"/>
+         </or>
+         <event_equals id="Event 05"/>
+      </condition>
+      <action>
+        <description>Create alert (and suppress Event 01 and Event 03)</description>
+        <suppress_events events="GEAR[condition_events]"/>
+        <create_alert id="Alert 01"/>
+      </action>
+   
+   </rule>
+</analyze>
+<pool_closure>
+    <rule name="Make everything an alert">
+        <condition>
+           <true/>
+        </condition>
+        <action>
+           <create_alert id="Alert US"/>
+        </action>
+    </rule>
+</pool_closure>
+</gear_ruleset>

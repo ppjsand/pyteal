@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<events>
+   <event id="EF000001" min_time_in_pool="500"/>
+   <event id="EF000002" min_time_in_pool="500"/>
+   <event id="EF000003" min_time_in_pool="500"/>
+   <event id="EFS00001" min_time_in_pool="500"/>
+   <event id="EFS00002" min_time_in_pool="500"/>
+   <event id="EFS00003" min_time_in_pool="500"/>
+   <event id="E0000001"/>
+   <event id="E0000002" name="E2"/>
+   <event id="E0000003" name="E3"/>
+   <event id="E0000004" name="Everyveryveryveryveryverylongname4"/>
+   <event id="E0000005" name="E5"/>
+</events>
+<constants>
+   <constant name="E1" type="event_id" value="E0000001"/>
+   <constant name="E4" type="event_id" value="E0000004"/>
+   <constant name="E1andE4" type="set_of_event_ids" value="E1,Everyveryveryvewryveryverylongname4"/>
+   <constant name="E1E2E3E4" type="set_of_event_ids" value="E1,E2,E3,E4"/>
+</constants>
+<analyze>
+   <!-- Start base setup  -->
+   <rule name="EFS000001 suppressions">
+      <condition>
+            <event_equals id="EF000001"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00001"/>
+        <create_alert id="Alert 01"/>
+      </action>
+   </rule>
+   <rule name="EFS000002 suppressions">
+      <condition>
+            <event_equals id="EF000002"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00002"/>
+        <create_alert id="Alert 02"/>
+      </action>
+   </rule>
+   <rule name="EFS000003 suppressions">
+      <condition>
+            <event_equals id="EF000003"/>
+      </condition>
+      <action>
+        <suppress_events ids="EFS00003"/>
+        <create_alert id="Alert 03"/>
+      </action>
+   </rule>   
+   <!-- END BASE SETUP ... at this point should have 
+        EF000001, EF000002, and EF000003 moving forward
+        EFS00001, EFS00002, and EFS00003 moving forward and suppressed by one above
+        
+        This should create 3 alerts (1,2,3) each with one condition event and one suppression
+    -->
+    <!-- NOTE INPUT EVENT DATA CHANGE: Added raw data entry for neighbor_loc to all E0000005 events 
+           and made it different for one of them -->
+    <!--  Subtest 1: 
+             1st: suppress: E2s at neighbor_loc, E3s at default (src_location), and E4s at top scope
+             2nd: Create Alert 04 from E5
+                          
+             This should create 1 'Alert 04':
+                1 with 3 condition events and 6 suppressions:
+                    2 E2 for neighbor match
+                    3 E4 because all match at motherboard scope
+                    1 E3 - because it matched the scoped location
+    -->
+   <rule name="E00000005 suppressions">
+      <condition>
+            <event_equals id="E5" scope="C:pciSlot"/>
+      </condition>
+      <action>
+        <suppress_events ids="E0000002" locations="GEAR[all_condition_events.ext.neighbor_loc]"/>
+        <suppress_events ids="E0000003"/>
+        <suppress_events ids="E0000004" scope="C:motherboard"/>
+      </action>
+   </rule>
+   <rule name="E00000005 create alert">
+      <condition>
+            <event_equals id="E5"/>
+      </condition>
+      <action>
+        <create_alert id="Alert 04"/>
+      </action>
+   </rule>
+</analyze>
+</gear_ruleset>

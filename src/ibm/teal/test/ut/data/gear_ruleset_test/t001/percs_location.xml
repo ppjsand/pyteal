@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<cluster ver="1.0"
+    xmlns="http://www.ibm.com/teal" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.ibm.com/teal ../../../../xml/location.xsd ">
+  
+    <location id="D" type="device" separator="##">
+        <simple>
+            <component type="node"/>
+            <component type="device"/>
+            <component type="major"/>
+            <component type="minor"/>
+        </simple>
+    </location>
+
+    <location id="A" type="application" separator="##">
+        <simple>
+            <component type="node"/>            
+            <component type="application"/>
+            <component type="pid"/>
+            <component type="identifier"/>
+        </simple>
+    </location>
+
+    <location id="J" type="job" separator="##">
+        <simple>
+            <component type="stepId"/>
+            <component type="node"/>
+            <component type="task"/>
+        </simple>
+    </location>
+
+    <location id="H" type="hardware" separator="-">
+        <complex>
+            <!-- Level 1 -->
+            <component type="buildingBlock" id="BB" pattern="[0-5][0-9]|6[0-4]">
+                <compref ref="frame" />
+
+            <!-- Level 2 -->
+            </component><component type="frame" id="FR" pattern="00[1-9]|0[1-9][0-9]|[1-9][0-9][0-9]">
+                <compref ref="supernode"/>
+            </component>
+
+            <!-- Level 3 -->
+            <component type="supernode" id="SN" pattern="[0-4][0-9][0-9]|50[0-9]|51[0-1]">
+                <compref ref="drawer"/>
+            </component>
+
+            <!-- Level 4 -->
+            <component type="drawer" id="DR" pattern="[0-3]">            
+                    <compref ref="hub"/>
+            </component>        
+
+            <!-- Level 5 -->
+            <component type="hub" id="HB" pattern="[0-7]">
+                <compref ref="localPort"/>
+                <compref ref="remotePort"/>
+                <compref ref="nodePort"/>
+            </component>
+
+            <!-- Level 6 -->
+            <component type="localPort" id="LL" pattern="0[0-7]"/>
+            <component type="remotePort" id="LR" pattern="[0-2][0-9]|3[0-1]"/>
+            <component type="nodePort" id="LD" pattern="0[0-9]|1[0-5]"/>
+
+        </complex>
+    </location>
+    <location id="P" type="pseries" separator="@">
+    	<simple>
+    		<component type="ploc"/>
+    	</simple>
+    </location>
+</cluster>

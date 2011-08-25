@@ -1,0 +1,69 @@
+#!/bin/bash
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2010,2011
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+#
+#	/etc/rc.d/init.d/teal_ll
+#
+#       This service manages the IBM Toolkit for Event Analysis and Logging (TEAL) daemon
+#
+# chkconfig: 345 20 80
+# pidfile: /var/lock/teal_ll.pid
+# 
+
+# Source function library.
+. /etc/init.d/functions
+
+# Local functions and definitions
+teal_ll=/opt/teal/ibm/teal/connector/loadleveler.py
+PIDFILE=/var/lock/teal_ll.pid
+
+start() {
+	echo -n "Starting teal_ll: "
+	daemon --pidfile $PIDFILE $teal_ll --daemon
+	RC=$?
+	[ $RC -eq 0 ] && touch /var/lock/subsys/teal_ll
+	return $RC
+}	
+
+stop() {
+	echo -n "Shutting down teal_ll: "
+	killproc -p $PIDFILE $TEAL
+	RC=$?
+	[ $RC -eq 0 ] && rm -f /var/lock/subsys/teal_ll
+	return $RC
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+	status -p $PIDFILE $teal_ll
+	;;
+    restart|reload)
+    	stop
+	start
+	;;
+    condrestart)
+    	#<Restarts the service if it is already running. For example:>
+	[ -f /var/lock/subsys/<service> ] && restart || :
+	;;
+    *)
+	echo "Usage: teal_ll {start|stop|status|restart|reload}"
+	exit 1
+	;;
+esac
+exit $?

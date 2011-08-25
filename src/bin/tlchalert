@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2010,2011
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+# locale setup
+import os
+import gettext
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import sys
+from optparse import OptionParser
+
+from ibm.teal import Teal
+from ibm.teal import registry
+from ibm.teal.alert_mgr import AlertMgrError
+
+if __name__ == '__main__':
+    # Parse the command line        
+    parser = OptionParser()
+    parser.add_option('-i', '--id',
+                        type='long',
+                        action='store',
+                        dest='rec_id',
+                        default=-1,
+                        help=_('The record id of the alert. (use tllsalert)'))
+    parser.add_option('-s', '--state',
+                        type='choice',
+                        choices=['close'],
+                        default=None,
+                        action='store',
+                        dest='state',
+                        help=_('The new alert state. (close is the only valid value at this time.'))
+    
+    (options, args) = parser.parse_args()
+    
+    if options.rec_id < 0:
+        parser.error(_("Invalid id specified"))
+
+    if options.state is None:
+        parser.error(_('Must specify at least one attribute to change'))
+
+    # Prepare to use the database
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tlchalert.log', msgLevel='warning', data_only=True, commit_alerts=True)
+    
+    alert_mgr = registry.get_service(registry.SERVICE_ALERT_MGR)
+
+    if options.state == 'close':
+        try:
+            alert_mgr.close(options.rec_id)
+        except AlertMgrError, ame:
+            print >>sys.stderr, _('Cannot close alert. Reason: {0}').format(ame)
+            sys.exit(1)
+            
+    # All done, now shut down TEAL gracefully
+    t.shutdown()
+

@@ -1,0 +1,1889 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alertMetadata xmlns:tns="http://www.ibm.com/teal/alertmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/alertmeta ../../../../../../xml/alertmeta.xsd ">
+  <!-- Version: 20110411a; Source: errList.20110404.v2.csv -->
+
+  <alert id="BD000000">
+    <description>alert: INVMINOR:Invalid Minor Number</description>
+    <msg_template>Problem with network management reporting in frame $frame cage $cage (superNode $supernode drawer $drawer) (Invalid Minor Number)</msg_template>
+    <recommendation>Record the alert ID.
+Call IBM Service.
+Call your next level of support and inform them that there is a general network manager problem and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>I</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LNM</fru_list>
+  </alert>
+
+  <!--  Set when a Master broadcast is not received before the Counter Invalid Trigger goes off or if there is a Master ID conflict. -->
+  <alert id="BD304001">
+    <description>alert: GC_INVALID:Global Counter invalid: this counter went invalid</description>
+    <msg_template>Problem with global counter in frame $frame cage $cage (superNode $supernode drawer $drawer) (Global Counter invalid: this counter went invalid)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <!-- Per Torrent review -> do not call home; other errors will explain it. 
+
+Set when a broadcast is received with an ID matching the Local ID. -->
+  <alert id="BD304002">
+    <description>alert: GC_ID:Global Counter ID conflict</description>
+    <msg_template>Problem with global counter in frame $frame cage $cage superNode $supernode drawer $drawer (Global Counter ID conflict)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <!-- Do not call home -> other errors will explain it.
+
+Set when this counter assumes Mastership based on the takeover trigger. -->
+  <alert id="BD304003">
+    <description>alert: GC_MASTER:Global Counter Takeover: this counter has assumed mastership</description>
+    <msg_template>Problem with global counter in frame $frame cage $cage (superNode $supernode drawer $drawer) (Global Counter Takeover: this counter has assumed mastership)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <!-- Do not call home -> other errors will explain it
+This Backup/Master counter has been made stale by a higher Master ID
+received from a broadcast packet. -->
+  <alert id="BD304004">
+    <description>alert: GC_STALE:Global Counter Stale: counter has been made stale by higher ID</description>
+    <msg_template>Problem with global counter in frame $frame cage $cage (superNode $supernode drawer $drawer) (Global Counter Stale: counter has been made stale by higher ID)</msg_template>
+    <recommendation>Record the alert ID.
+Call your next level of support and inform them that there is a problem with a global counter and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>I</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFIGCTR</fru_list>
+  </alert>
+
+  <!-- Set whenever a new Local ID is created after being made stale and that ID will overflow the next time the Range Constant is added to it. The current local ID has not overflowed but will do so the next time it is made stale. -->
+  <alert id="BD304005">
+    <description>alert: GC_OVERFLOW:Global Counter ID overflow.</description>
+    <msg_template>Problem with global counter in frame $frame cage $cage (superNode $supernode drawer $drawer) (Global Counter ID overflow.)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD200006">
+    <description>alert: MRT_UE:Multicast Route Table Array Uncorrectable Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Route Table Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD200007">
+    <description>alert: MRT_CE:Multicast Route Table Array Correctable Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Route Table Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD200008">
+    <description>alert: MIA_UE:Multicast Input Array Uncorrectable Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Input Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD200009">
+    <description>alert: MOA_UE:Multicast Output Array Uncorrectable Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Output Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD20000A">
+    <description>alert: MIA_CE:Multicast Input Array Correctable Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Input Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD20000B">
+    <description>alert: MOA_CE:Multicast Output Array Correctable Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Output Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD20000C">
+    <description>alert: MC_PTO:Multicast Packet Timeout Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Packet Timeout Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD20000D">
+    <description>alert: MC_HWERR:Multicast Hardware Internal Error</description>
+    <msg_template>Problem with multicast route table in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Multicast Hardware Internal Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40000E">
+    <description>alert: HFI_RRFIFOLS_UE:HFI Ramp Route Request FIFO Uncorrectable Error; left side</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Route Request FIFO Uncorrectable Error; left side)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40000F">
+    <description>alert: HFI_RRFIFORS_UE:HFI Ramp Route Request FIFO Uncorrectable Error; right side</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Route Request FIFO Uncorrectable Error; right side)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400010">
+    <description>alert: HFI_SRT2_UE:HFI Ramp SRT2 Hub Route Table Uncorrectable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp SRT2 Hub Route Table Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400011">
+    <description>alert: HFI_SRT1SN_UE:HFI Ramp SRT1 Supernode Route Table Uncorrectable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp SRT1 Supernode Route Table Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400012">
+    <description>alert: HFI_SRT1IRVLS_UE:HFI Ramp SRT1 Indirect Route Validity Table UE; left side</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp SRT1 Indirect Route Validity Table UE; left side)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400013">
+    <description>alert: HFI_SRT1IRVRS_UE:HFI Ramp SRT1 Indirect Route Validity Table UE; right side</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp SRT1 Indirect Route Validity Table UE; right side)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400014">
+    <description>alert: HFI_SRTA_CE:HFI Ramp SRT Array Correctable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp SRT Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400015">
+    <description>alert: HFI_SRT_HWERR:HFI Ramp SRT Hardware Internal Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp SRT Hardware Internal Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400016">
+    <description>alert: HFI_DOWN:HFI Down</description>
+    <msg_template>HFI down in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Down)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400017">
+    <description>alert: HFI_INLL_PE:HFI Ramp Input Port Linked List Parity Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Input Port Linked List Parity Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400018">
+    <description>alert: HFI_INPAIFA_CE:HFI Ramp Input Port Async IF Array Correctable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Input Port Async IF Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400019">
+    <description>alert: HFI_INPA_CE:HFI Ramp Input Port Array Correctable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Input Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40001A">
+    <description>alert: HFI_INPAIFA_UE:HFI Ramp Input Port Array Uncorrectable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Input Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40001B">
+    <description>alert: HFI_OUTPAIFA_CE:HFI Ramp Output Port Async IF Array Correctable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Output Port Async IF Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40001C">
+    <description>alert: HFI_OUTPAIFA_UE:HFI Ramp Output Port Async IF Array Uncorrectable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Output Port Async IF Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40001D">
+    <description>alert: HFI_INPAIFA_UE:HFI Ramp Input Port Async IF Array Uncorrectable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Input Port Async IF Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40001E">
+    <description>alert: HFI_OUTPA_CE:HFI Ramp Output Port Array Correctable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Output Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD40001F">
+    <description>alert: HFI_OUTPA_UE:HFI Ramp Output Port Array Uncorrectable Error</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Output Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD400020">
+    <description>alert: HFI_SENDER_HANG:HFI Ramp Output Port Sender Hang</description>
+    <msg_template>Problem with HFI ramp in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (HFI Ramp Output Port Sender Hang)</msg_template>
+    <recommendation>Record the alert ID.
+Call your next level of support and inform them that there is a general network problem and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_NET</fru_list>
+  </alert>
+
+  <alert id="BD700022">
+    <description>alert: DLNK_PLANE_WC:D Link Port Lane Width Change</description>
+    <msg_template>D Link Port Lane Width Change between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Lane Width Change)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700024">
+    <description>alert: LRLNK_PLANE_WC:LR Link Port Lane Width Change</description>
+    <msg_template>LR Link Port Lane Width Change between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $remotePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_remotePort (LR Link Port Lane Width Change)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700025">
+    <description>alert: DLNK_DOWN:D Link Port Down</description>
+    <msg_template>D-link down between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Down)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700026">
+    <description>alert: LRLNK_DOWN:LR Link Port Down</description>
+    <msg_template>LR-link down between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $remotePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_remotePort (LR Link Port Down)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700027">
+    <description>alert: LLLNK_DOWN:Llocal Link Port Down</description>
+    <msg_template>LL-link down in frame $frame cage $cage (superNode $supernode drawer $drawer) (Llocal Link Port Down)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500028">
+    <description>alert: LLLNK_IPLL_PE:Llocal Port Input Port Linked List Parity Error</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Input Port Linked List Parity Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500029">
+    <description>alert: LLNK_IPAIFA_UE:Llocal Port Input Port Async IF Array Uncorrectable Error</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Input Port Async IF Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD50002A">
+    <description>alert: LLNK_IPAIFA_CE:Llocal Port Input Port Async IF Array Correctable Error</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Input Port Async IF Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD50002B">
+    <description>alert: LLNK_IPA_UE:Llocal Port Input Port Array Uncorrectable Error</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Input Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD50002C">
+    <description>alert: LLNK_IPA_CE:Llocal Port Input Port Array Correctable Error</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Input Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD50002D">
+    <description>alert: LLNK_OUTPA_UE:Llocal Port Output Port Array Uncorrectable Error</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Output Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD50002E">
+    <description>alert: LLNK_OUTPA_CE:Llocal Port Output Port Array Correctable Error</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Output Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD50002F">
+    <description>alert: LLNK_IPBUF_OF:Llocal Input Port Buffer Overflow</description>
+    <msg_template>LL-link problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Input Port Buffer Overflow)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500030">
+    <description>alert: LLNK_IPVC_HANG:Llocal Input Port VC Hang</description>
+    <msg_template>LL-link hang in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Input Port VC Hang)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500031">
+    <description>alert: LLNK_IPUNEX_FLIT:Llocal Input Port Unexpected Flit Type</description>
+    <msg_template>LL-link problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Input Port Unexpected Flit Type)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500032">
+    <description>alert: LLNK_IPVC_DEADLOCK:Llocal Input Port VC Deadlock Case</description>
+    <msg_template>LL-link deadlock in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Input Port VC Deadlock Case)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500033">
+    <description>alert: LLNK_OUTPCR_OF:Llocal Port Output Port Credit Overflow</description>
+    <msg_template>LL-link problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Output Port Credit Overflow)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500034">
+    <description>alert: LLNK_OUTPSENDER_HANG:Llocal Port Output Port Sender Hang</description>
+    <msg_template>LL-link hang in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Output Port Sender Hang)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD500035">
+    <description>alert: LLNK_OUTP_HWERR:Llocal Port Output Port Hard Failure</description>
+    <msg_template>LL-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $localPort (Llocal Port Output Port Hard Failure)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700036">
+    <description>alert: DLNK_INCRC:D Link Inbound Port CRC Threshold Exceeded</description>
+    <msg_template>D-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Inbound Port CRC Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700037">
+    <description>alert: DLNK_DROPFLIT:D Link Port Dropped Flit Threshold Exceeded</description>
+    <msg_template>D-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Dropped Flit Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700038">
+    <description>alert: DLNK_TOTREPLAY:D Link Port Total Replay Threshold Exceeded</description>
+    <msg_template>D-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Total Replay Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700039">
+    <description>alert: DLNK__FLITRETRY:D Link Port Same Flit Retry Threshold Exceeded</description>
+    <msg_template>D-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Same Flit Retry Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70003A">
+    <description>alert: DLNK_LINKUP_THRES:D Link Port Link Up Threshold Exceeded</description>
+    <msg_template>D-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Link Up Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70003B">
+    <description>alert: DLNK_INLL_PE:D Link Input Port Linked List Parity Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Input Port Linked List Parity Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70003C">
+    <description>alert: DLNK_PCR_OF:D Link Port Credit Overflow</description>
+    <msg_template>D-link overflow problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer) I19$neighbor_drawer hub $neighbor_hub port $neighbor_nodePort. (D Link Port Credit Overflow)</msg_template>
+    <recommendation>There is a problem with a D-Link that is likely to be a local issue.
+Record the alert ID and contact IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:local_torrent, FRU:nbr_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70003D">
+    <description>alert: DLNK_PBUF_OF:D Link Port Buffer Overflow</description>
+    <msg_template>D-link overflow problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer) I19$neighbor_drawer hub $neighbor_hub port $neighbor_nodePort. (D Link Port Buffer Overflow)</msg_template>
+    <recommendation>There is a problem with a D-Link that is likely to be a local issue.
+Record the alert ID and contact IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:local_torrent, FRU:nbr_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70003E">
+    <description>alert: DLNK_PVC_DEADLOCK:D Link Port VC Deadlock Case</description>
+    <msg_template>D-link deadlock between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port VC Deadlock Case)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70003F">
+    <description>alert: DLNK_PUNEX_FLIT:D Link Port Unexpected Flit Type</description>
+    <msg_template>D-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Unexpected Flit Type)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700040">
+    <description>alert: DLNK_SENDER_HANG:D Link Port Sender Hang</description>
+    <msg_template>D-link hang between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Sender Hang)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700041">
+    <description>alert: DLNK_IPVC_HANG:D Link Port Input Port VC Hang Timeout</description>
+    <msg_template>D-link hang between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (D Link Port Input Port VC Hang Timeout)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700042">
+    <description>alert: DLNK_IPAIFA_UE:D Link Input Port Async IF Array Uncorrectable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Input Port Async IF Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700043">
+    <description>alert: DLNK_IPAIFA_CE:D Link Input Port Async IF Array Correctable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Input Port Async IF Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700044">
+    <description>alert: DLNK_IPA_UE:D Link Input Port Array Uncorrectable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Input Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700045">
+    <description>alert: DLNK_IPA_CE:D Link Input Port Array Correctable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Input Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700046">
+    <description>alert: DLNK_OPA_UE:D Link Output Port Array Uncorrectable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Output Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700047">
+    <description>alert: DLNK_OPA_CE:D Link Output Port Array Correctable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Output Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700048">
+    <description>alert: DLNK_OPAIFA_UE:D Link Output Port Async IF Array Uncorrectable Err</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Output Port Async IF Array Uncorrectable Err)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700049">
+    <description>alert: DLNK_OPAIFA_CE:D Link Output Port Async IF Array Correctable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Output Port Async IF Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70004A">
+    <description>alert: DLNK_HWERR:D Link Port Hard Failure</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Link Port Hard Failure)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70004B">
+    <description>alert: DLNK_PRT1A_UE:D Port PRT1 Array Uncorrectable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Port PRT1 Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70004C">
+    <description>alert: DLNK_PRT1A_CE:D Port PRT1 Array Correctable Error</description>
+    <msg_template>D-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (D Port PRT1 Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70004D">
+    <description>alert: LRLNK_INCRC:LR Link Inbound Port CRC Threshold Exceeded</description>
+    <msg_template>LR-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Inbound Port CRC Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD70004E">
+    <description>alert: LRLNK_DROPFLIT:LR Link Port Dropped Flit Threshold Exceeded</description>
+    <msg_template>LR-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port Dropped Flit Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD70004F">
+    <description>alert: LRLNK_TOTREPLAY:LR Link Port Total Replay Threshold Exceeded</description>
+    <msg_template>LR-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port Total Replay Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700050">
+    <description>alert: LRLNK__FLITRETRY:LR Link Port Same Flit Retry Threshold Exceeded</description>
+    <msg_template>LR-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port Same Flit Retry Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700051">
+    <description>alert: LRLNK_LINKUP_THRES:LR Link Port Link Up Threshold Exceeded</description>
+    <msg_template>LR-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port Link Up Threshold Exceeded)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700052">
+    <description>alert: LRLNK_INLL_PE:LR Link Input Port Linked List Parity Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Input Port Linked List Parity Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700053">
+    <description>alert: LRLNK_PCR_OF:LR Link Port Credit Overflow</description>
+    <msg_template>LR-link overflow problem between frame $frame cage $cage (superNode $superNode drawer $drawer) hub $hub port $remotePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_superNode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_remotePort. (LR Link Port Credit Overflow)</msg_template>
+    <recommendation>There is an internal problem with a LR-Link port that is likely to be a local issue.
+Record the alert ID and contact IBM service.
+Log on to the Management Server.
+Replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:local_om1, SYM:HFI_OM:nbr_om1, FRU:local_torrent, FRU:nbr_torrent, SYM:HFI_OM:local_om2,SYM:HFI_OM:nbr_om2</fru_list>
+  </alert>
+
+  <alert id="BD700054">
+    <description>alert: LRLNK_PBUF_OF:LR Link Port Buffer Overflow</description>
+    <msg_template>LR-link overflow problem between frame $frame cage $cage (superNode $superNode drawer $drawer) hub $hub port $remotePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_superNode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_remotePort. (LR Link Port Buffer Overflow)</msg_template>
+    <recommendation>There is an internal problem with a LR-Link port that is likely to be a local issue.
+Record the alert ID and contact IBM service.
+Log on to the Management Server.
+Replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:local_om1, SYM:HFI_OM:nbr_om1, FRU:local_torrent, FRU:nbr_torrent, SYM:HFI_OM:local_om2,SYM:HFI_OM:nbr_om2</fru_list>
+  </alert>
+
+  <alert id="BD700055">
+    <description>alert: LRLNK_PVC_DEADLOCK:LR Link Port VC Deadlock Case</description>
+    <msg_template>LR-link deadlock between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port VC Deadlock Case)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700056">
+    <description>alert: LRLNK_PUNEX_FLIT:LR Link Port Unexpected Flit Type</description>
+    <msg_template>LR-link problem between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port Unexpected Flit Type)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700057">
+    <description>alert: LRLNK_SENDER_HANG:LR Link Port Sender Hang</description>
+    <msg_template>LR-link hang between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port Sender Hang)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700058">
+    <description>alert: LRLNK_IPVC_HANG:LR Link Port Input Port VC Hang Timeout</description>
+    <msg_template>LR-link hang between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (LR Link Port Input Port VC Hang Timeout)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD700059">
+    <description>alert: LRLNK_IPAIFA_UE:LR Link Input Port Async IF Array Uncorrectable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Input Port Async IF Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70005A">
+    <description>alert: LRLNK_IPAIFA_CE:LR Link Input Port Async IF Array Correctable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Input Port Async IF Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70005B">
+    <description>alert: LRLNK_IPA_UE:LR Link Input Port Array Uncorrectable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Input Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70005C">
+    <description>alert: LRLNK_IPA_CE:LR Link Input Port Array Correctable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Input Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70005D">
+    <description>alert: LRLNK_OPA_UE:LR Link Output Port Array Uncorrectable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Output Port Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70005E">
+    <description>alert: LRLNK_OPA_CE:LR Link Output Port Array Correctable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Output Port Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD70005F">
+    <description>alert: LRLNK_OPAIFA_UE:LR Link Output Port Async IF Array Uncorrectable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Output Port Async IF Array Uncorrectable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700060">
+    <description>alert: LRLNK_OPAIFA_CE:LR Link Output Port Async IF Array Correctable Error</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Output Port Async IF Array Correctable Error)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD700061">
+    <description>alert: LRLNK_HWERR:LR Link Port Hard Failure</description>
+    <msg_template>LR-link internal problem in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (LR Link Port Hard Failure)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BD880074">
+    <description>alert: OMTX_TEMPHIGH:TX optical module Temp High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX optical module Temp High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880075">
+    <description>alert: OMTX_TEMPLOW:TX optical module Temp Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX optical module Temp Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880076">
+    <description>alert: OMTX_33LOW:TX optical module Vcc3.3 High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX optical module Vcc3.3 High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880077">
+    <description>alert: OMTX_33HIGH:TX optical module Vcc3.3 Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX optical module Vcc3.3 Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880078">
+    <description>alert: OMTX_25LOW:TX optical module Vcc2.5 High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX optical module Vcc2.5 High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880079">
+    <description>alert: OMTX_25HIGH:TX optical module Vcc2.5 Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX optical module Vcc2.5 Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD88007A">
+    <description>alert: OMRX_TEMPHIGH:RX optical module Temp High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX optical module Temp High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD88007B">
+    <description>alert: OMRX_TEMPLOW:RX optical module Temp Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX optical module Temp Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD88007C">
+    <description>alert: OMRX_33LOW:RX optical module Vcc3.3 High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX optical module Vcc3.3 High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD88007D">
+    <description>alert: OMRX_33HIGH:RX optical module Vcc3.3 Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX optical module Vcc3.3 Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD88007E">
+    <description>alert: OMRX_25LOW:RX optical module Vcc2.5 High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX optical module Vcc2.5 High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD88007F">
+    <description>alert: OMRX_25HIGH:RX optical module Vcc2.5 Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX optical module Vcc2.5 Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880180">
+    <description>alert: OMTX_LOS:TX Loss of Signal</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX Loss of Signal)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880181">
+    <description>alert: OMTX_FAULT:TX Fault</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX Fault)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880182">
+    <description>alert: OMTX_BCHIGH:TX Bias Current High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX Bias Current High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880183">
+    <description>alert: OMTX_LOPLOW:TX LOP Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX LOP Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880184">
+    <description>alert: OMTX_BCLOW:TX Bias Current Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX Bias Current Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880185">
+    <description>alert: OMTX_LOPHIGH:TX LOP High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (TX LOP High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880186">
+    <description>alert: OMRX_LOS:RX LOS</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX LOS)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880187">
+    <description>alert: OMRX_LIPLOW:RX Light Input Power Low</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX Light Input Power Low)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <alert id="BD880188">
+    <description>alert: OMRX_LIPHIGH:RX Light Input Power High</description>
+    <msg_template>Optical Module event in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort (RX Light Input Power High)</msg_template>
+    <recommendation>There is a problem with an optical module.
+Record the alert ID.
+Call IBM Service.
+Replace the the local reporting FRU according the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:local_om1, SYM:local_om2</fru_list>
+  </alert>
+
+  <!-- Reported in Alert listener -->
+  <alert id="BD0000FF">
+    <description>alert: NOSFP:Cannot connect to primary or backup HMC</description>
+    <msg_template>Cannot connect to the the primary nor the backup HMC for reporting serviceable events. (Cannot connect to primary or backup HMC)</msg_template>
+    <recommendation>There is a problem communicating with both the primary and backup HMC for logging network serviceable events.
+Call IBM Service and report the alert ID.
+Check the network connections between the EMS and HMCs.
+If the network problem cannot be isolated and repaired, contact the next level of support.</recommendation>
+    <severity>E</severity>
+    <urgency>I</urgency>
+    <call_home>N</call_home>
+    <cust_notification>N</cust_notification>
+    <fru_list>ISO:HFINSFP</fru_list>
+  </alert>
+
+  <!-- Reported by CNM -->
+  <alert id="BD000010">
+    <description>alert: NONBR:No Neighbor Found</description>
+    <msg_template>ISNM cannot find a neighbor for an event that should have one. (No Neighbor Found)</msg_template>
+    <recommendation>A neighbor was not found for an event that requires one.
+Call IBM Service and report the alert ID.
+Determine the neighbor, and check for events reported by it, because event analysis would not have been able to relate events on the neighbor to this event; this can result in reporting events that are not serviceable.</recommendation>
+    <severity>E</severity>
+    <urgency>I</urgency>
+    <call_home>N</call_home>
+    <cust_notification>N</cust_notification>
+    <fru_list>ISO:HFINNBR</fru_list>
+  </alert>
+
+  <!-- TEAL found a problem with CNM's location format -->
+  <alert id="BD00FFF0">
+    <description>alert: ON_ERROR_LOC:on_error - location</description>
+    <msg_template>ISNM has reported an invalid location to TEAL. (on_error - location)</msg_template>
+    <recommendation>Record the alert ID, and call your next level of support.</recommendation>
+    <severity>E</severity>
+    <urgency>I</urgency>
+    <call_home>N</call_home>
+    <cust_notification>N</cust_notification>
+  </alert>
+
+  <alert id="BDFF0040">
+    <description>alert: FAULTY_OPTICAL_MODULE:Faulty Optical Module</description>
+    <msg_template>Faulty optical module in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Faulty Optical Module)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM service.
+Replace the FRU according to the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:common_torrent</fru_list>
+  </alert>
+
+  <alert id="BDFF0050">
+    <description>alert: FAULTY_HUB:Faulty Network Hub</description>
+    <msg_template>Faulty hub in frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub (Faulty Network Hub)</msg_template>
+    <recommendation>There is a problem with a hub chip.
+Record the alert ID.
+Call IBM service.
+Replace the FRU according to the FRU list.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>FRU:common_torrent</fru_list>
+  </alert>
+
+  <!-- In a drawer, 2 Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <alert id="BDFF0055">
+    <description>alert: FAULTY_LRCABASSY_PARTIAL:Faulty LR-link cable assembly - partial</description>
+    <msg_template>Faulty LR link cable assembly handle in frame $frame cage $cage (superNode $supernode drawer $drawer) (Faulty LR-link cable assembly - partial)</msg_template>
+    <recommendation>There is a problem with an HFI port or group of HFI ports associated with the LR Link Assembly. The problem may be with a particular handle in the assembly.
+Record the  alert ID.
+Call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends. If the port is for LR-links this can be very disruptive to the network for the associated Supernode.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>SYM:HFI_LRA:common_port</fru_list>
+  </alert>
+
+  <!-- In a drawer, all Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <alert id="BDFF0056">
+    <description>alert: FAULTY_LRCABASSY:Faulty LR-link cable assembly - full</description>
+    <msg_template>Faulty or removed LR link cable assembly in frame $frame $cage (superNode $supernode drawer $drawer) (Faulty LR-link cable assembly - full)</msg_template>
+    <recommendation>There is a problem with an HFI port or group of HFI ports associated with the LR Link Assembly.
+Record the  alert ID.
+Call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends. If the port is for LR-links this can be very disruptive to the network for the associated Supernode.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>SYM:HFI_LRA:common_port</fru_list>
+  </alert>
+
+  <!-- In a drawer, all Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <alert id="BDFF0057">
+    <description>alert: FAULTY_LRCABASSY2:Faulty LR-link cable assembly - 2 drawer super node</description>
+    <msg_template>Faulty or removed LR link cable assembly in frame $frame cage $cage (superNode $supernode drawer $drawer) (Faulty LR-link cable assembly - 2 drawer super node)</msg_template>
+    <recommendation>There is a problem with an HFI port or group of HFI ports associated with the LR Link Assembly.
+Record the  alert ID.
+Call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends. If the port is for LR-links this can be very disruptive to the network for the associated Supernode.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>SYM:HFI_LRA:common_port</fru_list>
+  </alert>
+
+  <!-- In a drawer, all Hubs' optical LR-link connections are grouped into one part of an assembly. -->
+  <alert id="BDFF0058">
+    <description>alert: FAULTY_LRCABASSY3:Faulty LR-link cable assembly - 3 drawer super node</description>
+    <msg_template>Faulty or removed LR link cable assembly in frame $frame cage $cage (superNode $supernode drawer $drawer) (Faulty LR-link cable assembly - 3 drawer super node)</msg_template>
+    <recommendation>There is a problem with an HFI port or group of HFI ports associated with the LR Link Assembly.
+Record the  alert ID.
+Call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends. If the port is for LR-links this can be very disruptive to the network for the associated Supernode.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>SYM:HFI_LRA:common_port</fru_list>
+  </alert>
+
+  <alert id="BDFF0060">
+    <description>alert: SUSPECT_DRAWER:Suspicious Drawer</description>
+    <msg_template>Drawer level event occurred on frame $frame cage $cage (superNode $superNode drawer $drawer). (Suspicious Drawer)</msg_template>
+    <recommendation>A large number of HFI network links attached to a drawer are down without an accompanying power event.
+Call IBM Service and report the alert ID.
+If a drawer lost power, then this is a secondary effect.</recommendation>
+    <severity>W</severity>
+    <urgency>O</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_IDR</fru_list>
+  </alert>
+
+  <alert id="BDFF0061">
+    <description>alert: SUSPECT_SUPERNODE:Suspicious SuperNode</description>
+    <msg_template>SuperNode level event occurred on frame $frame superNode $supernode. Multiple drawers in a supernode are impacted. (Suspicious SuperNode)</msg_template>
+    <recommendation>A large number of HFI network links attached to a superNode are down without an accompanying power event.
+Call IBM Service and report the alert ID.
+If a superNode lost power, then this is a secondary effect.</recommendation>
+    <severity>W</severity>
+    <urgency>O</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_ISN</fru_list>
+  </alert>
+
+  <alert id="BDFF0062">
+    <description>alert: SUSPECT_FRAME:Suspicious Frame</description>
+    <msg_template>Frame level event occurred in frame $frame. Multiple CECs are impacted. (Suspicious Frame)</msg_template>
+    <recommendation>A large number of HFI network links in a Frame are down without an accompanying power event.
+Call IBM Service and report the alert ID.
+If a frame lost power, then this is a secondary effect.</recommendation>
+    <severity>W</severity>
+    <urgency>O</urgency>
+    <call_home>N</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_SFR</fru_list>
+  </alert>
+
+  <alert id="BDFF0070">
+    <description>alert: NETWORKFAULT:Network Fault</description>
+    <msg_template>HFI Network Fault (Network Fault)</msg_template>
+    <recommendation>Record the alert ID.
+Call your next level of support and inform them that there is a general network problem and give them the alert ID.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_NET</fru_list>
+  </alert>
+
+  <alert id="BDFF0080">
+    <description>alert: BOUNCINGDLNK:Bouncing D-Link</description>
+    <msg_template>D-link bouncing between frame $frame cage $cage (superNode $supernode drawer $drawer) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (Bouncing D-Link)</msg_template>
+    <recommendation>There is a problem with a D-Link.
+Record the alert ID and call IBM Service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_DDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, FRU:nbr_torrent,FRU:local_torrent</fru_list>
+  </alert>
+
+  <alert id="BDFF0082">
+    <description>alert: BOUNCINGLRLNK:Bouncing LR-Link</description>
+    <msg_template>LR-link bouncing between frame $frame cage $cage (superNode $supernode drawer $drawer ) hub $hub port $nodePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_nodePort (Bouncing LR-Link)</msg_template>
+    <recommendation>There is a problem with an LR-Link.
+Record the alert ID and call IBM service.
+Log on to the Management Server.
+To isolate to the proper FRU, run Link Diags and perform the actions that it recommends.
+If no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.</recommendation>
+    <severity>E</severity>
+    <urgency>S</urgency>
+    <call_home>Y</call_home>
+    <cust_notification>Y</cust_notification>
+    <fru_list>ISO:HFI_LDG, SYM:HFI_CAB:nbr_port, SYM:CBLCONT:local_port, SYM:HFI_OM:nbr_om1, SYM:HFI_OM:local_om1, FRU:nbr_torrent,FRU:local_torrent, SYM:HFI_OM:nbr_om2,SYM:HFI_OM:local_om2</fru_list>
+  </alert>
+</alertMetadata>

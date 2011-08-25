@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
+<pool_control>
+  <initial_duration default="300" minimum="1" maximum="1200"/>
+</pool_control>
+<events>
+    <event id="BE304001" name="GC_INVALID"
+         min_time_in_pool="30" pool_extension_time="0"/>
+    <event id="BE304003" name="GC_MASTER"
+         min_time_in_pool="30" pool_extension_time="0"/>
+    <event id="BE304004" name="GC_STALE"
+         min_time_in_pool="30" pool_extension_time="0"/>
+    <event id="BE304005" name="GC_OVERFLOW"
+         min_time_in_pool="30" pool_extension_time="0"/>
+    <event id="BE200006" name="MRT_UE"
+         min_time_in_pool="30" pool_extension_time="0"/>
+    <event id="BE200007" name="MRT_CE"
+         min_time_in_pool="30" pool_extension_time="0"/>
+</events>
+<constants>
+   <constant name="DLNKCTRLIN" type="set_of_event_ids"
+        value="BE70003D, BE700041"/>
+    <constant name="DLNKCTRLOUT" type="set_of_event_ids"
+        value="BE70003C, BE70003E"/>
+    <constant name="DLNKDERRIN" type="set_of_event_ids"
+        value="BE700036, BE70003F"/>
+    <constant name="DLNK_ERRS" type="set_of_event_ids"
+        value="DLNKCTRLIN, DLNKCTRLOUT, DLINKDOWN, DLNKFAULTIN DLNKDERRIN DLNKDERROUT"/>
+   
+</constants>
+<analyze>
+    <rule name="Rule: MRT_CE">
+      <description>Rule: Multicast Route Table Array Correctable Error; 0xBE200007:MRT_CE;</description>
+      <condition>
+        <description>Condition: equals 0xBE200007:MRT_CE </description>
+        <event_equals id="BE200007"/>
+      </condition>
+      <action>
+        <description>Action: 0xBE200007:MRT_CE</description>
+        <create_alert id="BE200007"/>
+      </action>
+    </rule>
+    <rule name="Rule: MRT_UE">
+      <description>Rule: Multicast Route Table Array Uncorrectable Error; 0xBE200006:MRT_UE;</description>
+      <condition>
+        <description>Condition: equals 0xBE200006:MRT_UE </description>
+        <event_equals id="BE200006"/>
+      </condition>
+      <action>
+        <description>Action: 0xBE200006:MRT_UE</description>
+        <suppress_events ids="MRT_CE" scope="H:hub"/>
+        <create_alert id="BE200006"/>
+      </action>
+    </rule>
+    <rule name="Rule: GC_OVERFLOW">
+      <description>Rule: Global Counter ID overflow.; 0xBE304005:GC_OVERFLOW;</description>
+      <condition>
+        <description>Condition: equals 0xBE304005:GC_OVERFLOW </description>
+        <event_equals id="BE304005"/>
+      </condition>
+      <action>
+        <description>Action: 0xBE304005:GC_OVERFLOW</description>
+        <suppress_events ids="GC_STALE, GC_INVALID" scope="H:hub"/>
+        <suppress_events ids="GC_MASTER" scope="Cluster"/>
+        <create_alert id="BE304005"/>
+      </action>
+    </rule>
+    <rule name="Rule: DLNK_DOWN">
+      <description>Rule: D Link Port Down; xBE700025:DLNK_DOWN;</description>
+      <condition>
+        <description>Condition: equals 0xBE700025:DLNK_DOWN</description>
+        <event_equals id="BE700025"/>
+      </condition>
+      <action>
+        <description>Action: 0xBE700025:DLNK_DOWN</description>
+        <suppress_events ids="DLNKDERRIN, DLNKDERROUT" scope="H:nodePort"/>
+        <suppress_events ids="DLNKDERRIN, DLNKDERROUT" scope="H:nodePort" 
+                         location="GEAR[last_condition_event.ext.neighbor]"/>
+        <create_alert id="BE700025"/>
+      </action>
+    </rule>
+    <rule name="Rule: CEC_OVERTEMP">
+      <description>Rule: CEC power dropped due to MCM Over Temperature; 0xBE609001:CEC_OVERTEMP;</description>
+      <condition>
+        <description>Condition: equals 0xBE200006:MRT_UE </description>
+        <event_equals id="BE6090001"/>
+      </condition>
+      <action>
+        <description>Action: 0xBE609001:CEC_OVERTEMP</description>
+        <suppress_events ids="MRT_CE" scope="H:Drawer"/>
+      </action>
+    </rule>
+    <rule name="Faulty Network Hub">
+      <description>Create: Faulty Network Hub; 0xBEFF0050; FAULTY_HUB </description>
+      <condition>
+        <description>Condition to create alert for compound event 0xBEFF0050:FAULTY_HUB</description>
+        <or>
+            <any_events num="4" ids="DLINKERRS" unique_loc="true" scope="H:hub"
+                        locations="GEAR[cur_event.src_loc'], GEAR[cur_event.ext.neightbor]" 
+                        min_per_loc="2"/>
+            <any_events num="10" ids="DLINKERRS" unique_loc="true" scope="H:hub"
+                        locations="GEAR[cur_event.src_loc], GEAR[cur_event.ext.neightbor]" 
+                        min_per_loc="10"/>
+ 			<any_events num="3" ids="LLLNKERRS" unique_loc="true" scope="H:hub"/>
+			<any_events num="3" ids="LLLNKERRS" unique_loc="true" scope="H:hub" 
+			            location="GEAR[cur_event.ext.neighbor]"/>
+      </or>
+      </condition>
+      <action>
+        <description>Create Alert with eventID 0xBEFF0050:FAULTY_HUB</description>
+        <create_alert id="BEFF0050"/>
+      </action>
+    </rule>
+    <rule name="Faulty Network Hub">
+      <description>Create: Faulty Network Hub; 0xBEFF0040; FAULTY_OPTICAL_MODULE </description>
+      <condition>
+        <description>Condition to create alert for compound event 0xBEFF0040:FAULTY_OPTICAL_MODULE
+        </description>
+        <or>
+			<any_events num="2" ids="LRLNKERRS" unique_id="false" scope="H:hub"
+			instance_loc_comp="H:localPort"
+			instances="[0,1] or [2,3] or [4,5] or [6,7] or [8,9] or [10,11] or [12,13] 
+			           or [14,15] or [16,17] or [18,19] or [20,21] or [22,23]" 
+			unique_locations="true"/> 
+            <any_events num="2" ids="LRLNKERRS" unique_id="false" scope="H:hub"
+            instance_loc_comp="H:localPort"
+            instances="[0,1] or [2,3] or [4,5] or [6,7] or [8,9] or [10,11] or [12,13] 
+                       or [14,15] or [16,17] or [18,19] or [20,21] or [22,23]" 
+            unique_locations="true" locations="GEAR[cur_event.ext.neighbor]"/> 
+        </or>
+    </condition>
+    <action>
+        <create_alert id="BEFF0040"/>
+    </action>
+    </rule>
+</analyze>
+<pool_closure>
+    <rule name="Make each unsuppressed event into an alert">
+        <condition>
+           <true/>
+        </condition>
+        <action>
+           <suppress_events events="GEAR[condition_events]"/>
+           <create_alert id="Alert US"/>
+        </action>
+    </rule>
+</pool_closure>
+</gear_ruleset>

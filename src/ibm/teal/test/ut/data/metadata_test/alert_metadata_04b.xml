@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<tns:alertMetadata xmlns:tns="http://www.ibm.com/teal/alertmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/alertmeta ../../../../../../xml/alertmeta.xsd ">
+  <tns:alert id="Alert01">
+    <tns:msg_template>This is Alert 01</tns:msg_template>
+    <tns:recommendation>Recommend doing something</tns:recommendation>
+    <tns:urgency>N</tns:urgency>
+    <tns:severity>W</tns:severity>
+    <tns:call_home>N</tns:call_home>
+    <tns:cust_notification>N</tns:cust_notification>
+    <tns:fru_class>fru_class</tns:fru_class>
+    <tns:fru_list>fru_list1, fru_list2</tns:fru_list>
+  </tns:alert>
+</tns:alertMetadata>

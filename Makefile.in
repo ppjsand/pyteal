@@ -1,0 +1,101 @@
+srcdir=@srcdir@/src
+prefix=@prefix@
+libdir=@libdir@
+
+VPATH=$(srcdir)/cpp/common:$(srcdir)/cpp/include:$(srcdir)/cpp/connector/isnm:$(srcdir)/ibm/teal/monitor
+
+CPPFLAGS=$(addprefix -I,$(subst :, ,$(VPATH))) 
+CFLAGS+=-fPIC -g -Wno-write-strings
+CXXFLAGS+=$(CFLAGS)
+LDLIBS=-ldl -pthread
+PYTHON_CPPFLAGS=$(CPPFLAGS) -I/usr/include/python2.6
+PYTHON_CXXFLAGS=$(CXXFLAGS)
+PYTHON_LDLIBS=-lpython2.6
+
+COMMON_LIBS = libteal_common.so
+ISNM_LIBS = libteal_isnm.so
+
+TEAL_MODULES = teal_semaphore.so
+TEAL_LIBS = $(COMMON_LIBS) $(ISNM_LIBS)
+
+LIBTEAL_COMMON_OBJ=DbModule.o DbInterface.o DbEvent.o DbCommonBaseEvent.o DbGpfsInfo.o Logging.o Semaphore.o RmcNotifier.o teal_connect_api.o teal_helpers.o teal_common_info.o
+
+LIBTEAL_ISNM_OBJ=teal_isnm_connect.o DbIsnmEvent.o
+
+TEAL_SEMAPHORE_OBJ=teal_semaphore.pyo
+
+all: $(TEAL_MODULES) $(TEAL_LIBS) $(TEAL_MODULES)
+
+clean:
+	$(RM) $(TEAL_MODULES) $(TEAL_LIBS) $(LIBTEAL_COMMON_OBJ) $(LIBTEAL_ISNM_OBJ) $(TEAL_SEMAPHORE_OBJ) teal_common_info.c libteal_common.so.1 libteal_common.so.1.0
+
+libteal_common.so: $(LIBTEAL_COMMON_OBJ)
+	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@.1 $(LIBTEAL_COMMON_OBJ) -o $@.1.0 $(LDLIBS)
+	ln -sf $@.1.0 $@.1
+	ln -sf $@.1 $@
+
+libteal_isnm.so: $(LIBTEAL_ISNM_OBJ) libteal_common.so
+	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@.1 $(LIBTEAL_ISNM_OBJ) -o $@.1.0 $(LDLIBS) -L. -lteal_common
+	ln -sf $@.1.0 $@.1
+	ln -sf $@.1 $@
+
+teal_semaphore.so: $(TEAL_SEMAPHORE_OBJ) libteal_common.so
+	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@ $(TEAL_SEMAPHORE_OBJ) -o $@ $(PYTHON_LDLIBS) -L. -lteal_common
+
+teal_common_info.c::
+	@echo "char teal_common_build_name[] = \"\$$NAME: $(TEAL_RPM_NAME)  "`date +%c`" "`whoami`" \$$\";" > teal_common_info.c
+
+%.pyo: %.cc
+	$(CXX) $(PYTHON_CXXFLAGS) $(PYTHON_CPPFLAGS) -o $@ -c $<
+
+install:
+	mkdir -p $(prefix)/lib
+	cp -d $(wildcard $(addsuffix *,$(TEAL_LIBS))) $(prefix)/lib
+
+	#mkdir -p $(prefix)/data
+	cp -r @srcdir@/src/data $(prefix)
+
+	#mkdir -p $(prefix)/etc
+	cp -r @srcdir@/src/etc $(prefix)
+
+	#mkdir -p $(prefix)/locale
+	cp -r @srcdir@/src/locale $(prefix)
+
+	#mkdir -p $(prefix)/bin
+	cp -r @srcdir@/src/bin $(prefix)
+	chmod +x $(prefix)/bin/tl*
+
+	#mkdir -p $(prefix)/sbin
+	cp -r @srcdir@/src/sbin $(prefix)
+	chmod +x $(prefix)/sbin/tl*
+
+	mkdir -p $(prefix)/ibm
+	cp @srcdir@/src/ibm/*.py $(prefix)/ibm
+	cp -r @srcdir@/src/ibm/isnm $(prefix)/ibm
+	cp -r @srcdir@/src/ibm/sfp $(prefix)/ibm
+
+	mkdir -p $(prefix)/ibm/teal
+	cp @srcdir@/src/ibm/teal/*.py $(prefix)/ibm/teal
+	cp -r @srcdir@/src/ibm/teal/analyzer $(prefix)/ibm/teal
+	cp -r @srcdir@/src/ibm/teal/connector $(prefix)/ibm/teal
+	cp -r @srcdir@/src/ibm/teal/database $(prefix)/ibm/teal
+	cp -r @srcdir@/src/ibm/teal/filter $(prefix)/ibm/teal
+	cp -r @srcdir@/src/ibm/teal/monitor $(prefix)/ibm/teal
+	cp -r @srcdir@/src/ibm/teal/listener $(prefix)/ibm/teal
+	cp -r @srcdir@/src/ibm/teal/util $(prefix)/ibm/teal
+
+	cp teal_semaphore.so $(prefix)/ibm/teal/monitor
+
+	mkdir -p $(prefix)/log
+	echo 'export TEAL_ROOT_DIR=$(prefix)' > $(prefix)/bin/tealenv
+	echo 'export TEAL_CONF_DIR=$$TEAL_ROOT_DIR/etc' >> $(prefix)/bin/tealenv
+	echo 'export TEAL_LOG_DIR=$$TEAL_ROOT_DIR/log' >> $(prefix)/bin/tealenv
+	echo 'export TEAL_DATA_DIR=$$TEAL_ROOT_DIR/ibm/teal/test/ut/data' >> $(prefix)/bin/tealenv
+	echo 'export PYTHONPATH=$$TEAL_ROOT_DIR' >> $(prefix)/bin/tealenv
+	echo 'export LD_LIBRARY_PATH=$$TEAL_ROOT_DIR/lib' >> $(prefix)/bin/tealenv
+	echo 'export TEAL_TEST_PYODBC_CONFIG="{driver:DB2,db_type:DB2,dbname:tealdb0,user_id:db2inst1,pwd:xxxxxxxx}"' >> $(prefix)/bin/tealenv
+
+install_test: 
+	mkdir -p $(prefix)/ibm/teal/test
+	cp -r @srcdir@/src/ibm/teal/test $(prefix)/ibm/teal
+

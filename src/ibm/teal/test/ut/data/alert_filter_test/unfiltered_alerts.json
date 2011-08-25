@@ -1,0 +1,76 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "AlertCNM", 
+        "creation_time": "2011-01-28 18:34:49.742815", 
+        "event_loc": "MB-PR2", 
+        "event_loc_type": "C", 
+        "raw_data": "L1 L2 L3", 
+        "reason": "This is a CNM alert", 
+        "rec_id": 1, 
+        "recommendation": "do stuff", 
+        "severity": "I", 
+        "src_name": "Analyzer1", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "AlertSto", 
+        "creation_time": "2011-01-28 18:34:49.763352", 
+        "event_loc": "MB-PR2", 
+        "event_loc_type": "C", 
+        "raw_data": "X", 
+        "reason": "This is an alert that should be stopped", 
+        "rec_id": 2, 
+        "recommendation": "do stuff", 
+        "severity": "W", 
+        "src_name": "Analyzer2", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "3": {
+      "data": {
+        "alert_id": "Alert 02", 
+        "creation_time": "2011-01-28 18:34:49.792549", 
+        "event_loc": "MB-PR2", 
+        "event_loc_type": "C", 
+        "raw_data": "L1", 
+        "reason": "This is an alert 02", 
+        "rec_id": 3, 
+        "recommendation": "do stuff", 
+        "severity": "W", 
+        "src_name": "Analyzer3", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "4": {
+      "data": {
+        "alert_id": "AlertLL", 
+        "creation_time": "2011-01-28 18:34:49.879930", 
+        "event_loc": "MB-PR2", 
+        "event_loc_type": "C", 
+        "raw_data": "L1", 
+        "reason": "This is a LL alert", 
+        "rec_id": 7, 
+        "recommendation": "do stuff", 
+        "severity": "I", 
+        "src_name": "Analyzer1", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]
