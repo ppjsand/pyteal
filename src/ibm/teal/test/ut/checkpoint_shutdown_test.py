@@ -37,12 +37,16 @@ class TealCheckpointShutdownTest(TealTestCase):
         self.tllsckpt = os.path.join(teal_path,'bin/tllsckpt')
         t.shutdown()
         
+        self.prepare_db()
+        
         # Need to have checkpointing to DB off so this doesn't interfer with the other instance of TEAL's checkpoints       
         self.teal = Teal('data/checkpoint_test/noop_monitor.conf','stderr',msgLevel='info', commit_checkpoints=False)
         self.db = registry.get_service(registry.SERVICE_DB_INTERFACE)
         self.query = self.db.gen_select(
                      [EVENT_CPF_CHKPT_ID, EVENT_CPF_NAME, EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA],
                      db_interface.TABLE_CHECKPOINT)
+        self.query_mon_data = self.db.gen_select([EVENT_CPF_DATA], db_interface.TABLE_CHECKPOINT, 
+                                                 where="${0} = 'monitor_event_queue'".format(EVENT_CPF_NAME), where_fields=[EVENT_CPF_NAME])
         self.truncate = self.db.gen_truncate(db_interface.TABLE_CHECKPOINT)
 
     def tearDown(self):
@@ -101,13 +105,26 @@ class TealCheckpointShutdownTest(TealTestCase):
                                        + '{"status": "S", "data": "recovery None", "name": "monitor_event_queue", "event_recid": null}'
                                        + '{"status": " ", "data": "", "name": "MAX_event_rec_id", "event_recid": null}', exp_err_msg='', print_out=False)
         self.assertCmdWorks([self.tllsckpt, '-f', 'csv'], exp_good_msg='Demo1Analyzer,S,,monitor_event_queue,S,,recovery NoneMAX_event_rec_id, ,,', exp_err_msg='', print_out=False)
+        cnxn.close()
         return 
     
     def testControlledShutdownDirty(self):
-        # Start teal and let it shutdown badly
+        # Start TEAL and let it shutdown badly
         tealp = Process(target=run_teal)
         tealp.start()
-        time.sleep(15)
+        try_times = 11
+        time.sleep(10)
+        while try_times > 0:
+            time.sleep(1)
+            cnxn = self.db.get_connection()
+            cursor = cnxn.cursor()
+            cursor.execute(self.query_mon_data)
+            row = cursor.fetchone()
+            if row is not None:
+                try_times = 0
+            else:
+                try_times -= 1
+            #cnxn.close()  <<<< uncommenting changing the timing enough that it stops working!
         tealp.terminate()
         tealp.join()
         
@@ -125,7 +142,7 @@ class TealCheckpointShutdownTest(TealTestCase):
         self.assertEqual(row[1],'monitor_event_queue')
         self.assertEqual(row[2],'R')
         self.assertEqual(row[3], None)
-        self.assertEqual(row[4], 'recovery None')
+        self.assertEqual(row[4], 'recovery None')  
         row = cursor.fetchone()
         self.assertEqual(row, None)
         self.assertCmdWorks([self.tllsckpt], exp_good_msg='Demo1Analyzer        R  Nonemonitor_event_queue  R  NoneMAX_event_rec_id        None', exp_err_msg='', print_out=False)
@@ -151,6 +168,7 @@ class TealCheckpointShutdownTest(TealTestCase):
                                        + '{"status": "R", "data": "recovery None", "name": "monitor_event_queue", "event_recid": null}'
                                        + '{"status": " ", "data": "", "name": "MAX_event_rec_id", "event_recid": null}', exp_err_msg='', print_out=False)
         self.assertCmdWorks([self.tllsckpt, '-f', 'csv'], exp_good_msg='Demo1Analyzer,R,,monitor_event_queue,R,,recovery NoneMAX_event_rec_id, ,,', exp_err_msg='', print_out=False)
+        cnxn.close()
         return 
 
     

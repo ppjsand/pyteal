@@ -1,0 +1,75 @@
+
+###############################################################################
+# Global Variables
+###############################################################################
+
+RPM_BUILD_ROOT ?= $(HOME)/teal
+CONNECTOR = @CONNECTOR@
+
+srcdir=@srcdir@/src
+iprefix=/opt/teal
+libdir=@libdir@
+
+XCAT_INSTALL_DIR=$(RPM_BUILD_ROOT)/install/postscripts/rmcmon
+XCAT_INSTALL_SRC_DIR=perl/xCAT_monitoring/rmc
+
+###############################################################################
+# Specific Component Additions
+###############################################################################
+
+ifeq ($(CONNECTOR), none)
+include teal-base.mk
+endif
+
+ifeq ($(CONNECTOR),sfp)
+include teal-sfp.mk
+endif
+
+ifeq ($(CONNECTOR),ll)
+include teal-ll.mk
+endif
+
+ifeq ($(CONNECTOR),pnsd)
+include teal-pnsd.mk
+endif
+
+ifeq ($(CONNECTOR),isnm)
+include teal-isnm.mk
+endif
+
+ifeq ($(CONNECTOR),test)
+include teal-test.mk
+endif
+
+###############################################################################
+# Build Targets
+###############################################################################
+
+.PHONY: all install uninstall clean
+
+all: $(TEAL_BUILD_COMP)
+	@echo "Build complete"
+
+clean: $(TEAL_CLEAN_COMP)
+	@echo "Cleanup compete"
+
+install: $(TEAL_INSTALL_COMP)
+	@echo "Installation complete"
+
+uninstall: $(TEAL_UNINSTALL_COMP)
+	@echo "Uninstall complete"
+
+###############################################################################
+# Special implicit targets
+###############################################################################
+
+%.32.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS_32) -o $@ -c $<
+	
+%.32.o: %.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_32) -o $@ -c $<
+
+%.32.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_32) -o $@ -c $<
+	
+	

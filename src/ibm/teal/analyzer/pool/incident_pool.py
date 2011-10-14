@@ -751,7 +751,7 @@ class IncidentPoolEventCheckpoint(EventAnalyzerCheckpoint):
             try:
                 self.pool_rec_id = long(json.loads(self.data)[1])
             except:
-                self.msg_target().warning('Checkpoint data invalid')
+                self.msg_target.warning('Checkpoint data invalid')
                 self.pool_rec_id = self.start_rec_id
                 self.data = None
         self.rec_ids = self._get_rec_ids_from_data()

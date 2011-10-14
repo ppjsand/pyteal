@@ -170,7 +170,7 @@ class CnmInitAlert(ExtInitAlert):
 		    get_logger().debug('Found a Field Replaceable Unit (FRU) entry')
                     fruClass="FRU"
                     if fru_data[1].startswith('common'):
-                        part = self.common_fru_check(self.get_events(),fru_data[2].replace('common',''))
+                        part = self.common_fru_check(self.get_events(),fru_data[1].replace('common',''))
                         if part is None:
 	        	    get_logger().info('No common part found')
                             part_number="HFI_COM"
@@ -294,8 +294,8 @@ class CnmInitAlert(ExtInitAlert):
 	"None" will be returned
 	'''
 	#print '****',event_list,fru
-	local_fru =  'local_'+fru
-	nbr_fru = 'nbr_'+fru
+	local_fru =  'local'+fru
+	nbr_fru = 'nbr'+fru
 	first_event = True
 	match_local = True
 		        

@@ -71,6 +71,11 @@ class ConditionData(object):
 
     def get_truth_space(self, prime_set, min_num=1):
         ''' Prime the condition with the event '''
+        point_list = self._collect_at_loc(self.events, min_num)
+
+        if prime_set is None:
+            return set(point_list)
+        
         truth_space = set()
         #print _print_events_struct(self.events, title='get_truth_space')
         point_list = self._collect_at_loc(self.events, min_num)
@@ -187,7 +192,7 @@ class ConditionData(object):
         tmp_events_list = []
         for loc, dict_by_id in dict_by_loc.items():
                 tmp_events = self._collect_at_id([dict_by_id], min)
-                if len(tmp_events) >= min:
+                if len(set(tmp_events)) >= min:  
                     tmp_events_list.append((frozenset([loc]), frozenset(tmp_events)))
         return tmp_events_list
     
@@ -201,7 +206,7 @@ class ConditionData(object):
             dict_by_id_list = [dict_by_loc[t_loc] for t_loc in t_locs]
                 
             tmp_events = self._collect_at_id(dict_by_id_list, min)
-            if tmp_events is not None and len(tmp_events) >= min:
+            if tmp_events is not None and len(set(tmp_events)) >= min:
                 # See if overlaps existing key 
                 found = False
                 ck_loc_set = set(t_locs)
@@ -309,23 +314,149 @@ class ConditionData(object):
                     tmp_events.extend(dict_by_inst_list[t_idx][t_inst])  
         return tmp_events
     
+    def __str__(self):
+        return _print_events_struct(self.events)
+    
+    def _state_str(self, excluded):
+        return _print_events_struct_with_summary(self.events, excluded=excluded, verbose=(self.condition.ruleset.gear_rule_debug == 'V'))
+    
 # HELPER
-#def _print_events_struct(events, title=''):
-#    ''' print the events structure '''
-#    outstr = title + '\n'
-#    for loc_k, loc_v in events.items():
-#        outstr += '  ' + str(loc_k) +'\n'
-#        for id_k, id_v in loc_v.items():
-#            outstr += '    ' + str(id_k) + '\n'
-#            if len(id_v) == 0:
-#                outstr += '        -empty\n'
-#            else:
-#                for inst_k, inst_v in id_v.items():
-#                    outstr += '      ' + str(inst_k) + '\n'
-#                    if inst_v is not None:
-#                        outstr += '          ' + ','.join([e.brief_str() for e in inst_v]) + '\n'
-#                    else:
-#                        outstr += '          ' + '-empty-\n'
-#    return outstr
+def _print_events_struct(events, title=''):
+    ''' print the events structure '''
+    outstr = title + '\n'
+    for loc_k, loc_v in events.items():
+        outstr += '  ' + str(loc_k) +'\n'
+        for id_k, id_v in loc_v.items():
+            outstr += '    ' + str(id_k) + '\n'
+            if len(id_v) == 0:
+                outstr += '        -empty\n'
+            else:
+                for inst_k, inst_v in id_v.items():
+                    outstr += '      ' + str(inst_k) + '\n'
+                    if inst_v is not None:
+                        outstr += '          ' + ','.join([e.brief_str() for e in inst_v]) + '\n'
+                    else:
+                        outstr += '          ' + '-empty-\n'
+    return outstr
+
+def _print_events_struct_with_summary(ievents, title=None, excluded=None, verbose=False):
+    ''' print the events structure '''
+    prt_events = _compress_events_struct(ievents)
+    if excluded is None:
+        ck_exclude = []
+    else:
+        ck_exclude = excluded
+    if title is not None:
+        outstr = title + '\n'
+    else:
+        outstr = ''
+    
+    # Zero totals 
+    c_all_events_incl = 0
+    c_all_events_excl = 0
+    c_mlo_keys_incl = 0
+    c_mlo_keys_excl = 0
+
+    for loc_k, loc_v in prt_events.items():
+        # Location match entries
+        c_mlo_events_incl = 0
+        c_mlo_events_excl = 0
+        c_id_keys_incl = 0
+        c_id_keys_excl = 0  
+        
+        outstr += '  ' + str(loc_k) +'\n'
+        for id_k, id_v in loc_v.items():
+            # Id entries 
+            c_id_events_incl = 0
+            c_id_events_excl = 0 
+            c_inst_keys_incl = 0 
+            c_inst_keys_excl = 0 
+            
+            if id_k is not None or verbose == True:
+                outstr += '    ' + str(id_k) + '\n'
+            if len(id_v) == 0:
+                outstr += '        -empty\n'
+            else:
+                for inst_k, inst_v in id_v.items():
+                    # Instance entries 
+                    c_inst_events_incl = 0 
+                    c_inst_events_excl = 0 
+                    if inst_k is not None or verbose == True:
+                        outstr += '      ' + str(inst_k) + '\n'
+                    if inst_v is not None:
+                        exl_list = []
+                        rest = []
+                        for e in inst_v:
+                            # Events in lists 
+                            if e in ck_exclude:
+                                exl_list.append(e)
+                            else:
+                                rest.append(e)
+                            # Update counts
+                        if len(exl_list) != 0 or (verbose == True and excluded is not None):
+                            outstr += '          suppressed: '
+                            outstr += str(len(exl_list)) + '> '
+                            outstr += ','.join([e.brief_str() for e in exl_list]) + '\n'
+                        if len(rest) != 0 or verbose == True:
+                            outstr += '          ' 
+                            outstr += str(len(rest)) + '> '
+                            outstr += ','.join([e.brief_str() for e in rest]) + '\n'
+                        c_inst_events_incl += len(rest)
+                        c_inst_events_excl += len(exl_list)
+                        c_id_events_incl += len(rest)
+                        c_id_events_excl += len(exl_list)
+                        c_mlo_events_incl += len(rest)
+                        c_mlo_events_excl += len(exl_list)
+                        c_all_events_incl += len(rest)
+                        c_all_events_excl += len(exl_list)
+                    else:
+                        outstr += '          ' + '-empty-\n'
+                    if c_inst_events_incl != 0:
+                        c_inst_keys_incl += 1
+                    else:
+                        c_inst_keys_excl += 1
+            if (id_v.keys()[0] is not None and (c_id_events_incl + c_id_events_excl) > 4) or verbose == True:
+                if excluded is None:
+                    outstr += '      SUMMARY instances: total = {0}'.format(c_inst_keys_incl)
+                    outstr += '  events: total = {0}'.format(c_id_events_incl)
+                else:
+                    outstr += '      SUMMARY instances: total = {0} included = {1}  suppressed = {2}'.format(c_inst_keys_incl + c_inst_keys_excl, c_inst_keys_incl, c_inst_keys_excl)
+                    outstr += '  events: total = {0} included = {1}  suppressed = {2}'.format(c_id_events_incl + c_id_events_excl, c_id_events_incl, c_id_events_excl)
+                outstr +='\n'  
+            if c_inst_keys_incl != 0:
+                c_id_keys_incl += 1
+            else: 
+                c_id_keys_excl += 1
+        if (loc_v.keys()[0] is not None and (c_mlo_events_incl + c_mlo_events_excl) > 4) or verbose == True:
+            if excluded is None:
+                outstr += '    SUMMARY ids: total = {0}'.format(c_id_keys_incl)
+                outstr += '  events: total = {0}'.format(c_mlo_events_incl)
+            else:
+                outstr += '    SUMMARY ids: total = {0} included = {1}  suppressed = {2}'.format(c_id_keys_incl + c_id_keys_excl, c_id_keys_incl, c_id_keys_excl)
+                outstr += '  events: total = {0} included = {1}  suppressed = {2}'.format(c_mlo_events_incl + c_mlo_events_excl, c_mlo_events_incl, c_mlo_events_excl)
+            outstr +='\n' 
+        if c_id_keys_incl != 0:
+            c_mlo_keys_incl += 1
+        else:
+            c_mlo_keys_excl += 1 
+    if excluded is None:
+        outstr += '  SUMMARY matched locs: total = {0}'.format(c_mlo_keys_incl)
+        outstr += '  events: total = {0}'.format(c_all_events_incl)
+    else:
+        outstr += '  SUMMARY matched locs: total = {0} included = {1}  suppressed = {2}'.format(c_mlo_keys_incl + c_mlo_keys_excl, c_mlo_keys_incl, c_mlo_keys_excl)
+        outstr += '  events: total = {0} included = {1}  suppressed = {2}'.format(c_all_events_incl + c_all_events_excl, c_all_events_incl, c_all_events_excl)
+    outstr +='\n'  
+    return outstr
+
+def _compress_events_struct(events):
+    ''' print the events structure '''
+    new_events = defaultdict(lambda : defaultdict(lambda : defaultdict(list)))
+    for loc_k, loc_v in events.items():
+        for id_k, id_v in loc_v.items():
+            if len(id_v) != 0:
+                for inst_k, inst_v in id_v.items():
+                    if inst_v is not None and len(inst_v) != 0:
+                        new_events[loc_k][id_k][inst_k] = inst_v
+    return new_events
          
     

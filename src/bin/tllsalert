@@ -15,6 +15,7 @@
 # locale setup
 import os
 import gettext
+from ibm.teal.alert import ALERT2ALERT_COLS
 curdir = os.path.abspath(os.path.dirname(__file__))
 localedir = os.path.join(curdir, '..', 'locale')
 t = gettext.translation('messages', localedir, fallback=True)
@@ -152,6 +153,11 @@ if __name__ == '__main__':
                         dest='dup_alerts',
                         default=False,
                         help=_('Print the duplicate alerts also'))
+    parser.add_option('-x','--xref',
+                        action='store_true',
+                        dest='xref',
+                        default=False,
+                        help=_('Include cross reference data in output'))
     (options, args) = parser.parse_args()
     
     # Validate option combinations
@@ -160,6 +166,9 @@ if __name__ == '__main__':
         
     if options.with_assoc and options.output_format == 'brief':
         parser.error(_("Cannot specify --with-assoc with 'brief' formatting"))
+
+    if options.xref and options.output_format == 'brief':
+        parser.error(_("Cannot specify --xref with 'brief' formatting"))
 
     db = registry.get_service(registry.SERVICE_DB_INTERFACE)
 
@@ -202,6 +211,8 @@ if __name__ == '__main__':
     if (options.output_format == 'csv'):
         if options.with_assoc:
             result_cols.append('associations')
+        if options.xref:
+            result_cols.append('xref')
             
         print ','.join(result_cols)    
         writer = csv.DictWriter(sys.stdout,result_cols,quoting=csv.QUOTE_MINIMAL)
@@ -237,6 +248,28 @@ if __name__ == '__main__':
                     assoc_dict[a_type] = '[' + ','.join(map(str, a_list)) + ']'
                                                             
             results['associations'] = assoc_dict
+            
+        if options.xref:
+            cursor3 = cnxn.cursor()
+            # See if this is a duplicate of anyone
+            tmp_dict = {'DO:A':[]}
+            
+            # Get the alerts it is associated with
+            db.select(cursor3, ALERT2ALERT_COLS, db_interface.TABLE_ALERT2ALERT,
+                       where='$t_alert_recid = ?', where_fields=['t_alert_recid'], parms=(results['rec_id']))
+
+            for row2 in cursor3:
+                if row2[1] == 'D':
+                    tmp_dict['DO:A'].append(row2[0])
+                else:
+                    print 'Unrecognized relationship {0} to alert {1} from alert {2}'.format(row2[1], row2[0], row2[2])
+
+            xref_dict = {}
+            for a_type, a_list in tmp_dict.items():
+                    a_list.sort()
+                    xref_dict[a_type] = '[' + ','.join(map(str, a_list)) + ']'
+
+            results['xref'] = xref_dict
             
         if (options.output_format == 'json'):
             writer = command.JSONEventEncoder()
@@ -274,6 +307,9 @@ if __name__ == '__main__':
                     print 'Duplicate Alerts:', assoc_dict['D:A']
                     print 'Suppression Alerts:', assoc_dict['S:A']
                     print 'Suppression Events:', assoc_dict['S:E']
+                    
+            if (options.xref):
+                    print 'Duplicate Of Alerts:', xref_dict['DO:A']
 
 
     # All done, now shut down TEAL gracefully

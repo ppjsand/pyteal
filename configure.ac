@@ -40,26 +40,61 @@ AC_CANONICAL_BUILD
 # Options
 ###############################
 
+# Determine which package to build
+AC_ARG_ENABLE([connector],AC_HELP_STRING([--enable-connector], [enable connector (default: none)]),[enable_connector=$enableval],[enable_connector=none])
+case $enable_connector in
+    base|none)
+        CONNECTOR="none"
+        ;;
+
+    sfp|pnsd|gpfs|isnm|ll|test) 
+       CONNECTOR=$enable_connector
+       ;;
+
+    *) 
+        AC_MSG_ERROR([Invalid connector specified]) 
+        ;;
+esac
+
+# Determine if 32 or 64 bit platform target
+machine="`uname -m`"
+
+if test "$machine" = "ppc64"; then
+    BITS="64"
+elif test "$machine" = "x86_64"; then
+    BITS="64"
+else
+    BITS="32"
+fi
 
 ###############################
 # Checks for programs.
 ###############################
 
+AC_PROG_MKDIR_P
+AC_PROG_LN_S
 AC_PROG_CXX
-AC_PROG_CC
 AC_PROG_CPP
+AC_PATH_PROG([PYTHON], [python], false)
+if test "$PYTHON" == 'false'; then
+	AC_MSG_ERROR([python not found])
+else
+    python_version="`$PYTHON -V 2>&1 | cut -d' ' -f2`"
+    PYTHON_VER=`echo $python_version | sed 's/\(^@<:@0-9@:>@*\.@<:@0-9@:>@*\).*/\1/'`
+fi
 
 ########################
 # Checks for libraries.
 ########################
 
+#AC_CHECK_LIB([python],[Py_IncRef], [], AC_MSG_ERROR([Must have the python development library available]))
 
 #############################
 # Checks for header files.
 #############################
 
 AC_CHECK_HEADERS([sql.h sqlext.h],[],AC_MSG_ERROR([Must have SQL header files available]))
-#AC_CHECK_HEADER([Python.h],[],AC_MSG_ERROR([Must have python header file available]))
+#AC_CHECK_HEADER([Python.h],[Py_IncRef],AC_MSG_ERROR([Must have python header file available]))
 
 #################################################################
 # Checks for typedefs, structures, and compiler characteristics.
@@ -72,7 +107,15 @@ AC_CHECK_HEADERS([sql.h sqlext.h],[],AC_MSG_ERROR([Must have SQL header files av
 ###############################
 # Endgame
 ###############################
-AC_CONFIG_FILES([Makefile:Makefile.in])
+
+AC_CONFIG_FILES([Makefile:Makefile.in
+				teal-base.mk
+				teal-ll.mk
+				teal-pnsd.mk
+				teal-sfp.mk
+				teal-isnm.mk
+				teal-test.mk])
+
 
 #AC_CONFIG_FILES([Makefile:Makefile.in
 #                 Make.rules
@@ -99,5 +142,8 @@ AC_CONFIG_FILES([Makefile:Makefile.in])
 #                 data/ibm/teal/Makefile:data/ibm/teal/Makefile.in
 #                 data/ibm/teal/xml/Makefile:data/ibm/teal/xml/Makefile.in])
 #
+AC_SUBST(PYTHON_VER)
+AC_SUBST(BITS)
+AC_SUBST(CONNECTOR)
 AC_OUTPUT
 

@@ -32,8 +32,7 @@ from ibm.teal.event import EVENT_ATTR_RAW_DATA, \
 from ibm.teal.database.db_interface import TABLE_EVENT_LOG
 from ibm.teal.teal_error import ConfigurationError
 from ibm.teal.monitor.event_monitor import EventMonitor
-from ibm.teal.checkpoint_mgr import EventCheckpoint, CheckpointListener,\
-    CHECKPOINT_STATUS_RUNNING
+from ibm.teal.checkpoint_mgr import CheckpointListener
 
 
 BASIC_EVENTLOG_SELECT_COLS = ['rec_id', 'event_id', 'time_occurred', 'time_logged', 'src_comp', 'src_loc_type', 'src_loc', 'rpt_comp', 'rpt_loc_type', 'rpt_loc', 'event_cnt', 'elapsed_time', 'raw_data_fmt', 'raw_data']
@@ -49,6 +48,11 @@ class RealtimeMonitor(EventMonitor):
     def __init__(self,restart,config_dict):
         '''Constructor.
         '''
+        
+        # Validate configuration parameters
+        if config_dict['enabled'] != 'realtime':
+            raise ConfigurationError('Realtime monitor can only enabled for realtime use.  Unsupported value specified: {0}'.format(config_dict['enabled']))
+
         self.running = False
         CONFIG_KEY = 'notifier'
         if CONFIG_KEY not in config_dict:

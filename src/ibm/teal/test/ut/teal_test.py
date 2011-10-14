@@ -26,7 +26,15 @@ class TealTest(TealTestCase):
 
     def testTooManyMonitors(self):
         ''' Verify that Teal fails if more than one monitor is specified'''
-        self.assertRaisesTealError(TealError, "Invalid secondary monitor configured - EventMonitorNoop", Teal, 'data/teal_test/tealtest_01.conf', 'stderr', 'info','now','realtime',False, False, None, False, '', False)
+        self.assertRaisesTealError(TealError, "Multiple monitors configured - only one allowed", Teal, 'data/teal_test/tealtest_01.conf', 'stderr', 'info','now','realtime',False, False, None, False, '', False)
+        return
+
+    def testTooFewMonitors(self):
+        ''' Verify that Teal fails if no monitor is specified'''
+        self.assertRaisesTealError(TealError, 
+                                   'No monitor configured - must have one monitor configured and enabled',
+                                   Teal, 
+                                   'data/teal_test/tealtest_03.conf', 'stderr', 'info','now','realtime',False, False, None, False, '', False)
         return
 
     def testTooManyDatabases(self):
@@ -73,6 +81,24 @@ class TealTest(TealTestCase):
             names.append(lsr_m.__self__.get_name())
         self.assertTrue('AnalyzerTest055a' in names)
         teal.shutdown()
+        return
+    
+    def testHistoricOnlyHistoric(self):
+        ''' Verify that the historic monitor can only be run in historic mode '''
+        self.assertRaisesTealError(TealError, "Historic monitor can only enabled for historic use.  Unsupported value specified: realtime", Teal, 'data/teal_test/bad_hist_mon_01.conf', 'stderr', 'info', 'now', 'realtime')
+        self.assertRaisesTealError(TealError, "Historic monitor can only enabled for historic use.  Unsupported value specified: all", Teal, 'data/teal_test/bad_hist_mon_02.conf', 'stderr', 'info', 'now', 'historic')
+        # Should run ... clear the DB and run it with no events, so nothing will happen
+        self.prepare_db()
+        teal = Teal('data/teal_test/bad_hist_mon_03.conf', 'stderr', 'info', 'now', 'historic')
+        teal.shutdown()
+        return
+    
+    def testRealtimeOnlyRealtime(self):
+        ''' Verify that the realtime monitor can only be run in realtime mode '''
+        self.assertRaisesTealError(TealError, "Realtime monitor can only enabled for realtime use.  Unsupported value specified: historic", Teal, 'data/teal_test/bad_real_mon_01.conf', 'stderr', 'info', 'now', 'historic')
+        self.assertRaisesTealError(TealError, "Realtime monitor can only enabled for realtime use.  Unsupported value specified: all", Teal, 'data/teal_test/bad_real_mon_02.conf', 'stderr', 'info', 'now', 'realtime')
+        # Notifier is checked after the enabled check ... so this makes sure enabled check passed
+        self.assertRaisesTealError(TealError, "RealtimeMonitor requires notifier be specified in the configuration file", Teal, 'data/teal_test/bad_real_mon_03.conf', 'stderr', 'info', 'now', 'realtime')
         return
         
         

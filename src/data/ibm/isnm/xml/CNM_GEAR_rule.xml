@@ -1,5 +1,5 @@
-<gear_ruleset version_id="20110817a" schema_version="1.0">
-  <!-- Source: errList.20110808.v3.csv -->
+<gear_ruleset version_id="2011103a" schema_version="1.0">
+  <!-- Source: errList.20110913.v2.csv -->
   <gear_control>
     <default_event_comp value="CNM"/>
     <default_create_alert_init_class class="ibm.isnm.cnm_gear.CnmInitAlert"/>
@@ -344,6 +344,8 @@
     	value="BD700037, BD700038, BD700039"/>
     <constant name="DLNKERRS" type="set_of_event_ids"
     	value="BD700022, BD700036, BD700037, BD700038, BD700039, BD70003B, BD70003C, BD70003D, BD70003E, BD70003F, BD700040, BD700041, BD700042, BD700043, BD700044, BD700045, BD700046, BD700047, BD700048, BD700049, BD70004A, BD70004B, BD70004C, BD7000A0, BD7000A1"/>
+    <constant name="DLNKERRS_DOWN_NOHANG" type="set_of_event_ids"
+    	value="BD700022, BD700025, BD700036, BD700037, BD700038, BD700039, BD70003B, BD70003C, BD70003D, BD70003E, BD70003F, BD700042, BD700043, BD700044, BD700045, BD700046, BD700047, BD700048, BD700049, BD70004A, BD70004B, BD70004C, BD7000A0, BD7000A1"/>
     <constant name="DLNKERRS_NOHANG" type="set_of_event_ids"
     	value="BD700022, BD700036, BD700037, BD700038, BD700039, BD70003B, BD70003C, BD70003D, BD70003E, BD70003F, BD700042, BD700043, BD700044, BD700045, BD700046, BD700047, BD700048, BD700049, BD70004A, BD70004B, BD70004C, BD7000A0, BD7000A1"/>
     <constant name="DLNKFAULTIN" type="event_id"
@@ -406,6 +408,8 @@
     	value="BD70004F"/>
     <constant name="LRLNKERRS" type="set_of_event_ids"
     	value="BD700024, BD70004D, BD70004E, BD70004F, BD700050, BD700052, BD700053, BD700054, BD700055, BD700056, BD700057, BD700058, BD700059, BD70005A, BD70005B, BD70005C, BD70005D, BD70005E, BD70005F, BD700060, BD700061, BD7000A8, BD7000A9"/>
+    <constant name="LRLNKERRS_DOWN_NOHANG" type="set_of_event_ids"
+    	value="BD700024, BD700026, BD70004D, BD70004E, BD70004F, BD700050, BD700052, BD700053, BD700054, BD700055, BD700056, BD700059, BD70005A, BD70005B, BD70005C, BD70005D, BD70005E, BD70005F, BD700060, BD700061, BD7000A8, BD7000A9"/>
     <constant name="LRLNKERRS_NOHANG" type="set_of_event_ids"
     	value="BD700024, BD70004D, BD70004E, BD70004F, BD700050, BD700052, BD700053, BD700054, BD700055, BD700056, BD700059, BD70005A, BD70005B, BD70005C, BD70005D, BD70005E, BD70005F, BD700060, BD700061, BD7000A8, BD7000A9"/>
     <constant name="LRLNKFAULTIN" type="event_id"
@@ -1898,7 +1902,8 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-    <!-- 8/17/2011; don't report
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_TEMPHIGH">
       <description>Rule_analyze: TX optical module Temp High; BD880074:OMTX_TEMPHIGH;</description>
       <condition>
@@ -1909,10 +1914,12 @@
         <description>Action_analyze: BD880074:OMTX_TEMPHIGH</description>
       </action>
     </rule>
+
     -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-    <!-- 8/17/2011; don't report
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_TEMPLOW">
       <description>Rule_analyze: TX optical module Temp Low; BD880075:OMTX_TEMPLOW;</description>
       <condition>
@@ -1923,6 +1930,7 @@
         <description>Action_analyze: BD880075:OMTX_TEMPLOW</description>
       </action>
     </rule>
+
     -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
@@ -1990,7 +1998,8 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-    <!-- 8/17/2011; don't report
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMRX_TEMPHIGH">
       <description>Rule_analyze: RX optical module Temp High; BD88007A:OMRX_TEMPHIGH;</description>
       <condition>
@@ -2001,10 +2010,12 @@
         <description>Action_analyze: BD88007A:OMRX_TEMPHIGH</description>
       </action>
     </rule>
+
     -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-    <!-- 8/17/2011; don't report
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMRX_TEMPLOW">
       <description>Rule_analyze: RX optical module Temp Low; BD88007B:OMRX_TEMPLOW;</description>
       <condition>
@@ -2015,6 +2026,7 @@
         <description>Action_analyze: BD88007B:OMRX_TEMPLOW</description>
       </action>
     </rule>
+
     -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
@@ -2114,6 +2126,8 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_BCHIGH">
       <description>Rule_analyze: TX Bias Current High; BD880182:OMTX_BCHIGH;</description>
       <condition>
@@ -2134,7 +2148,11 @@
       </action>
     </rule>
 
+    -->
+
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_LOPLOW">
       <description>Rule_analyze: TX Light Output Power Low; BD880183:OMTX_LOPLOW;</description>
       <condition>
@@ -2155,7 +2173,10 @@
       </action>
     </rule>
 
+    -->
+
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+
     <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_BCLOW">
       <description>Rule_analyze: TX Bias Current Low; BD880184:OMTX_BCLOW;</description>
@@ -2167,10 +2188,12 @@
         <description>Action_analyze: BD880184:OMTX_BCLOW</description>
       </action>
     </rule>
+
     -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-    <!-- 8/17/2011; don't report
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_LOPHIGH">
       <description>Rule_analyze: TX Light Output Power High; BD880185:OMTX_LOPHIGH;</description>
       <condition>
@@ -2181,6 +2204,7 @@
         <description>Action_analyze: BD880185:OMTX_LOPHIGH</description>
       </action>
     </rule>
+
     -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
@@ -2226,7 +2250,8 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-    <!-- 8/17/2011; don't report
+
+    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMRX_LIPHIGH">
       <description>Rule_analyze: RX Light Input Power High; BD880188:OMRX_LIPHIGH;</description>
       <condition>
@@ -2237,6 +2262,7 @@
         <description>Action_analyze: BD880188:OMRX_LIPHIGH</description>
       </action>
     </rule>
+
     -->
 
     <!-- Suppressed by:  Nothing -->
@@ -2398,7 +2424,7 @@
       </condition>
       <action>
         <description>Action_analyze: BD0000FF:NOSFP</description>
-        <create_alert id="BD0000FF"/>
+        <create_alert id="BD0000FF" priority="15"/>
       </action>
     </rule>
 
@@ -2411,7 +2437,7 @@
       </condition>
       <action>
         <description>Action_analyze: BD000010:NONBR</description>
-        <create_alert id="BD000010"/>
+        <create_alert id="BD000010" priority="15"/>
       </action>
     </rule>
 
@@ -2420,7 +2446,7 @@
       <description>Rule_analyze: Faulty Optical Module; BDFF0040:FAULTY_OPTICAL_MODULE;</description>
       <condition>
         <description>Condition_analyze: compound conditions to recognize BDFF0040:FAULTY_OPTICAL_MODULE </description>
-                      <any_events num="2" ids="LRLNKERRS_NOHANG" unique_id="false"
+                      <any_events num="2" ids="LRLNKERRS_DOWN_NOHANG" unique_id="false"
                     scope="H:opticalModule" location_match="identical" unique_instance="true"
                     locations="GEAR[cur_event.src_loc],GEAR[cur_event.ext.neighbor_loc]"/> 
       </condition>
@@ -2452,8 +2478,12 @@
       <condition>
         <description>Condition_analyze: compound conditions to recognize BDFF0050:FAULTY_HUB </description>
         <or>
-           <any_events num="4" ids="DLNKERRS_NOHANG"/>
-          <any_events num="10" ids="LRLNKERRS_NOHANG" location_match="identical"
+           <any_events num="4" ids="DLNKERRS_DOWN_NOHANG"
+location_match="identical" 
+                  scope="H:hub" unique_id="false" unique_instance="true"
+                  locations="GEAR[cur_event.src_loc], 
+                           GEAR[cur_event.ext.neighbor_loc]"/>
+          <any_events num="10" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:hub" unique_id="false"  unique_instance="true"
                   locations="GEAR[cur_event.src_loc],
                              GEAR[cur_event.ext.neighbor_loc]" />           
@@ -2474,7 +2504,7 @@
       <description>Rule_analyze: Faulty LR-link cable assembly - 48 or more links; BDFF0055:FAULTY_LRCABASSY_PARTIAL;</description>
       <condition>
         <description>Condition_analyze: compound conditions to recognize BDFF0055:FAULTY_LRCABASSY_PARTIAL </description>
-             <any_events num="48" ids="LRLNKERRS_NOHANG" location_match="identical"
+             <any_events num="48" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
      scope="H:drawer" unique_id="false" unique_instance="true"
      locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" 
@@ -2492,7 +2522,7 @@
       <description>Rule_analyze: Faulty LR-link cable assembly - full; BDFF0056:FAULTY_LRCABASSY;</description>
       <condition>
         <description>Condition_analyze: compound conditions to recognize BDFF0056:FAULTY_LRCABASSY </description>
-             <any_events num="192" ids="LRLNKERRS_NOHANG" location_match="identical"
+             <any_events num="192" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
      scope="H:drawer" unique_id="false" unique_instance="true"
      locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" 
@@ -2510,7 +2540,7 @@
       <description>Rule_analyze: Faulty LR-link cable assembly - 64 or more links; BDFF0057:FAULTY_LRCABASSY2;</description>
       <condition>
         <description>Condition_analyze: compound conditions to recognize BDFF0057:FAULTY_LRCABASSY2 </description>
-             <any_events num="64" ids="LRLNKERRS_NOHANG" location_match="identical"
+             <any_events num="64" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
      scope="H:drawer" unique_id="false" unique_instance="true"
      locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" 
@@ -2528,7 +2558,7 @@
       <description>Rule_analyze: Faulty LR-link cable assembly - 128 or more links; BDFF0058:FAULTY_LRCABASSY3;</description>
       <condition>
         <description>Condition_analyze: compound conditions to recognize BDFF0058:FAULTY_LRCABASSY3 </description>
-             <any_events num="128" ids="LRLNKERRS_NOHANG" location_match="identical"
+             <any_events num="128" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
      scope="H:drawer" unique_id="false" unique_instance="true"
      locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" 
@@ -2550,11 +2580,11 @@
  <and>
            <!-- drawer level neighbor match of 4 separate hubs -->
            <or location_match="identical" scope="H:drawer">
-               <any_events num="4" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="4" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:drawer" unique_id="false"
                   unique_instance="true" instance_scope="H:hub"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
-            <any_events num="4" ids="LRLNKERRS_NOHANG" location_match="identical"
+            <any_events num="4" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:drawer" unique_id="false"
                   unique_instance="true" instance_scope="H:hub"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
@@ -2562,13 +2592,13 @@
       
            <or location_match="identical" scope="H:drawer">
      <!-- neighbor match of 8 separate D-links -->
-               <any_events num="8" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="8" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:drawer" unique_id="false"
                   unique_instance="true" instance_scope="H:nodePort"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
      <!-- neighbor match of 48 separate LR-links = (6/hub to each drawer -->
      <!--   (6/hub-drawer)*(2 drawer)*(4 hubs) = 48 -->
-               <any_events num="48" ids="LRLNKERRS_NOHANG" location_match="identical"
+               <any_events num="48" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:drawer" unique_id="false"
                   unique_instance="true" instance_scope="H:remotePort"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
@@ -2592,12 +2622,12 @@
            <!-- drawer level neighbor match of 16 separate D-link hubs or 8 LR-link hubs -->
            <or location_match="identical" scope="H:supernode">
      <!-- 16 D-link hubs = 4 drawer * 4 hubs -->
-               <any_events num="16" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="16" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:supernode" unique_id="false"
                   unique_instance="true" instance_scope="H:hub"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
       <!-- 8 LR-link hubs =  2 drawer * 4 hubs -->
-               <any_events num="8" ids="LRLNKERRS_NOHANG" location_match="identical"
+               <any_events num="8" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:supernode" unique_id="false"
                   unique_instance="true" instance_scope="H:hub"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
@@ -2607,13 +2637,13 @@
            <or location_match="identical" scope="H:supernode">
                  <!-- 32 D-link events -->
        <!-- 16 hubs * 2 links per hub; also this is 2 hubs fully populated -->
-                 <any_events num="32" ids="DLNKERRS_NOHANG" location_match="identical"
+                 <any_events num="32" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                     scope="H:supernode" unique_id="false"
                     unique_instance="true" instance_scope="H:nodePort"
                     locations="GEAR[cur_event.ext.neighbor_loc]" />
        <!-- 192 LR-link events -->
        <!-- 1/2 LR-links in a superNode = (192 LR/node * 4 node)/(2 port/link) -->
-                 <any_events num="192" ids="LRLNKERRS_NOHANG" location_match="identical"
+                 <any_events num="192" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                     scope="H:supernode" unique_id="false"
                     unique_instance="true" instance_scope="H:remotePort"
                     locations="GEAR[cur_event.ext.neighbor_loc]" />
@@ -2636,12 +2666,12 @@
         <and>
            <or location_match="identical" scope="H:frame">
      <!-- 32 D-link hubs -> 8 drawers * 4 hubs -->
-               <any_events num="32" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="32" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:frame" unique_id="false"
                   unique_instance="true" instance_scope="H:hub"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
      <!-- 32 LR-link hubs -> 8 drawers * 4 hubs -->
-               <any_events num="32" ids="LRLNKERRS_NOHANG" location_match="identical"
+               <any_events num="32" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:frame" unique_id="false"
                   unique_instance="true" instance_scope="H:hub"
                   locations="GEAR[cur_event.ext.neighbor_loc]" />
@@ -2649,12 +2679,12 @@
            <or location_match="identical" scope="H:frame">
                  <!-- 128 D-links in a frame-->
        <!-- 32 hubs * 4 links per hub = 128 -->
-                 <any_events num="128" ids="DLNKERRS_NOHANG" location_match="identical"
+                 <any_events num="128" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                     scope="H:frame" unique_id="false"
                     unique_instance="true" instance_scope="H:nodePort"
                     locations="GEAR[cur_event.ext.neighbor_loc]" />
                <!-- 384 LR-links -->
-                 <any_events num="384" ids="LRLNKERRS_NOHANG" location_match="identical"
+                 <any_events num="384" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                     scope="H:frame" unique_id="false"
                     unique_instance="true" instance_scope="H:remotePort"
                     locations="GEAR[cur_event.ext.neighbor_loc]" />
@@ -2716,14 +2746,14 @@
           <!-- Base scope = frame -->  
  <and>
            <!-- frame level match of 2 separate supernodes -->
-               <any_events num="2" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="2" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:frame" unique_id="false"
                   unique_instance="true" instance_scope="H:supernode"
                   locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" />
          
      <!-- 16 separate D-links in a frame -->
-               <any_events num="16" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="16" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:frame" unique_id="false"
                   unique_instance="true" instance_scope="H:remotePort"
                   locations="GEAR[cur_event.src_loc], 
@@ -2745,14 +2775,14 @@
           <!-- Base scope = frame -->  
  <and>
            <!-- frame level match of 2 separate supernodes -->
-               <any_events num="2" ids="LRLNKERRS_NOHANG" location_match="identical"
+               <any_events num="2" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:frame" unique_id="false"
                   unique_instance="true" instance_scope="H:supernode"
                   locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" />
          
      <!-- 16 separate LR-links in a frame -->
-               <any_events num="16" ids="LRLNKERRS_NOHANG" location_match="identical"
+               <any_events num="16" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:frame" unique_id="false"
                   unique_instance="true" instance_scope="H:opticalModule"
                   locations="GEAR[cur_event.src_loc], 
@@ -2803,14 +2833,14 @@
           <!-- Base scope = supernode -->  
  <and>
            <!-- supernode level match of 2 separate drawers -->
-               <any_events num="2" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="2" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:supernode" unique_id="false"
                   unique_instance="true" instance_scope="H:drawer"
                   locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" />
          
-     <!-- 16 separate D-links in a supernode -->
-               <any_events num="8" ids="DLNKERRS_NOHANG" location_match="identical"
+     <!-- 8 separate D-links in a supernode -->
+               <any_events num="8" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:supernode" unique_id="false"
                   unique_instance="true" instance_scope="H:nodePort"
                   locations="GEAR[cur_event.src_loc], 
@@ -2890,14 +2920,14 @@
           <!-- Base scope = drawer -->  
  <and>
            <!-- drawer level match of 2 separate hubs -->
-               <any_events num="2" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="2" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:drawer" unique_id="false"
                   unique_instance="true" instance_scope="H:hub"
                   locations="GEAR[cur_event.src_loc], 
                              GEAR[cur_event.ext.neighbor_loc]" />
          
      <!-- 4 separate D-links -->
-               <any_events num="4" ids="DLNKERRS_NOHANG" location_match="identical"
+               <any_events num="4" ids="DLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:drawer" unique_id="false"
                   unique_instance="true" instance_scope="H:nodePort"
                   locations="GEAR[cur_event.src_loc], 
@@ -2918,7 +2948,7 @@
         <description>Condition_analyze: compound conditions to recognize BDFF00AB:RANDOM_LRNK_DRWR </description>
           <!-- Base scope = drawer -->  
      <!-- neighbor match of 6 separate LR-links -->
-               <any_events num="6" ids="LRLNKERRS_NOHANG" location_match="identical"
+               <any_events num="6" ids="LRLNKERRS_DOWN_NOHANG" location_match="identical"
                   scope="H:drawer" unique_id="false"
                   unique_instance="true" instance_scope="H:nodePort"
                   locations="GEAR[cur_event.src_loc], 

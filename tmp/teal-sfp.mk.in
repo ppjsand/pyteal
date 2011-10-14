@@ -1,0 +1,36 @@
+
+TEAL_INSTALL_COMP=install_sfp
+
+TEAL_OPT_FILES = \
+ibm/sfp/__init__.py \
+ibm/sfp/sfp_analyzer.py \
+ibm/teal/connector/sfp.py \
+data/ibm/sfp/sql/install/Teal_sfp_db2.sql \
+data/ibm/sfp/sql/install/Teal_sfp_dba_db2.sql \
+data/ibm/sfp/sql/install/Teal_sfp_mysql.sql \
+data/ibm/sfp/sql/uninstall/Teal_sfp_dba_db2.sql \
+data/ibm/sfp/sql/uninstall/Teal_sfp_rm_db2.sql \
+data/ibm/sfp/sql/uninstall/Teal_sfp_rm_mysql.sql \
+data/ibm/teal/xml/SFP_1.xml
+
+TEAL_XCAT_FILES = \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogSfpEvent.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogSfpEvent_HB.pm \
+perl/xCAT_schema/Teal_sfp.pm
+
+TEAL_ETC_FILES = \
+etc/teal/sfp.conf
+
+all:
+
+install_sfp:
+	$(foreach d, $(dir $(TEAL_OPT_FILES)), $(shell mkdir -p $(RPM_BUILD_ROOT)/opt/teal/$(d)))
+	$(foreach f, $(TEAL_OPT_FILES), $(shell cp $(srcdir)/$(f) $(RPM_BUILD_ROOT)/opt/teal/$(f)))
+
+	$(foreach d, $(dir $(TEAL_ETC_FILES)), $(shell mkdir -p $(RPM_BUILD_ROOT)/$(d)))
+	$(foreach f, $(TEAL_ETC_FILES), $(shell cp $(srcdir)/$(f) $(RPM_BUILD_ROOT)/$(f)))
+
+	$(foreach d, $(dir $(TEAL_XCAT_FILES)), $(shell mkdir -p $(RPM_BUILD_ROOT)/opt/xcat/lib/$(d)))
+	$(foreach f, $(TEAL_XCAT_FILES), $(shell cp $(srcdir)/$(f) $(RPM_BUILD_ROOT)/opt/xcat/lib/$(f)))
+
+

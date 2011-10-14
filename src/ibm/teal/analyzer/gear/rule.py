@@ -27,6 +27,7 @@ class GearRule(object):
         Constructor
         '''
         self.name = ''
+        self.debug = context.gear_rule_debug
         self.description = ''
         self.condition = None
         self.action = None
@@ -61,6 +62,12 @@ class GearRule(object):
         for att_key in xml_element.attrib:
             if att_key == 'name':
                 self.name = xml_element.attrib['name'].strip()
+            elif att_key == 'debug':
+                att_val = xml_element.attrib['debug'].strip()
+                if att_val == 'true':
+                    self.debug = True
+                elif att_val == 'false':
+                    self.debug = False
             else:
                 self.context.parse_error(self.trace_id[0], 'rule element encountered an unexpected attribute: {0}'.format(att_key))
         # elements
@@ -83,6 +90,13 @@ class GearRule(object):
             self.context.parse_error(self.trace_id[0], '\'rule\' element requires both the \'condition\' and \'action\' sub-elements')
         self.condition.resolve_and_validate(self)
         self.action.resolve_and_validate(self)
+        if self.debug is not None: 
+            self.execute_suppression_stage = self.execute_suppression_stage_DEBUG
+            self.execute_alert_stage = self.execute_alert_stage_DEBUG
+        else:
+            self.execute_suppression_stage = self.execute_suppression_stage_NORMAL
+            self.execute_alert_stage = self.execute_alert_stage_NORMAL
+
         return
        
     def prime(self, event):
@@ -99,7 +113,7 @@ class GearRule(object):
         self.condition.accumulate(event)
         return
     
-    def execute_suppression_stage(self, pool, gear_ctl):
+    def execute_suppression_stage_NORMAL(self, pool, gear_ctl):
         ''' execute the rules '''
         self.cur_event = None
         truth_space = self.condition.get_truth_space(None)
@@ -113,7 +127,13 @@ class GearRule(object):
         self.action.execute_finalize_suppression_stage(pool, self)
         return
     
-    def execute_alert_stage(self, pool, gear_ctl):
+    def execute_suppression_stage_DEBUG(self, pool, gear_ctl):
+        ''' execute the rules '''
+        get_logger().info(self.condition._state_str(None))
+        self.execute_suppression_stage_NORMAL(pool, gear_ctl)
+        return
+    
+    def execute_alert_stage_NORMAL(self, pool, gear_ctl):
         ''' execute the rules '''
         self.cur_event = None
         # Process create alerts
@@ -127,6 +147,12 @@ class GearRule(object):
             self.action.truth_point = truth_point   # Required to make GEAR variables work
             self.action.execute_accumulate_alert_stage(truth_point, pool, self)
         return self.action.execute_create_alert_stage(pool, self)
+    
+    def execute_alert_stage_DEBUG(self, pool, gear_ctl):
+        ''' execute the rules '''
+        get_logger().info('Excluded events: {0}'.format(','.join([str(e.rec_id) for e in pool.get_suppressed_incidents()])))
+        get_logger().info(self.condition._state_str(pool.get_suppressed_incidents()))
+        return self.execute_alert_stage_NORMAL(pool, gear_ctl)
     
     def reset(self):
         '''Reset the rule'''

@@ -22,6 +22,7 @@ from ibm.teal.event import Event, EVENT_COLS, EVENT_ATTR_REC_ID,\
     EVENT_ATTR_TIME_OCCURRED
 from ibm.teal.registry import get_logger, SERVICE_DB_INTERFACE, SERVICE_EVENT_Q, SERVICE_HISTORIC_QUERY, SERVICE_SHUTDOWN,\
     SERVICE_TIME_MODE
+from ibm.teal.teal_error import ConfigurationError
 
 class HistoricMonitor(EventMonitor):
     '''
@@ -34,6 +35,10 @@ class HistoricMonitor(EventMonitor):
         '''
         Constructor
         '''
+        # Validate configuration parameters
+        if config_dict['enabled'] != 'historic':
+            raise ConfigurationError('Historic monitor can only enabled for historic use.  Unsupported value specified: {0}'.format(config_dict['enabled']))
+        
         self.query = self._build_query()
         self.running = True # Set here so we don't run into timing issues in shutdown
         self.monitor_thread = Thread(group=None,target=self.start,name='event_monitor')

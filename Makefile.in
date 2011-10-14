@@ -1,101 +1,87 @@
+
+###############################################################################
+# Global Variables
+###############################################################################
+
+RPM_BUILD_ROOT ?= $(HOME)/teal
+
 srcdir=@srcdir@/src
-prefix=@prefix@
+iprefix=/opt/teal
 libdir=@libdir@
 
-VPATH=$(srcdir)/cpp/common:$(srcdir)/cpp/include:$(srcdir)/cpp/connector/isnm:$(srcdir)/ibm/teal/monitor
+XCAT_INSTALL_DIR=$(RPM_BUILD_ROOT)/install/postscripts/rmcmon
+XCAT_INSTALL_SRC_DIR=perl/xCAT_monitoring/rmc
 
-CPPFLAGS=$(addprefix -I,$(subst :, ,$(VPATH))) 
-CFLAGS+=-fPIC -g -Wno-write-strings
+
+###############################################################################
+# Specific Component Additions
+###############################################################################
+
+teal: all
+
+include teal-base.mk
+include teal-sfp.mk
+include teal-ll.mk
+include teal-pnsd.mk
+include teal-isnm.mk
+include teal-test.mk
+#include teal-gpfs.mk
+
+###############################################################################
+# Build Environment
+###############################################################################
+
+CPPFLAGS+=$(addprefix -I,$(subst :, ,$(VPATH))) 
+CFLAGS+=-fPIC -Wno-write-strings
 CXXFLAGS+=$(CFLAGS)
-LDLIBS=-ldl -pthread
-PYTHON_CPPFLAGS=$(CPPFLAGS) -I/usr/include/python2.6
-PYTHON_CXXFLAGS=$(CXXFLAGS)
-PYTHON_LDLIBS=-lpython2.6
+LDFLAGS += -L.
+LDLIBS += -ldl -pthread
 
-COMMON_LIBS = libteal_common.so
-ISNM_LIBS = libteal_isnm.so
+ifeq (@BITS@,64)
+CXXFLAGS_32 = $(CXXFLAGS) -m32
+CFLAGS_32 = $(CFLAGS) -m32
+LDFLAGS_32 = $(LDFLAGS) -m32
+endif
 
-TEAL_MODULES = teal_semaphore.so
-TEAL_LIBS = $(COMMON_LIBS) $(ISNM_LIBS)
+###############################################################################
+# Special implicit targets
+###############################################################################
 
-LIBTEAL_COMMON_OBJ=DbModule.o DbInterface.o DbEvent.o DbCommonBaseEvent.o DbGpfsInfo.o Logging.o Semaphore.o RmcNotifier.o teal_connect_api.o teal_helpers.o teal_common_info.o
+%.32.o: %.c
+	$(CC) $(CPPFLAGS) $(CFLAGS_32) -o $@ -c $<
+	
+%.32.o: %.cc
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_32) -o $@ -c $<
 
-LIBTEAL_ISNM_OBJ=teal_isnm_connect.o DbIsnmEvent.o
+%.32.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS_32) -o $@ -c $<
+	
+###############################################################################
+# Build Targets
+###############################################################################
 
-TEAL_SEMAPHORE_OBJ=teal_semaphore.pyo
+.PHONY: all clean install uninstall
 
-all: $(TEAL_MODULES) $(TEAL_LIBS) $(TEAL_MODULES)
+all: $(TEAL_BUILD_COMPS)
+	@echo "Build complete"
 
-clean:
-	$(RM) $(TEAL_MODULES) $(TEAL_LIBS) $(LIBTEAL_COMMON_OBJ) $(LIBTEAL_ISNM_OBJ) $(TEAL_SEMAPHORE_OBJ) teal_common_info.c libteal_common.so.1 libteal_common.so.1.0
+clean: $(TEAL_CLEAN_COMPS)
+	@echo "Cleanup complete"
 
-libteal_common.so: $(LIBTEAL_COMMON_OBJ)
-	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@.1 $(LIBTEAL_COMMON_OBJ) -o $@.1.0 $(LDLIBS)
-	ln -sf $@.1.0 $@.1
-	ln -sf $@.1 $@
+install: $(TEAL_INSTALL_COMPS)
+	$(foreach d, $(dir $(TEAL_OPT_FILES)), $(shell mkdir -p $(RPM_BUILD_ROOT)/opt/teal/$(d)))
+	$(foreach f, $(TEAL_OPT_FILES), $(shell cp -f $(srcdir)/$(f) $(RPM_BUILD_ROOT)/opt/teal/$(f)))
 
-libteal_isnm.so: $(LIBTEAL_ISNM_OBJ) libteal_common.so
-	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@.1 $(LIBTEAL_ISNM_OBJ) -o $@.1.0 $(LDLIBS) -L. -lteal_common
-	ln -sf $@.1.0 $@.1
-	ln -sf $@.1 $@
+	$(foreach d, $(dir $(TEAL_ETC_FILES)), $(shell mkdir -p $(RPM_BUILD_ROOT)/$(d)))
+	$(foreach f, $(TEAL_ETC_FILES), $(shell cp -f $(srcdir)/$(f) $(RPM_BUILD_ROOT)/$(f)))
 
-teal_semaphore.so: $(TEAL_SEMAPHORE_OBJ) libteal_common.so
-	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@ $(TEAL_SEMAPHORE_OBJ) -o $@ $(PYTHON_LDLIBS) -L. -lteal_common
+	$(foreach d, $(dir $(TEAL_XCAT_FILES)), $(shell mkdir -p $(RPM_BUILD_ROOT)/opt/xcat/lib/$(d)))
+	$(foreach f, $(TEAL_XCAT_FILES), $(shell cp -f $(srcdir)/$(f) $(RPM_BUILD_ROOT)/opt/xcat/lib/$(f)))
 
-teal_common_info.c::
-	@echo "char teal_common_build_name[] = \"\$$NAME: $(TEAL_RPM_NAME)  "`date +%c`" "`whoami`" \$$\";" > teal_common_info.c
-
-%.pyo: %.cc
-	$(CXX) $(PYTHON_CXXFLAGS) $(PYTHON_CPPFLAGS) -o $@ -c $<
-
-install:
-	mkdir -p $(prefix)/lib
-	cp -d $(wildcard $(addsuffix *,$(TEAL_LIBS))) $(prefix)/lib
-
-	#mkdir -p $(prefix)/data
-	cp -r @srcdir@/src/data $(prefix)
-
-	#mkdir -p $(prefix)/etc
-	cp -r @srcdir@/src/etc $(prefix)
-
-	#mkdir -p $(prefix)/locale
-	cp -r @srcdir@/src/locale $(prefix)
-
-	#mkdir -p $(prefix)/bin
-	cp -r @srcdir@/src/bin $(prefix)
-	chmod +x $(prefix)/bin/tl*
-
-	#mkdir -p $(prefix)/sbin
-	cp -r @srcdir@/src/sbin $(prefix)
-	chmod +x $(prefix)/sbin/tl*
-
-	mkdir -p $(prefix)/ibm
-	cp @srcdir@/src/ibm/*.py $(prefix)/ibm
-	cp -r @srcdir@/src/ibm/isnm $(prefix)/ibm
-	cp -r @srcdir@/src/ibm/sfp $(prefix)/ibm
-
-	mkdir -p $(prefix)/ibm/teal
-	cp @srcdir@/src/ibm/teal/*.py $(prefix)/ibm/teal
-	cp -r @srcdir@/src/ibm/teal/analyzer $(prefix)/ibm/teal
-	cp -r @srcdir@/src/ibm/teal/connector $(prefix)/ibm/teal
-	cp -r @srcdir@/src/ibm/teal/database $(prefix)/ibm/teal
-	cp -r @srcdir@/src/ibm/teal/filter $(prefix)/ibm/teal
-	cp -r @srcdir@/src/ibm/teal/monitor $(prefix)/ibm/teal
-	cp -r @srcdir@/src/ibm/teal/listener $(prefix)/ibm/teal
-	cp -r @srcdir@/src/ibm/teal/util $(prefix)/ibm/teal
-
-	cp teal_semaphore.so $(prefix)/ibm/teal/monitor
-
-	mkdir -p $(prefix)/log
-	echo 'export TEAL_ROOT_DIR=$(prefix)' > $(prefix)/bin/tealenv
-	echo 'export TEAL_CONF_DIR=$$TEAL_ROOT_DIR/etc' >> $(prefix)/bin/tealenv
-	echo 'export TEAL_LOG_DIR=$$TEAL_ROOT_DIR/log' >> $(prefix)/bin/tealenv
-	echo 'export TEAL_DATA_DIR=$$TEAL_ROOT_DIR/ibm/teal/test/ut/data' >> $(prefix)/bin/tealenv
-	echo 'export PYTHONPATH=$$TEAL_ROOT_DIR' >> $(prefix)/bin/tealenv
-	echo 'export LD_LIBRARY_PATH=$$TEAL_ROOT_DIR/lib' >> $(prefix)/bin/tealenv
-	echo 'export TEAL_TEST_PYODBC_CONFIG="{driver:DB2,db_type:DB2,dbname:tealdb0,user_id:db2inst1,pwd:xxxxxxxx}"' >> $(prefix)/bin/tealenv
-
-install_test: 
-	mkdir -p $(prefix)/ibm/teal/test
-	cp -r @srcdir@/src/ibm/teal/test $(prefix)/ibm/teal
-
+	$(foreach d, $(dir $(patsubst $(XCAT_INSTALL_SRC_DIR)/%,%,$(TEAL_XCAT_INSTALL_FILES))), $(shell mkdir -p $(XCAT_INSTALL_DIR)/$(d)))
+	$(foreach f, $(TEAL_XCAT_INSTALL_FILES), $(shell cp -f $(srcdir)/$(f) $(XCAT_INSTALL_DIR)/$(patsubst $(XCAT_INSTALL_SRC_DIR)/%,%,$f)))
+	@echo "Installation complete"
+	
+uninstall: $(TEAL_UNINSTALL_COMPS)
+	@echo "Uninstallation complete"
+	
