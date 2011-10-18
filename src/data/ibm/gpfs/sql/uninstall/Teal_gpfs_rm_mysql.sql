@@ -1,0 +1,4 @@
+ALTER TABLE x_GPFS_1_1 DROP FOREIGN KEY teal_gpfs_fs_fk;
+ALTER TABLE x_GPFS_1_2 DROP FOREIGN KEY teal_gpfs_dsk_fk;
+ALTER TABLE x_GPFS_1_3 DROP FOREIGN KEY teal_gpfs_per_fk;
+ALTER TABLE x_GPFS_1_4 DROP FOREIGN KEY teal_gpfs_msc_fk;

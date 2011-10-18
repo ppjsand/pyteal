@@ -20,12 +20,30 @@ XCAT_INSTALL_SRC_DIR=perl/xCAT_monitoring/rmc
 teal: all
 
 include teal-base.mk
-include teal-sfp.mk
-include teal-ll.mk
-include teal-pnsd.mk
+
+ifeq (@ENABLE_ISNM@,1)
 include teal-isnm.mk
+endif
+
+ifeq (@ENABLE_SFP@,1)
+include teal-sfp.mk
+endif
+
+ifeq (@ENABLE_LL@,1)
+include teal-ll.mk
+endif
+
+ifeq (@ENABLE_PNSD@,1)
+include teal-pnsd.mk
+endif
+
+ifeq (@ENABLE_GPFS@,1)
+include teal-gpfs.mk
+endif
+
+ifeq (@ENABLE_TEST@,1)
 include teal-test.mk
-#include teal-gpfs.mk
+endif
 
 ###############################################################################
 # Build Environment

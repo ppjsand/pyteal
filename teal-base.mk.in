@@ -215,6 +215,7 @@ install_base_lib64:
 	cp -d libteal_common.so $(RPM_BUILD_ROOT)/usr/lib
 	
 install_base: $(INSTALL_TEAL_BASE_LIBS)
+	mkdir -p $(RPM_BUILD_ROOT)/var/log/teal
 	mkdir -p $(RPM_BUILD_ROOT)/opt/teal/ibm/teal/monitor
 	cp teal_semaphore.so $(RPM_BUILD_ROOT)/opt/teal/ibm/teal/monitor
 	

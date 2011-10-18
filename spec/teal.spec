@@ -28,12 +28,36 @@ to log events, have analyzers evaluate the events to get closer to the root caus
 # Turn off the brp-python-bytecompile script
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
 
+# define the default values
+%define  with_isnm 1
+%define  with_sfp 1
+%define  with_ll 1
+%define  with_pnsd 1
+%define  with_gpfs 0
+%define  with_test 1
+
+# if --without switch is used
+%{?_without_isnm: %{expand: %%global with_isnm 0}}
+%{?_without_sfp: %{expand: %%global with_sfp 0}}
+%{?_without_ll: %{expand: %%global with_ll 0}}
+%{?_without_pnsd: %{expand: %%global with_pnsd 0}}
+%{?_without_gpfs: %{expand: %%global with_gpfs 0}}
+%{?_without_test: %{expand: %%global with_test 0}}
+
+# if --with switch is used
+%{?_with_isnm: %{expand: %%global with_isnm 1}}
+%{?_with_sfp: %{expand: %%global with_sfp 1}}
+%{?_with_ll: %{expand: %%global with_ll 1}}
+%{?_with_pnsd: %{expand: %%global with_pnsd 1}}
+%{?_with_gpfs: %{expand: %%global with_gpfs 1}}
+%{?_with_test: %{expand: %%global with_test 1}}
+
 %prep
 %setup -n pyteal-code
 
 %build
 autoconf
-%configure
+%configure --enable-isnm=%{with_isnm} --enable-sfp=%{with_sfp} --enable-ll=%{with_ll} --enable-pnsd=%{with_pnsd} --enable-gpfs=%{with_gpfs} --enable-test=%{with_test}
 make
 
 %install
@@ -55,7 +79,6 @@ if  [ $1 -eq 1 ]; then
 site=`python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"`
 echo /opt"/teal" > $site"/teal.pth"
 
-mkdir -p /var/log/teal/
 else
 /sbin/service teal stop
 fi
@@ -86,12 +109,9 @@ find /opt/teal -name "*.pyc" -exec rm {} \;
 site=`python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()"`
 rm $site"/teal.pth"
 
-rm -rf /var/log/teal/
 fi
 
 %files base
-%attr( 644, bin, bin ) /etc/teal/teal.conf
-%attr( 755, bin, bin ) /etc/init.d/teal
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/install/Teal_db2.sql
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/install/Teal_dba_db2.sql
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/install/Teal_mysql.sql
@@ -204,6 +224,9 @@ fi
 %attr( 644, bin, bin ) /opt/teal/locale/en_US/LC_MESSAGES/messages.po
 %attr( 644, bin, bin ) /opt/teal/locale/en_US/LC_MESSAGES/messages.mo
 %attr( 755, bin, bin ) /install/postscripts/rmcmon/resources/sn/IBM.Sensor/TealEventNotify.pm
+%config(noreplace) /etc/teal/teal.conf
+%attr( 755, bin, bin ) /etc/init.d/teal
+%attr( 755, root, root ) /var/log/teal
 
 %package isnm
 Summary: Toolkit for Event Analysis and Logging ISNM Connector  	
@@ -243,6 +266,7 @@ if  [ $1 -eq 0 ]; then
 /sbin/service teal start
 fi
 
+%if %{with_isnm}
 %files isnm
 %attr( 755, bin, bin ) /opt/teal/ibm/isnm/__init__.py
 %attr( 755, bin, bin ) /opt/teal/ibm/isnm/cnm_gear.py
@@ -267,7 +291,8 @@ fi
 %attr( 755, bin, bin ) /usr/lib64/libteal_isnm.so.1
 %attr( 755, bin, bin ) /usr/lib64/libteal_isnm.so.1.0
 %endif
-%attr( 644, bin, bin ) /etc/teal/isnm.conf
+%config(noreplace) /etc/teal/isnm.conf
+%endif
 
 %package ll
 Summary: Toolkit for Event Analysis and Logging Loadleveler Connector  	
@@ -310,6 +335,7 @@ if  [ $1 -eq 0 ]; then
 /sbin/service teal start
 fi
 
+%if %{with_ll}
 %files ll
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/connector/loadleveler.py
 %attr( 644, bin, bin ) /opt/teal/data/ibm/ll/sql/install/Teal_ll_db2.sql
@@ -322,7 +348,8 @@ fi
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/LL_1.xml
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_ll.pm
 %attr( 755, bin, bin ) /etc/init.d/teal_ll
-%attr( 644, bin, bin ) /etc/teal/ll.conf
+%config(noreplace) /etc/teal/ll.conf
+%endif
 
 %package pnsd
 Summary: Toolkit for Event Analysis and Logging Loadleveler Connector  	
@@ -349,6 +376,7 @@ if  [ $1 -eq 0 ]; then
 /sbin/service teal start
 fi
 
+%if %{with_pnsd}
 %files pnsd
 %attr( 755, bin, bin ) /install/postscripts/rmcmon/resources/node/IBM.Sensor/TealPnsdStat.pm
 %attr( 755, bin, bin ) /install/postscripts/rmcmon/resources/sn/IBM.Condition/TealAnyNodePnsdStat.pm
@@ -359,7 +387,8 @@ fi
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodePnsdStat_H.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogPnsdEvent.pm 
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogPnsdEvent_H.pm 
-%attr( 644, bin, bin ) /etc/teal/pnsd.conf
+%config(noreplace) /etc/teal/pnsd.conf
+%endif
 
 %package sfp
 Summary: Toolkit for Event Analysis and Logging Service Focal Point Connector  	
@@ -398,6 +427,7 @@ if [ $1 -eq 0 ]; then
 /sbin/service teal start
 fi
 
+%if %{with_sfp}
 %files sfp
 %attr( 755, bin, bin ) /opt/teal/ibm/sfp/__init__.py
 %attr( 755, bin, bin ) /opt/teal/ibm/sfp/sfp_analyzer.py
@@ -412,7 +442,8 @@ fi
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogSfpEvent.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogSfpEvent_HB.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_sfp.pm
-%attr( 644, bin, bin ) /etc/teal/sfp.conf
+%config(noreplace) /etc/teal/sfp.conf
+%endif
 
 %package test
 Summary: Toolkit for Event Analysis and Logging Testcases
@@ -422,6 +453,7 @@ Requires: teal-base >= 1.1.0.2
 %description test
 This package provides the unit and functional verification test for TEAL
 
+%if %{with_test}
 %files test
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/test/__init__.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/test/teal_unittest.py
@@ -1246,3 +1278,95 @@ This package provides the unit and functional verification test for TEAL
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/test/ut/tlcommands_test.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/test/ut/tlvfyrule_test.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/test/ut/xml_file_reader_test.py
+%endif
+
+%package gpfs
+Summary: Toolkit for Event Analysis and Logging GPFS Connector  	
+Group: Applications/System
+Requires: teal-base >= 1.1.0.2
+
+%description gpfs
+This package provides the TEAL connector for GPFS. It also provides the additional plug-ins to 
+support the additional user data, rules and TEAL framework configuration for reporting TEAL Alerts
+
+%pre gpfs
+/sbin/service teal stop
+
+if  [ $1 -eq 1 ]; then
+/sbin/service xcatd stop
+fi
+
+%post gpfs
+if  [ $1 -eq 1 ]; then
+/sbin/service xcatd start
+/opt/xcat/sbin/runsqlcmd -d /opt/teal/data/ibm/gpfs/sql/install
+fi
+
+/sbin/service teal start
+
+%preun gpfs
+if  [ $1 -eq 0 ]; then
+/sbin/service teal stop
+/opt/xcat/sbin/runsqlcmd -d /opt/teal/data/ibm/gpfs/sql/uninstall
+/sbin/service xcatd stop
+fi
+
+%postun gpfs
+if  [ $1 -eq 0 ]; then
+/sbin/service xcatd start
+/sbin/service teal start
+fi
+
+%if %{with_gpfs}
+%files gpfs
+%attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/sql/install/Teal_gpfs_db2.sql
+%attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/sql/install/Teal_gpfs_mysql.sql
+%attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/sql/uninstall/Teal_gpfs_rm_db2.sql
+%attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/sql/uninstall/Teal_gpfs_rm_mysql.sql
+%attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/GPFS_1.xml
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfschnode
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfserrhandler
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfspurge
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfsstatus
+%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/GPFSConnectorMonitor.pm
+%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/GPFSConnectorFailed.pm
+%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_gpfs.pm
+%attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so
+%attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so.1
+%attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so.1.0
+%config(noreplace) /etc/teal/gpfs.conf
+%endif
+
+%package gpfs-sn
+Version: 1.1.0.2
+Summary: Toolkit for Event Analysis and Logging GPFS Connector (service node) 	
+Group: Applications/System
+
+Requires: gpfs.base >= 3.4.0-5 
+
+%description gpfs-sn
+This package provides the TEAL service node connector for GPFS. It will run on a service node selected as
+a GPFS collector node for a cluster.
+
+%pre gpfs-sn
+
+%post gpfs-sn
+
+%preun gpfs-sn
+
+%postun gpfs-sn
+
+%if %{with_gpfs}
+%files gpfs-sn
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfslauncher
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfsmon
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfsrefresh
+%attr( 755, bin, bin ) /usr/lib64/libteal_common.so.1.0
+%attr( 755, bin, bin ) /usr/lib64/libteal_common.so.1
+%attr( 755, bin, bin ) /usr/lib64/libteal_common.so
+%attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so
+%attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so.1
+%attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so.1.0
+%attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/tlgpfsmon.conf.sample
+%config(noreplace) /opt/teal/data/ibm/gpfs/tlgpfsmon.conf
+%endif
