@@ -139,10 +139,10 @@ class GearEvaluatable(object):
     
     __metaclass__ = ABCMeta
     
-    def __init__(self, type, xml_element, trace_dict, ruleset):
+    def __init__(self, itype, xml_element, trace_dict, ruleset):
         ''' Constructor ''' 
-        self.ev_type = type
-        self.trace_id = (0, type) 
+        self.ev_type = itype
+        self.trace_id = (0, itype) 
         self.description = None
         self.ruleset = ruleset
         
@@ -234,6 +234,29 @@ class GearEvaluatable(object):
     
     def _str_subelement_additions(self):
         ''' Additions to the output str '''
+        return ''    
+    
+    def _state_str(self, exclude_events=None):
+        ''' Duplicate of str that includes the state ... attributes don't have state so reuse str support for those '''
+        outstr = '<{0} gtp="{1}"'.format(self.ev_type, self.trace_id)
+        outstr += dump_rule_values(self, GCON_VALUES[self.ev_type])
+        outstr += self._str_attribute_additions()
+        outstr += '>\n'
+        if self.description is not None and len(self.description) > 0:
+            outstr += '<description>{0}</description>\n'.format(self.description)
+        outstr += '<state>'
+        outstr += self._state_str_state_additions(exclude_events)
+        outstr += '</state>'
+        outstr += self._state_str_subelement_additions(exclude_events)
+        outstr += '</{0}>\n'.format(self.ev_type)
+        return outstr     
+    
+    def _state_str_subelement_additions(self, exclude_events):
+        ''' Additions to the output state str from subelements'''
+        return ''
+    
+    def _state_str_state_additions(self, exclude_events):
+        ''' Additions to the output state str for the state'''
         return ''
     
     @abstractmethod
@@ -256,13 +279,13 @@ class GearEvaluatable(object):
 class GearEvaluatableContainer(GearEvaluatable): 
     ''' Evaluatable that contains other evaluatables '''
     
-    def __init__(self, type, xml_element, trace_dict, ruleset):
+    def __init__(self, itype, xml_element, trace_dict, ruleset):
         ''' Constructor '''
         self.evaluatables = []
-        GearEvaluatable.__init__(self, type, xml_element, trace_dict, ruleset)
+        GearEvaluatable.__init__(self, itype, xml_element, trace_dict, ruleset)
         return
     
-    def resolve_and_validate(self, rule, min=None, max=None):
+    def resolve_and_validate(self, rule, imin=None, imax=None):
         ''' Resolve and validate the condition 
         
             NOTE: method adds optional parameters
@@ -270,10 +293,10 @@ class GearEvaluatableContainer(GearEvaluatable):
         GearEvaluatable.resolve_and_validate(self, rule)
         
         # check limits
-        if min is not None and len(self.evaluatables) < min:
-            self.ruleset.parse_error(self.trace_id[0], '\'{0}\' element must contain at least {1} condition sub-elements'.format(self.ev_type, min))
-        if max is not None and len(self.evaluatables) > max:
-            self.ruleset.parse_error(self.trace_id[0], '\'{0}\' element cannot contain more than {1} condition sub-elements'.format(self.ev_type, max))
+        if imin is not None and len(self.evaluatables) < imin:
+            self.ruleset.parse_error(self.trace_id[0], '\'{0}\' element must contain at least {1} condition sub-elements'.format(self.ev_type, imin))
+        if imax is not None and len(self.evaluatables) > imax:
+            self.ruleset.parse_error(self.trace_id[0], '\'{0}\' element cannot contain more than {1} condition sub-elements'.format(self.ev_type, imax))
 
         # validate contained
         for evaluatable in self.evaluatables:
@@ -312,6 +335,13 @@ class GearEvaluatableContainer(GearEvaluatable):
         outstr = ''
         for evaluatable in self.evaluatables:
             outstr += str(evaluatable)
+        return outstr
+    
+    def _state_str_subelement_additions(self, exclude_events):
+        ''' Additions to the output state str from subelements'''
+        outstr = ''
+        for evaluatable in self.evaluatables:
+            outstr += evaluatable._state_str(exclude_events)
         return outstr
     
     def get_cross_ref(self):
@@ -355,7 +385,7 @@ class GearCondition(GearEvaluatableContainer):
     
     def resolve_and_validate(self, rule):
         '''Resolve and validate the condition''' 
-        GearEvaluatableContainer.resolve_and_validate(self, rule, min=1, max=1)
+        GearEvaluatableContainer.resolve_and_validate(self, rule, imin=1, imax=1)
         return
        
     def get_truth_space(self, exclude_events, exclude_primes=False):
@@ -472,7 +502,67 @@ class GearEvaluatableEventEquals(GearEvaluatable):
         except:
             result = None
         return result
+ 
+    def _state_str_state_additions(self, exclude_events):
+        ''' Additions to the output state str for the state'''
+        
+        verbose = self.ruleset.gear_rule_debug == 'V'
+        outstr = '{0} = {1}\n'.format(self.id.in_str, self.id.get_value())
 
+        if exclude_events is None:
+            ck_exclude = []
+        else:
+            ck_exclude = exclude_events
+        tmp_events = self.event_list[:]
+        tmp_events.extend(self.primes)
+                    
+        events_by_loc = defaultdict(list)
+        exclude_by_loc = defaultdict(list)
+        locs = set()
+        tot_events = 0
+        tot_exclude = 0 
+        for e in tmp_events:
+            # Get location
+            if self.location_match.get_value() == GRVA_TYPE_LOCATION_MATCH_IGNORE:
+                use_loc = None
+            else:
+                use_loc = e.src_loc
+                if self.scope.is_set() and self.scope.get_value()[1] is not None:
+                    try:
+                        use_loc = e.src_loc.new_location_by_scope(self.scope.get_value()[1])
+                    except:
+                        get_logger().exception('event_equals exception!')
+            locs.add(use_loc)
+            if e in ck_exclude:
+                exclude_by_loc[use_loc].append(e)
+                tot_exclude += 1 
+            else:
+                events_by_loc[use_loc].append(e)
+                tot_events += 1
+        
+        loc_included = len(locs)
+        for loc in locs:
+            outstr += '  {0}\n'.format(str(loc) )
+            if len(exclude_by_loc[loc]) != 0 or (verbose == True and exclude_events is not None):
+                outstr += '          suppressed: '
+                outstr += str(len(exclude_by_loc[loc])) + '> '
+                outstr += ','.join([e.brief_str() for e in exclude_by_loc[loc]]) + '\n'
+            if len(events_by_loc[loc]) != 0 or verbose == True:
+                outstr += '          ' 
+                outstr += str(len(events_by_loc[loc])) + '> '
+                outstr += ','.join([e.brief_str() for e in events_by_loc[loc]]) + '\n'
+            if len(events_by_loc[loc]) == 0:
+                loc_included -= 1 
+            
+        if exclude_events is None:
+            outstr += '  SUMMARY matched locs: total = {0}'.format(len(locs))
+            outstr += '  events: total = {0}'.format(tot_events)
+        else:
+            outstr += '  SUMMARY matched locs: total = {0} included = {1}  suppressed = {2}'.format(len(locs), loc_included, len(locs) - loc_included)
+            outstr += '  events: total = {0} included = {1}  suppressed = {2}'.format(tot_events + tot_exclude, tot_events, tot_exclude)
+        outstr +='\n'  
+        return outstr
+    
     
 class GearEvaluatableOr(GearEvaluatableContainer):
     '''Evaluate if the current event matches the specified event values'''
@@ -484,7 +574,7 @@ class GearEvaluatableOr(GearEvaluatableContainer):
     
     def resolve_and_validate(self, rule):
         '''Resolve and validate the condition''' 
-        GearEvaluatableContainer.resolve_and_validate(self, rule, min=1)
+        GearEvaluatableContainer.resolve_and_validate(self, rule, imin=1)
         # Resolve get_truth_space method 
         if self.location_match.get_value() == GRVA_TYPE_LOCATION_MATCH_IGNORE:
             self.get_truth_space = self._get_truth_space_IGNORE
@@ -539,7 +629,7 @@ class GearEvaluatableAnd(GearEvaluatableContainer):
     
     def resolve_and_validate(self, rule):
         '''Resolve and validate the condition''' 
-        GearEvaluatableContainer.resolve_and_validate(self, rule, min=1)
+        GearEvaluatableContainer.resolve_and_validate(self, rule, imin=1)
         # Resolve the accumulate method
         if self.location_match.get_value() == GRVA_TYPE_LOCATION_MATCH_IGNORE:
             self.get_truth_space = self._get_truth_space_IGNORE
@@ -655,7 +745,7 @@ class GearEvaluatableNot(GearEvaluatableContainer):
     
     def resolve_and_validate(self, rule):
         '''Resolve and validate the condition''' 
-        GearEvaluatableContainer.resolve_and_validate(self, rule, min=1, max=1)
+        GearEvaluatableContainer.resolve_and_validate(self, rule, imin=1, imax=1)
         
         # Doesn't support location match of unique at this point
         if self.location_match.get_value() == GRVA_TYPE_LOCATION_MATCH_UNIQUE:
@@ -755,6 +845,9 @@ class GearEvaluatableNot(GearEvaluatableContainer):
         # Need to get all events
         return None
     
+    def _state_str_state_additions(self, exclude_events):
+        ''' Additions to the output state str for the state'''
+        return 'NOT SUPPORTED YET'
 
 class GearEvaluatableEventOccurred(GearEvaluatable):
     '''Evaluate if the event specified has occurred the specified number of times'''
@@ -934,6 +1027,10 @@ class GearEvaluatableEventOccurred(GearEvaluatable):
         except:
             result = None
         return result
+    
+    def _state_str_state_additions(self, exclude_events):
+        ''' Additions to the output state str for the state'''
+        return 'NOT SUPPORTED YET'
     
     
 class GearEvaluatableAllEvents(GearEvaluatable):
@@ -1179,10 +1276,14 @@ class GearEvaluatableAllEvents(GearEvaluatable):
         '''
         try:
             comp = self.comp.get_value()
-            result = [(comp, id) for id in self.ids.get_list()]
+            result = [(comp, tid) for tid in self.ids.get_list()]
         except:
             result = None
         return result
+    
+    def _state_str_state_additions(self, exclude_events):
+        ''' Additions to the output state str for the state'''
+        return 'NOT SUPPORTED YET'
 
 
 class GearEvaluatableAnyEvents(GearEvaluatable):
@@ -1192,6 +1293,7 @@ class GearEvaluatableAnyEvents(GearEvaluatable):
         ''' Constructor '''
         self.instance_comparitor = None
         GearEvaluatable.__init__(self, GCON_TYPE_ANY_EVENTS, xml_element, trace_dict, ruleset)
+        self.max_dups = 1
         self.prime_set = set()
         self.data = ConditionData(self)
         return
@@ -1273,6 +1375,7 @@ class GearEvaluatableAnyEvents(GearEvaluatable):
                 self.data.accumulate(event, loc)
             except InstanceError:
                 pass
+        self.max_dups = max(self.max_dups, len(locs))
         return  
     
     def get_truth_space(self, exclude_events, exclude_primes):
@@ -1280,10 +1383,10 @@ class GearEvaluatableAnyEvents(GearEvaluatable):
         if exclude_events is not None:
             self.data.remove_events(exclude_events)
         if exclude_primes == True:
-            use_primes = set()
-        else:
             use_primes = self.prime_set
-        return self.data.get_truth_space(use_primes, self.num.get_value())
+        else:
+            use_primes = None
+        return self.data.get_truth_space(use_primes, self.num.get_value(), self.max_dups)
     
     def reset(self):
         '''reset the condition'''
@@ -1311,10 +1414,36 @@ class GearEvaluatableAnyEvents(GearEvaluatable):
         '''
         try:
             comp = self.comp.get_value()
-            result = [(comp, id) for id in self.ids.get_list()]
+            result = [(comp, tid) for tid in self.ids.get_list()]
         except:
             result = None
         return result
+    
+    def _state_str_state_additions(self, exclude_events):
+        ''' Additions to the output state str for the state'''
+        outstr = '{0} = {1}\n'.format(self.ids.in_str, ','.join(sorted(list(self.ids.get_list()))))
+        # Print out the primes
+        if len(self.prime_set) == 0:
+            outstr += '  primed 0>\n'
+        else:
+            primed_exl = []
+            primed = []
+            if exclude_events is None:
+                primed = self.prime_set   
+            else:  
+                for e in self.prime_set:
+                    if e in exclude_events:
+                        primed_exl.append(e)
+                    else:
+                        primed.append(e)
+            if len(primed) != 0:
+                outstr += '  primed {0}> {1}\n'.format(len(primed), ','.join([e.brief_str() for e in primed]))
+            if len(primed_exl) != 0:
+                outstr += '  primed suppressed {0}> {1}\n'.format(len(primed_exl), ','.join([e.brief_str() for e in primed_exl]))
+            
+        # Print out other events 
+        outstr += self.data._state_str(excluded=exclude_events)
+        return outstr
         
 
 class GearEvaluatableEvaluate(GearEvaluatable):
@@ -1425,10 +1554,14 @@ class GearEvaluatableEvaluate(GearEvaluatable):
         try:
             # TODO: Is this the right way to do this or should we add a new interface?
             comp = self.comp.get_value()
-            result = [(comp, id) for id in self.call_class.get_cross_ref()]
+            result = [(comp, tid) for tid in self.call_class.get_cross_ref()]
         except:
             result = None
         return result
+    
+    def _state_str_state_additions(self, exclude_events):
+        ''' Additions to the output state str for the state'''
+        return 'NOT SUPPORTED YET'
 
 
 

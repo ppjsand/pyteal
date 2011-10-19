@@ -1,0 +1,47 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BD70003B", 
+        "associations": [
+          "C:E:14"
+        ], 
+        "creation_time": "2011-10-13 13:39:22.033210", 
+        "event_loc": "FR007-CG11-SN008-DR0-HB0-OM09-LD09", 
+        "event_loc_type": "H", 
+        "reason": "D-link internal problem in frame FR007 cage CG11 (superNode SN008 drawer DR0) hub HB0 port LD09 (D Link Input Port Linked List Parity Error)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a hub module.\nRecord the alert ID.\nRecord the location from the alert message.\nContact IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "BD70003B", 
+        "associations": [
+          "C:E:12", 
+          "C:E:13", 
+          "C:E:15", 
+          "C:E:11"
+        ], 
+        "creation_time": "2011-10-13 13:39:22.036068", 
+        "event_loc": "FR007-CG11-SN008-DR0-HB0-OM07-LD07", 
+        "event_loc_type": "H", 
+        "reason": "D-link internal problem in frame FR007 cage CG11 (superNode SN008 drawer DR0) hub HB0 port LD07 (D Link Input Port Linked List Parity Error)", 
+        "rec_id": 2, 
+        "recommendation": "There is a problem with a hub module.\nRecord the alert ID.\nRecord the location from the alert message.\nContact IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

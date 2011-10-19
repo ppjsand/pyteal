@@ -15,6 +15,7 @@
 # locale setup
 import os
 import gettext
+from ibm.teal.alert import ALERT2EVENT_COLS
 curdir = os.path.abspath(os.path.dirname(__file__))
 localedir = os.path.join(curdir, '..', 'locale')
 t = gettext.translation('messages', localedir, fallback=True)
@@ -108,12 +109,20 @@ if __name__ == '__main__':
                         dest='extended_format',
                         default=False,
                         help=_('Include extended event data in output'))
+    parser.add_option('-x','--xref',
+                        action='store_true',
+                        dest='xref',
+                        default=False,
+                        help=_('Include cross reference data in output'))
     (options, args) = parser.parse_args()
     #print options,args
     
     # Validate option combinations
     if (options.output_format == 'brief') and options.extended_format:
         parser.error(_("Cannot use --extended option with 'brief' format"))
+    
+    if (options.output_format == 'brief') and options.xref:
+        parser.error(_("Cannot use --xref option with 'brief' format"))
     
     # Prepare to use the database
     db = registry.get_service(registry.SERVICE_DB_INTERFACE)
@@ -147,7 +156,35 @@ if __name__ == '__main__':
                 # No special extended data, just show the raw data as is
                 columns.append('raw_data')
                 results['raw_data'] =  row.raw_data
+        if (options.xref):
+            columns.append('xref')
+            # Get the cross reference information 
             
+            tmp_dict = {
+                          "CF:A":[], 
+                          "SB:A":[],
+                        }
+            
+            cursor2 = cnxn.cursor()
+
+            # Get the alerts it is associated with
+            db.select(cursor2, ALERT2EVENT_COLS, db_interface.TABLE_ALERT2EVENT,
+                       where='$t_event_recid = ?', where_fields=['t_event_recid'], parms=(results['rec_id']))
+
+            for row2 in cursor2:
+                if row2[1] == 'S':
+                    tmp_dict['SB:A'].append(row2[0])
+                elif row2[1] == 'C':
+                    tmp_dict['CF:A'].append(row2[0])
+                else:
+                    print 'Unrecognized relationship {0} to event {1} from alert {2}'.format(row2[1], row2[0], row2[2])
+
+            xref_dict = {}
+            for a_type, a_list in tmp_dict.items():
+                    a_list.sort()
+                    xref_dict[a_type] = '[' + ','.join(map(str, a_list)) + ']'
+
+            results['xref'] = xref_dict
         
         if (options.output_format == 'json'):
             writer = command.JSONEventEncoder()
@@ -167,7 +204,10 @@ if __name__ == '__main__':
         else:
             print '==================================================='
             for c in columns:
-                if c in results:
+                if c == 'xref':
+                    print 'Condition For Alerts:', xref_dict['CF:A']
+                    print 'Suppressed By Alerts:', xref_dict['SB:A']
+                elif c in results:
                     if c == event.EVENT_ATTR_EVENT_ID:
                         event_id = results[c]
 

@@ -16,7 +16,13 @@ from ibm.teal import teal
 from ibm.teal.test.teal_unittest import TealTestCase
 from ibm.teal.analyzer.gear.instance_helper import Comparitor
 from ibm.teal.teal_error import XMLParsingError
+from ibm.teal.analyzer.gear.rule_condition_data import _perm_checker
 
+''' NAME is MISLEADING
+
+    This module is now for testing ALL of the GEARs helpers, not just the instance support,\
+    _perm_checker
+''' 
     
 class GearInstanceHelper(TealTestCase):
     '''Test running GEAR instance helper '''
@@ -271,6 +277,193 @@ class GearInstanceHelper(TealTestCase):
 #    print 'asserted 1: ' + str(c.assert_value('1'))
 #    print c
      
+class GearPermCheckerHelper(TealTestCase):
+    '''Test running GEAR perm checker helper '''
+    
+    def test01(self):
+        ''' Test 01 '''
+
+        in_dict1 = { 'loc1':['A'],
+                    'loc2':['B'],
+                    'loc3':['C']
+                    }
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 1)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 1)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 1)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 2)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 2)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 2)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 3)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 3)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 3)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 3)), set([]))
+        return 
+        
+    def test02(self):
+        ''' Test 02 '''
+
+        in_dict1 = { 'loc1':['A'],
+                     'loc2':['B'],
+                     'loc3':['B']
+                    }
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 1)), set(['A', 'B']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 1)), set(['A', 'B']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 2)), set(['A', 'B']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 2)), set(['A', 'B']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 3)), set(['A', 'B']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 3)), set(['A', 'B']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 3)), set([]))
+        return 
+        
+    def test03(self):
+        ''' Test 03 '''
+       
+        in_dict1 = { 'loc1':['A'],
+                     'loc2':['B','C','D','E','F'],
+                     'loc3':['B'],
+                     'loc4':['B','Q'],
+                     'loc5':['B']
+                    }
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 1)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 1)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 1)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 1)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 2)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 2)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 2)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 2)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 3)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 3)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 3)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 3)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 5, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 6, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 4)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 5)), set(['A', 'B','C','D','E','F', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 6)), set(['A', 'B','C','D','E','F', 'Q']))
+        return 
+        
+    def test04(self):
+        ''' Test 04 '''
+       
+        in_dict1 = { 'loc1':['B'],  #3
+                     'loc2':['B'],  #1
+                     'loc3':['B'],  #2 
+                     'loc4':['B', 'Q'],
+                     'loc5':['B', 'Q', 'M']
+                    }
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 1)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 1)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 1)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 2)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 2)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 2)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 3)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 3)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 3)), set(['B', 'M', 'Q']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 5, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 6, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 4)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 5)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 6)), set([]))
+        return 
+        
+    def test05(self):
+        ''' Test 05 '''
+
+        in_dict1 = { 'loc1':['B'],  #3
+                     'loc2':['A'],  #1
+                     'loc3':['B','A', 'C']  #2 
+                    }
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 1)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 1)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 1)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 2)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 2)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 2)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 3)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 3)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 3)), set(['A','B','C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 5, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 6, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 4)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 5)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 6)), set([]))
+        return 
+        
+    def test06(self):
+        ''' Test 06 '''
+
+        in_dict1 = { 'loc1':['A'],  
+                     'loc2':['A'],  
+                     'loc3':['A'],  
+                     'loc4':['A'],  
+                     'loc5':['A'],  
+                     'loc6':['A'],  
+                     'loc7':['A'],  
+                     'loc8':['A'],  
+                     'loc9':['A']
+                    }
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 1)), set(['A']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 2)), set(['A']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 3)), set(['A']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 5, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 6, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 4)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 5)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 6)), set([]))
+        return 
+        
+    def test07(self):
+        ''' Test 07 '''
+
+        in_dict1 = { 'loc1':['A', 'B', 'C'],  
+                     'loc2':['A', 'B', 'C'],  
+                     'loc3':['A', 'B', 'C'],  
+                     'loc8':['A', 'B'],  
+                     'loc9':['A', 'C']
+                    }
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 1)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 1)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 1)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 1)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 2)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 2)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 2)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 2)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 1, 3)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 2, 3)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 3, 3)), set(['A', 'B', 'C']))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 5, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 6, 3)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 4)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 5)), set([]))
+        self.assertEqual(set(_perm_checker(in_dict1, 4, 6)), set([]))
+        return
+
 
 if __name__ == "__main__":
     unittest.main()

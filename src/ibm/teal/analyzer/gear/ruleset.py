@@ -43,6 +43,7 @@ from ibm.teal.analyzer.gear.rule_value import _parse_gear_variable
 
 TEAL_ALERT_PRIORITIZATION = 'TEAL_ALERT_PRIORITIZATION'
 TEAL_TEST_POOL_TIMERS_OFF = 'TEAL_TEST_POOL_TIMERS_OFF'
+TEAL_TEST_GEAR_RULE_DEBUG = 'TEAL_TEST_GEAR_RULE_DEBUG'
 
 class GearRuleset(dict, GearEngine):
     '''
@@ -53,7 +54,7 @@ class GearRuleset(dict, GearEngine):
         Load the list of specified xml ruleset file
         '''
         dict.__init__(self)
-        if use_checkpoint == True:
+        if use_checkpoint == True: 
             self.checkpoint = RulesetEventCheckpoint(name, self)
         else:
             self.checkpoint = None
@@ -64,6 +65,15 @@ class GearRuleset(dict, GearEngine):
         self.send_alert = send_alert
         self.alert_input = alert_input
         self.event_input = event_input 
+        
+        # See if debug environment variable
+        temp_debug = upper(os.environ.get(TEAL_TEST_GEAR_RULE_DEBUG, 'NO'))
+        if  temp_debug == 'YES' or temp_debug == 'NORMAL':
+            self.gear_rule_debug = 'N'
+        elif temp_debug == 'VERBOSE':
+            self.gear_rule_debug = 'V'
+        else:
+            self.gear_rule_debug = None
         
         if self.alert_input:
             get_logger().warning('Only event analyzers are supported by GEAR at this time')
@@ -143,7 +153,7 @@ class GearRuleset(dict, GearEngine):
         else:
             get_logger().info('Alert prioritization has been turned off')
             self.prioritize_and_send_alerts = self._prioritize_and_send_alerts_NO_PRIORITY
-         
+                     
         return   
            
     def _get_init_duration(self):
@@ -322,7 +332,15 @@ class GearRuleset(dict, GearEngine):
     def prime_event(self, event, pool):
         ''' Prime the event -- get the conditions setup with it, but don't take actions '''
         self.trace_debug(self.trace_id[1], 'Priming event: {0}'.format(event.brief_str()))
-        self[GRSE_ANALYZE].prime(event, pool, self[GRSE_GEAR_CTL])
+        # Priming is all about making sure that alerts aren't created by just primed events
+        # however, suppressed events can never cause an alert to be created, so when a
+        # primed event is suppressed, it doesn't need to be treated in a special way
+        # This is beneficial because processing of primes is typically very expensive
+        # when getting the truth space
+        if event in pool.get_suppressed_incidents():
+            self[GRSE_ANALYZE].analyze_event(event, pool, self[GRSE_GEAR_CTL])
+        else:
+            self[GRSE_ANALYZE].prime(event, pool, self[GRSE_GEAR_CTL])
         return
     
     def get_default_event_component(self):

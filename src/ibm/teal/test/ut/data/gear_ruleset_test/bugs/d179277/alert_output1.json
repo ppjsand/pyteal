@@ -1,0 +1,27 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BDFF0050", 
+        "associations": [
+          "C:E:12", 
+          "C:E:13", 
+          "C:E:14", 
+          "C:E:11"
+        ], 
+        "creation_time": "2011-10-12 17:38:23.187123", 
+        "event_loc": "FR007-CG11-SN008-DR0-HB0", 
+        "event_loc_type": "H", 
+        "reason": "Faulty hub in frame FR007 cage CG11 (superNode SN008 drawer DR0) hub HB0 (Faulty Network Hub)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a hub chip.\nRecord the alert ID. \nRecord the location from the alert message.\nContact IBM Service.\nReplace the FRU according to the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

@@ -1,0 +1,129 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BDFF00AA", 
+        "associations": [
+          "C:E:11", 
+          "C:E:12", 
+          "C:E:13", 
+          "C:E:14", 
+          "C:E:15", 
+          "C:E:16", 
+          "C:E:17", 
+          "C:E:18"
+        ], 
+        "creation_time": "2011-10-12 16:28:54.092632", 
+        "event_loc": "FR007-CG12-SN009-DR0", 
+        "event_loc_type": "H", 
+        "reason": "A drawer has a random set of D-links reporting events at about the same time. Frame FR007 cage CG12 (superNode SN009 drawer DR0) (Random D-links in a Drawer)", 
+        "rec_id": 1, 
+        "recommendation": "A random set of D-links have issues at the drawer level.\nContact IBM Service and report the alert ID.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "BDFF00AA", 
+        "associations": [
+          "C:E:13", 
+          "C:E:15", 
+          "C:E:17", 
+          "C:E:11"
+        ], 
+        "creation_time": "2011-10-12 16:28:54.093194", 
+        "event_loc": "FR007-CG11-SN008-DR0", 
+        "event_loc_type": "H", 
+        "reason": "A drawer has a random set of D-links reporting events at about the same time. Frame FR007 cage CG11 (superNode SN008 drawer DR0) (Random D-links in a Drawer)", 
+        "rec_id": 2, 
+        "recommendation": "A random set of D-links have issues at the drawer level.\nContact IBM Service and report the alert ID.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "3": {
+      "data": {
+        "alert_id": "BDFF00AA", 
+        "associations": [
+          "C:E:12", 
+          "C:E:14", 
+          "C:E:16", 
+          "C:E:18"
+        ], 
+        "creation_time": "2011-10-12 16:28:54.093718", 
+        "event_loc": "FR007-CG09-SN006-DR0", 
+        "event_loc_type": "H", 
+        "reason": "A drawer has a random set of D-links reporting events at about the same time. Frame FR007 cage CG09 (superNode SN006 drawer DR0) (Random D-links in a Drawer)", 
+        "rec_id": 3, 
+        "recommendation": "A random set of D-links have issues at the drawer level.\nContact IBM Service and report the alert ID.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "4": {
+      "data": {
+        "alert_id": "BDFF00AA", 
+        "associations": [
+          "C:E:39", 
+          "C:E:11", 
+          "C:E:12", 
+          "C:E:13", 
+          "C:E:14", 
+          "C:E:15", 
+          "C:E:16", 
+          "C:E:17", 
+          "C:E:18"
+        ], 
+        "creation_time": "2011-10-12 16:28:57.121680", 
+        "event_loc": "FR007-CG12-SN009-DR0", 
+        "event_loc_type": "H", 
+        "reason": "A drawer has a random set of D-links reporting events at about the same time. Frame FR007 cage CG12 (superNode SN009 drawer DR0) (Random D-links in a Drawer)", 
+        "rec_id": 4, 
+        "recommendation": "A random set of D-links have issues at the drawer level.\nContact IBM Service and report the alert ID.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "5": {
+      "data": {
+        "alert_id": "BDFF00AA", 
+        "associations": [
+          "C:E:13", 
+          "C:E:39", 
+          "C:E:17", 
+          "C:E:15", 
+          "C:E:11"
+        ], 
+        "creation_time": "2011-10-12 16:28:57.122302", 
+        "event_loc": "FR007-CG11-SN008-DR0", 
+        "event_loc_type": "H", 
+        "reason": "A drawer has a random set of D-links reporting events at about the same time. Frame FR007 cage CG11 (superNode SN008 drawer DR0) (Random D-links in a Drawer)", 
+        "rec_id": 5, 
+        "recommendation": "A random set of D-links have issues at the drawer level.\nContact IBM Service and report the alert ID.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

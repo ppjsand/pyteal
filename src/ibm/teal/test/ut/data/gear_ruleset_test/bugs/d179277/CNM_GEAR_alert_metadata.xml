@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <alertMetadata xmlns:tns="http://www.ibm.com/teal/alertmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/alertmeta ../../../../../../xml/alertmeta.xsd ">
-  <!-- Version: 20110923a; Source: errList.20110913.v1.csv -->
+  <!-- Version: 20110817a; Source: errList.20110808.v3.csv -->
 
   <alert id="BD000000">
     <description>alert: INVMINOR:Invalid Minor Number</description>

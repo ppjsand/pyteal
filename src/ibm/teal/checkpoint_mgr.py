@@ -165,7 +165,6 @@ class CheckpointMgr(object):
             self.event_checkpoint_rec_id += 1
             tmp_rec_id = self.event_checkpoint_rec_id
             self.chkpt_recid_lock.release()
-            self.event_checkpoint_rec_id = tmp_rec_id
         return tmp_rec_id
       
     def register_event_checkpoint(self, checkpoint):

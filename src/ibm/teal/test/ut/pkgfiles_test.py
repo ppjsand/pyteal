@@ -497,7 +497,30 @@ class TestPkgfiles(unittest.TestCase):
         
         _compare_file_lists('pkg', pkg_files, 'teal', src_files, 'all files', failures)
         _compare_file_lists('pkg', pkg_dirs, 'teal', src_dirs, 'all dirs', failures)
-        
+       
+        #########################
+        # Compare base and base-bg
+        base_spec_files = []
+        base_bg_spec_files = []
+        _load_spec_file(spec_loc, 'base', base_spec_files, failures )
+        _load_spec_file(spec_loc, 'base-bg', base_bg_spec_files, failures )
+        base_spec_files.remove('/etc/teal/teal.conf')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_db2.sql')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_dba_db2.sql')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_mysql.sql')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/sql/uninstall/Teal_dba_db2.sql')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/sql/uninstall/Teal_rm_db2.sql')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/sql/uninstall/Teal_rm_mysql.sql')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/xml/percs_location.xml')
+        base_spec_files.remove('/opt/teal/sbin/tltab')
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_db2.pm')
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_mysql.pm')
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor/TealSendAlert.pm')
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify.pm')
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealNotifyEventLogged.pm')
+        base_spec_files.remove('/install/postscripts/rmcmon/resources/sn/IBM.Sensor/TealEventNotify.pm') 
+        _compare_file_lists('base', base_spec_files, 'base-bg', base_bg_spec_files, 'base spec files', failures)
+           
         for fail in failures:
             print fail
         self.assertEquals(str(failures), '[]')

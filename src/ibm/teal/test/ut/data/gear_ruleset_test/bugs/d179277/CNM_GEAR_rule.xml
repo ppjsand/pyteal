@@ -2,7 +2,7 @@
   <!-- Source: errList.20110913.v2.csv -->
   <gear_control>
     <default_event_comp value="CNM"/>
-    <default_create_alert_init_class class="ibm.isnm.cnm_gear.CnmInitAlert"/>
+     <!-- <default_create_alert_init_class class="ibm.isnm.cnm_gear.CnmInitAlert"/> -->
   </gear_control>
   <pool_control>
     <initial_duration default="300" minimum="1" maximum="1200"/>

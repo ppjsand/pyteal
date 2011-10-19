@@ -18,7 +18,6 @@ from ibm.teal.incident import Incident
 from ibm.teal.location import Location
 from ibm.teal.registry import get_logger, get_service, SERVICE_EVENT_METADATA,\
     SERVICE_DB_INTERFACE
-from string import Template
 import ast
 
 EVENT_ATTR_REC_ID = 'rec_id'
@@ -426,8 +425,8 @@ class Event(Incident):
                 if not rpt_loc.match(self.get_rpt_loc(), scope):
                     #get_logger().debug('Match failed due to rpt_loc mismatch {0} != {1}'.format(str(rpt_loc), str(self.get_rpt_loc())))
                     return False
-        except BaseException, e:
-            get_logger().warn('Match failed due to exception: {0}'.format(str(e)))
+        except BaseException:
+            get_logger().exception('Event {0}: Match failed'.format(self.brief_str()))
             return False
         #get_logger().debug('Matched')
         return True

@@ -519,7 +519,7 @@ class Teal:
                 registry.register_service(SERVICE_DB_INTERFACE, data_store[0](dict(cf_reg.items(data_store[2]))))
                 singleton_created = True
             else:
-                raise TealError('Invalid secondary data store configured - {0}'.format(data_store[1]))
+                raise TealError('Multiple data stores configured - only one allowed')
             
         if self.daemon_mode:
             # Make sure the DB is up and running before we continue, since this might be 
@@ -561,8 +561,12 @@ class Teal:
                 tmp_conf_dict = dict(cf_reg.items(monitor[2]))
                 singleton_created = True
             else:
-                raise TealError('Invalid secondary monitor configured - {0}'.format(monitor[1]))
-        registry.register_service(SERVICE_EVENT_MONITOR, tmp_mon_class(restart, tmp_conf_dict))
+                raise TealError('Multiple monitors configured - only one allowed')
+            
+        if singleton_created:
+            registry.register_service(SERVICE_EVENT_MONITOR, tmp_mon_class(restart, tmp_conf_dict))
+        else:
+            raise TealError('No monitor configured - must have one monitor configured and enabled')
         return
 
     def event_not_analyzed_callback(self, event):

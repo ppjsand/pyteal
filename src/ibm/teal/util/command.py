@@ -338,7 +338,10 @@ class TealOptionParser(optparse.OptionParser):
                 print "\t",i
 
     def format_epilog(self, formatter):
-        return '\n'+self.epilog
+        if self.epilog is not None:
+            return '\n'+self.epilog
+        else:
+            return ''
     
 def daemonize(daemon_name):
     ''' Make a daemon out of the process if requested '''
