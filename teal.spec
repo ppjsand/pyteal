@@ -527,12 +527,10 @@ This package provides the unit and functional verification test for TEAL
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/checkpoint_test/G1_rule_001.xml
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/test/ut/data/checkpoint_test/G1_test_class.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/test/ut/data/checkpoint_test/__init__.py
-%attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/checkpoint_test/xcat/cfgloc
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/cnm/cnm.NMalertMetaData.xml
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/common/configurationtest.conf
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/common/dbinterfaceonly.conf
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/common/locationtest.xml
-%attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/common/xcat/cfgloc
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/common/teal/dbinterfaceonly.conf
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/configuration_test/configurationtest_01.conf
 %attr( 644, bin, bin ) /opt/teal/ibm/teal/test/ut/data/configuration_test/configurationtest_02.conf
@@ -1370,3 +1368,4 @@ a GPFS collector node for a cluster.
 %attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/tlgpfsmon.conf.sample
 %config(noreplace) /opt/teal/data/ibm/gpfs/tlgpfsmon.conf
 %endif
+

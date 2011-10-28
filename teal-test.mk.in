@@ -73,13 +73,11 @@ ibm/teal/test/ut/data/checkpoint_test/configurationtest_05_semaphore.conf \
 ibm/teal/test/ut/data/checkpoint_test/data_sample_demo_NEW_001.json \
 ibm/teal/test/ut/data/checkpoint_test/eventsmetadatatest_06.xml \
 ibm/teal/test/ut/data/checkpoint_test/noop_monitor.conf \
-ibm/teal/test/ut/data/checkpoint_test/xcat/cfgloc \
 ibm/teal/test/ut/data/cnm/cnm.NMalertMetaData.xml \
 ibm/teal/test/ut/data/common/configurationtest.conf \
 ibm/teal/test/ut/data/common/dbinterfaceonly.conf \
 ibm/teal/test/ut/data/common/locationtest.xml \
 ibm/teal/test/ut/data/common/teal/dbinterfaceonly.conf \
-ibm/teal/test/ut/data/common/xcat/cfgloc \
 ibm/teal/test/ut/data/configuration_test/configurationtest_01.conf \
 ibm/teal/test/ut/data/configuration_test/configurationtest_02.conf \
 ibm/teal/test/ut/data/demo/GEAR_rule_example_001.xml \
