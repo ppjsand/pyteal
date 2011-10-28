@@ -243,9 +243,10 @@ class ConditionData(object):
         tmp_events = []
         if len(dict_by_id_list) == 1:
             tmp_dict_by_id = dict_by_id_list[0]
-            for t_ids in itertools.combinations(tmp_dict_by_id.keys(), min_needed):
-                tmp_dict_by_inst_list = [tmp_dict_by_id[t_id] for t_id in t_ids]
-                tmp_events.extend(self._collect_at_inst(tmp_dict_by_inst_list, min_needed, dups))
+            if len(tmp_dict_by_id.keys()) >= min_needed:
+                for t_ids in itertools.combinations(tmp_dict_by_id.keys(), min_needed):
+                    tmp_dict_by_inst_list = [tmp_dict_by_id[t_id] for t_id in t_ids]
+                    tmp_events.extend(self._collect_at_inst(tmp_dict_by_inst_list, min_needed, dups))
         else:
             # It was unique above us so we'll get min_needed entries in the dict and have
             # to look at combinations over that
@@ -275,37 +276,7 @@ class ConditionData(object):
             for t_key, t_list in t_dict.items():
                 dict_by_inst[t_key].extend(t_list)
         return _perm_checker(dict_by_inst, min_needed, dups)
-        
-#        print "HERE>>>"
-#        print str(len(dict_by_inst.keys()))
-#        print min_needed
-#        print dups
-#        # Check if enough to have any chance
-#        if len(dict_by_inst.keys()) < min_needed:
-#            print 'DONE not enough'
-#            return []
-#        
-#        tmp_events = []
-#        print 'check level = ' + str(((min_needed-1) * dups) + 1)
-#        if dups > 1 and len(dict_by_inst.keys()) < ((min_needed-1) * dups) + 1:
-#            found = False
-#            for keycomb in itertools.combinations(dict_by_inst.keys(), min_needed):
-#                t_lists = [dict_by_inst[k] for k in keycomb]
-#                for eventprod in itertools.product(*t_lists):
-#                    print str([e.brief_str() for e in eventprod])
-#                    if len(set(eventprod)) >= min_needed:
-#                        found = True
-#                        break
-#            if found == False:
-#                print "DONE ... dind't find"
-#                return []
-#             
-#        # Collect all the events
-#        for t_list in dict_by_inst.values():
-#            tmp_events.extend(t_list)
-#        print "DONE"
-#        return list(set(tmp_events))    
-      
+              
     def _collect_at_inst_comp(self, dict_by_inst_list, min_needed, dups):
         ''' Collect at instance level when a instance comparitor is being used ''' 
         # If only one element then just have to make sure enough keys

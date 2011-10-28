@@ -1,0 +1,86 @@
+
+TEAL_BUILD_COMPS += build_isnm
+TEAL_CLEAN_COMPS += clean_isnm
+TEAL_INSTALL_COMPS += $(INSTALL_TEAL_ISNM_LIBS)
+
+###############################################################################
+# Build environment
+###############################################################################
+
+VPATH += @top_srcdir@/src/cpp/include:@top_srcdir@/src/cpp/common:@top_srcdir@/src/cpp/connector/isnm
+
+TEAL_ISNM_LIBS = libteal_isnm.so
+
+LIBTEAL_ISNM_OBJ = teal_isnm_connect.o DbIsnmEvent.o
+
+ifeq (@BITS@,64)
+TEAL_ISNM_LIBS += libteal_isnm.32.so
+LIBTEAL_ISNM_OBJ32 = $(LIBTEAL_ISNM_OBJ:.o=.32.o)
+INSTALL_TEAL_ISNM_LIBS=install_isnm_lib64
+else
+INSTALL_TEAL_ISNM_LIBS=install_isnm_lib
+endif
+
+libteal_isnm.so: $(LIBTEAL_ISNM_OBJ) libteal_common.so
+	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@.1 $(LIBTEAL_ISNM_OBJ) -o $@.1.0 $(LDLIBS) -lteal_common
+	ln -sf $@.1.0 $@.1
+	ln -sf $@.1 $@
+
+libteal_isnm.32.so: $(LIBTEAL_ISNM_OBJ32) libteal_common.32.so
+	$(CXX) $(LDFLAGS_32) -shared -Wl,-soname,libteal_isnm.so.1 $(LIBTEAL_ISNM_OBJ32) -o $@.1.0 $(LDLIBS) -lteal_common.32
+	ln -sf $@.1.0 $@.1
+	ln -sf $@.1 $@
+
+###############################################################################
+# Common targets
+###############################################################################
+
+.PHONY: build_isnm clean_isnm
+
+build_isnm: $(TEAL_ISNM_LIBS)
+
+clean_isnm:
+	$(RM) $(TEAL_ISNM_LIBS) $(LIBTEAL_ISNM_OBJ) $(LIBTEAL_ISNM_OBJ32) libteal_isnm.so.1 libteal_isnm.so
+
+
+###############################################################################
+# Install
+###############################################################################	
+
+TEAL_OPT_FILES += \
+ibm/isnm/__init__.py \
+ibm/isnm/cnm_gear.py \
+ibm/isnm/cnm_alert_listener.py \
+ibm/isnm/sfp_message.py \
+data/ibm/teal/xml/CNM_1.xml \
+data/ibm/isnm/xml/CNM_GEAR_alert_metadata.xml \
+data/ibm/isnm/xml/CNM_GEAR_event_metadata.xml \
+data/ibm/isnm/xml/CNM_GEAR_rule.xml \
+data/ibm/isnm/sql/install/Teal_isnm_db2.sql \
+data/ibm/isnm/sql/install/Teal_isnm_dba_db2.sql \
+data/ibm/isnm/sql/install/Teal_isnm_mysql.sql \
+data/ibm/isnm/sql/uninstall/Teal_isnm_dba_db2.sql \
+data/ibm/isnm/sql/uninstall/Teal_isnm_rm_db2.sql \
+data/ibm/isnm/sql/uninstall/Teal_isnm_rm_mysql.sql
+ 
+TEAL_XCAT_FILES += \
+perl/xCAT_schema/Teal_isnm.pm
+
+TEAL_ETC_FILES += \
+etc/teal/isnm.conf
+
+install_isnm_lib:
+	mkdir -p $(RPM_BUILD_ROOT)/usr/lib
+	cp -d libteal_isnm.so* $(RPM_BUILD_ROOT)/usr/lib
+
+install_isnm_lib64:
+	mkdir -p $(RPM_BUILD_ROOT)/usr/lib64
+	cp -d libteal_isnm.so.1.0 $(RPM_BUILD_ROOT)/usr/lib64
+	cp -d libteal_isnm.so.1 $(RPM_BUILD_ROOT)/usr/lib64
+	cp -d libteal_isnm.so $(RPM_BUILD_ROOT)/usr/lib64
+
+	mkdir -p $(RPM_BUILD_ROOT)/usr/lib
+	cp -d libteal_isnm.32.so.1.0 $(RPM_BUILD_ROOT)/usr/lib/libteal_isnm.so.1.0
+	cp -d libteal_isnm.so.1 $(RPM_BUILD_ROOT)/usr/lib
+	cp -d libteal_isnm.so $(RPM_BUILD_ROOT)/usr/lib
+	

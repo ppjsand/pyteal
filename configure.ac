@@ -40,26 +40,78 @@ AC_CANONICAL_BUILD
 # Options
 ###############################
 
+# Determine which package to include
+AC_ARG_ENABLE([isnm],AC_HELP_STRING([--enable-isnm], [enable isnm connector (default: 1)]),[enable_isnm=$enableval],[enable_isnm=1])
+AC_ARG_ENABLE([sfp],AC_HELP_STRING([--enable-sfp], [enable sfp connector (default: 1)]),[enable_sfp=$enableval],[enable_sfp=1])
+AC_ARG_ENABLE([ll],AC_HELP_STRING([--enable-ll], [enable loadleveler connector (default: 1)]),[enable_ll=$enableval],[enable_ll=1])
+AC_ARG_ENABLE([pnsd],AC_HELP_STRING([--enable-pnsd], [enable PNSD connector (default: 1)]),[enable_pnsd=$enableval],[enable_pnsd=1])
+AC_ARG_ENABLE([gpfs],AC_HELP_STRING([--enable-gpfs], [enable GPFS connector (default: 0)]),[enable_gpfs=$enableval],[enable_gpfs=0])
+AC_ARG_ENABLE([test],AC_HELP_STRING([--enable-test], [enable testcase package (default: 1)]),[enable_test=$enableval],[enable_test=1])
+
+case "$enable_isnm" in
+	"yes"|"1") ENABLE_ISNM=1 ;;
+	*) ENABLE_ISNM=0 ;;
+esac
+case "$enable_sfp" in
+	"yes"|"1") ENABLE_SFP=1 ;;
+	*) ENABLE_SFP=0 ;;
+esac
+case "$enable_ll" in
+	"yes"|"1") ENABLE_LL=1 ;;
+	*) ENABLE_LL=0 ;;
+esac
+case "$enable_pnsd" in
+	"yes"|"1") ENABLE_PNSD=1 ;;
+	*) ENABLE_PNSD=0 ;;
+esac
+case "$enable_gpfs" in
+	"yes"|"1") ENABLE_GPFS=1 ;;
+	*) ENABLE_GPFS=0 ;;
+esac
+case "$enable_test" in
+	"yes"|"1") ENABLE_TEST=1 ;;
+	*) ENABLE_TEST=0 ;;
+esac
+
+# Determine if 32 or 64 bit platform target
+machine="`uname -m`"
+
+if test "$machine" = "ppc64"; then
+    BITS="64"
+elif test "$machine" = "x86_64"; then
+    BITS="64"
+else
+    BITS="32"
+fi
 
 ###############################
 # Checks for programs.
 ###############################
 
+AC_PROG_MKDIR_P
+AC_PROG_LN_S
 AC_PROG_CXX
-AC_PROG_CC
 AC_PROG_CPP
+AC_PATH_PROG([PYTHON], [python], false)
+if test "$PYTHON" == 'false'; then
+	AC_MSG_ERROR([python not found])
+else
+    python_version="`$PYTHON -V 2>&1 | cut -d' ' -f2`"
+    PYTHON_VER=`echo $python_version | sed 's/\(^@<:@0-9@:>@*\.@<:@0-9@:>@*\).*/\1/'`
+fi
 
 ########################
 # Checks for libraries.
 ########################
 
-
 #############################
 # Checks for header files.
 #############################
 
+CPPFLAGS="-I/usr/include/python$PYTHON_VER -I/opt/freeware/include/python$PYTHON_VER"
+
+AC_CHECK_HEADER([Python.h],[], AC_MSG_ERROR([Must have python header files available]))
 AC_CHECK_HEADERS([sql.h sqlext.h],[],AC_MSG_ERROR([Must have SQL header files available]))
-#AC_CHECK_HEADER([Python.h],[],AC_MSG_ERROR([Must have python header file available]))
 
 #################################################################
 # Checks for typedefs, structures, and compiler characteristics.
@@ -72,32 +124,24 @@ AC_CHECK_HEADERS([sql.h sqlext.h],[],AC_MSG_ERROR([Must have SQL header files av
 ###############################
 # Endgame
 ###############################
-AC_CONFIG_FILES([Makefile:Makefile.in])
 
-#AC_CONFIG_FILES([Makefile:Makefile.in
-#                 Make.rules
-#                 ibm/Makefile:ibm/Makefile.in
-#                 ibm/teal/Makefile:ibm/teal/Makefile.in
-#                 ibm/teal/analyzer/Makefile:ibm/teal/analyzer/Makefile.in
-#                 ibm/teal/analyzer/gear/Makefile:ibm/teal/analyzer/gear/Makefile.in
-#                 ibm/teal/analyzer/pool/Makefile:ibm/teal/analyzer/pool/Makefile.in
-#                 ibm/teal/database/Makefile:ibm/teal/database/Makefile.in
-#                 ibm/teal/filter/Makefile:ibm/teal/filter/Makefile.in
-#                 ibm/teal/listener/Makefile:ibm/teal/listener/Makefile.in
-#                 ibm/teal/monitor/Makefile:ibm/teal/monitor/Makefile.in
-#                 ibm/teal/test/Makefile:ibm/teal/test/Makefile.in
-#                 ibm/teal/test/ut/Makefile:ibm/teal/test/ut/Makefile.in
-#                 ibm/teal/util/Makefile:ibm/teal/util/Makefile.in
-#                 ibm/teal/connector/Makefile:ibm/teal/connector/Makefile.in
-#                 cpp/Makefile:cpp/Makefile.in
-#                 cpp/include/Makefile:cpp/include/Makefile.in
-#                 cpp/common/Makefile:cpp/common/Makefile.in
-#                 cpp/connector/Makefile:cpp/connector/Makefile.in
-#                 cpp/connector/isnm/Makefile:cpp/connector/isnm/Makefile.in
-#                 data/Makefile:data/Makefile.in
-#                 data/ibm/Makefile:data/ibm/Makefile.in
-#                 data/ibm/teal/Makefile:data/ibm/teal/Makefile.in
-#                 data/ibm/teal/xml/Makefile:data/ibm/teal/xml/Makefile.in])
-#
+AC_CONFIG_FILES([Makefile:Makefile.in
+				teal-base.mk
+				teal-ll.mk
+				teal-pnsd.mk
+				teal-sfp.mk
+				teal-isnm.mk
+				teal-gpfs.mk
+				teal-test.mk])
+
+AC_SUBST(PYTHON_VER)
+AC_SUBST(BITS)
+AC_SUBST(ENABLE_ISNM)
+AC_SUBST(ENABLE_SFP)
+AC_SUBST(ENABLE_LL)
+AC_SUBST(ENABLE_PNSD)
+AC_SUBST(ENABLE_GPFS)
+AC_SUBST(ENABLE_TEST)
+
 AC_OUTPUT
 

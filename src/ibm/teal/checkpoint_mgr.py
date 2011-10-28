@@ -18,6 +18,7 @@ from ibm.teal.teal_error import ConfigurationError, TealError
 from ibm.teal.database import db_interface
 import threading
 from ibm.teal.event import EVENT_ATTR_REC_ID
+import exceptions
 
 # Restart modes 
 RESTART_MODES = ['now', 'begin', 'recovery', 'lastproc']
@@ -579,14 +580,21 @@ class CheckpointListener(QueueListener):
         return True
     
     
-class CheckpointRecoveryComplete(TealError):
+class CheckpointRecoveryComplete(exceptions.Exception):
     ''' Used to throw exception indicating that the checkpoint has completed recovery and
         that normal processing can be resumed.
     '''
     
-    def __init__(self, msg):
+    def __init__(self, recovery_rec_id, msg):
         ''' Message will be logged ''' 
-        if msg is None:
-            msg = 'Checkpoint Recovery Complete'
-        TealError.__init__(self, msg, False) # Not a Error 
+        self.recovery_rec_id = recovery_rec_id
+        self.msg = msg
+        if self.recovery_rec_id is None:
+            get_logger().debug('Checkpoint recovery not required: {0}'.format(str(self.msg)))
+        else:
+            get_logger().info('Checkpoint recovery complete at {0}: {1}'.format(self.recovery_rec_id, str(self.msg)))
         return 
+
+    def __str__(self):
+        '''Print out additional information'''
+        return repr(self.msg)

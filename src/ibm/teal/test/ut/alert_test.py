@@ -231,8 +231,7 @@ class AlertTestStates(TealTestCase):
         # Note that in memory won't be updated ... only in DB
         # so lets get it from the DB
         dbi = get_service(SERVICE_DB_INTERFACE)
-        event_cnxn = dbi.get_connection()
-        cursor = event_cnxn.cursor()
+        event_cnxn, cursor =_get_connection(dbi)
         self.assert_alert_closed(dbi, cursor, ta1.rec_id)
         self.assert_alert_open(dbi, cursor, 2)
         self.assert_alert_open(dbi, cursor, 3)
@@ -240,11 +239,12 @@ class AlertTestStates(TealTestCase):
         self.assert_alert_closed(dbi, cursor, 5)
         self.assert_alert_closed(dbi, cursor, 6)
         self.assert_alert_open(dbi, cursor, 7)
-        # reopen it 
         self.assertRaisesTealError(AlertMgrError, 'Alert with specified record id not found', am.reopen, 23456)
         self.assertRaisesTealError(AlertMgrError, 'Operation not allowed on duplicate alert', am.reopen, 5)
         self.assertRaisesTealError(AlertMgrError, 'Operation not allowed on duplicate alert', am.reopen, 6)
+        # reopen it 
         am.reopen(ta1.rec_id)
+        event_cnxn, cursor =_get_connection(dbi, event_cnxn)
         self.assert_alert_open(dbi, cursor, ta1.rec_id)
         self.assert_alert_open(dbi, cursor, 2)
         self.assert_alert_open(dbi, cursor, 3)
@@ -253,6 +253,7 @@ class AlertTestStates(TealTestCase):
         self.assert_alert_open(dbi, cursor, 6)
         self.assert_alert_open(dbi, cursor, 7)
         am.close(3)
+        event_cnxn, cursor =_get_connection(dbi, event_cnxn)
         self.assert_alert_open(dbi, cursor, ta1.rec_id)
         self.assert_alert_open(dbi, cursor, 2)
         self.assert_alert_closed(dbi, cursor, 3)
@@ -261,6 +262,7 @@ class AlertTestStates(TealTestCase):
         self.assert_alert_open(dbi, cursor, 6)
         self.assert_alert_open(dbi, cursor, 7)
         am.reopen(3)
+        event_cnxn, cursor =_get_connection(dbi, event_cnxn)
         self.assert_alert_open(dbi, cursor, ta1.rec_id)
         self.assert_alert_open(dbi, cursor, 2)
         self.assert_alert_open(dbi, cursor, 3)
@@ -328,7 +330,15 @@ class AlertTestDuplicateSupport(TealTestCase):
         self.assertEqual(len(am.active_alerts_open), 3)
         self.teal.shutdown()
         return
-    
+  
+# Helpers
+
+def _get_connection(dbi, old_cnxn=None): 
+    if old_cnxn is not None:
+            old_cnxn.close()
+    event_cnxn = dbi.get_connection() 
+    cursor = event_cnxn.cursor()
+    return (event_cnxn, cursor)
 
 if __name__ == "__main__":
     unittest.main()

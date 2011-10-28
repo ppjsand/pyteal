@@ -1,0 +1,49 @@
+#!/bin/sh
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2011     
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+TEAL_ROOT=/opt/teal/bin
+IS_DAEMON=-d
+IS_POLLING=-p
+IS_EVENT=-e
+LOG_FILE=teal_conn.log
+TLGPFS_CONNECTOR=tlgpfsmon
+if [[ -z ${TEAL_LOG_DIR} ]]; then
+   if [[ -d /var/log/teal ]]; then
+      export TEAL_LOG_DIR=/var/log/teal
+   else
+      export TEAL_LOG_DIR=/tmp
+   fi
+   echo "`date` No TEAL GPFS connector log path is specified, using ${TEAL_LOG_DIR} by default!" >> ${TEAL_LOG_DIR}/${LOG_FILE}
+else
+   echo "`date` Log path is ${TEAL_LOG_DIR}" >> ${TEAL_LOG_DIR}/${LOG_FILE}
+fi
+
+if [[ -z ${TLGPFS_CONF} ]]; then
+   export TLGPFS_CONF=/opt/teal/data/ibm/gpfs/tlgpfsmon.conf
+   echo "`date` No TEAL GPFS connector conf file is specified, using ${TLGPFS_CONF} by default!" >> ${TEAL_LOG_DIR}/${LOG_FILE}
+else
+   echo "`date` Conf file is ${TEAL_LOG_DIR}" >> ${TEAL_LOG_DIR}/${LOG_FILE}
+fi
+if [[ -z $POLLING_INTERVAL ]]; then
+   export POLLING_INTERVAL=86400
+   echo "`date` No polling interval is specified, using ${POLLING_INTERVAL} by default!" >> ${TEAL_LOG_DIR}/${LOG_FILE}
+else
+   echo "`date` polling interval is ${POLLING_INTERVAL}" >> ${TEAL_LOG_DIR}/${LOG_FILE}
+fi
+echo "Lauch teal connector as: ${TEAL_ROOT}/${TLGPFS_CONNECTOR} ${IS_DAEMON} ${IS_POLLING} ${IS_EVENT} -i ${POLLING_INTERVAL} -c ${TLGPFS_CONF}" >> ${TEAL_LOG_DIR}/${LOG_FILE}
+${TEAL_ROOT}/${TLGPFS_CONNECTOR} ${IS_DAEMON} ${IS_POLLING} ${IS_EVENT} -i ${POLLING_INTERVAL} -c ${TLGPFS_CONF}
+ret=$?
+if [ ${ret} -eq 0 ]; then
+   echo "`date` ${TLGPFS_CONNECTOR} lauched!" >>  ${TEAL_LOG_DIR}/${LOG_FILE}
+fi
+exit ${ret}

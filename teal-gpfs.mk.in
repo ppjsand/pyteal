@@ -1,0 +1,127 @@
+
+VPATH += @top_srcdir@/src/cpp/connector/gpfs:/usr/lpp/mmfs/include
+
+ifeq (@BITS@,64)
+INSTALL_TEAL_GPFS_LIBS=install_gpfs_lib64
+else
+INSTALL_TEAL_GPFS_LIBS=install_gpfs_lib
+endif
+
+LIBTEAL_GPFS_OBJ = \
+DbClusterInfo.o \
+DbDaInfo.o \
+DbDiskEvent.o \
+DbDiskInfo.o \
+DbFsEvent.o \
+DbFsetInfo.o \
+DbFsInfo.o \
+DbMiscEvent.o \
+DbNodeInfo.o \
+DbPdiskInfo.o \
+DbPerseusEvent.o \
+DbRgInfo.o \
+DbStgPoolInfo.o \
+DbVdiskInfo.o \
+teal_gpfs_connect.o \
+utils.o \
+configuration.o
+
+TLGPFSREFRESH_OBJ = tlgpfsrefresh.o tlgpfs_command_api.o
+
+TLGPFSSTATUS_OBJ = tlgpfsstatus.o
+
+TLGPFSERRHANDLER_OBJ = tlgpfserrhandler.o
+
+TLGPFSPURGE_OBJ = tlgpfspurge.o
+
+TLGPFS_LIBS = libteal_common.so libteal_gpfs.so
+TLGPFS_LDLIBS = -lteal_common -lteal_gpfs -lrt
+TLGPFS_LDFLAGS = $(LDFLAGS) -L/usr/lpp/mmfs/lib
+
+TLGPFSMON_OBJ = \
+GPFSConfigHandler.o \
+GPFSDiskEvent.o \
+GPFSDiskEventLogging.o \
+GPFSEvent.o \
+GPFSEventFactory.o \
+GPFSEventHandler.o \
+GPFSEventProcessor.o \
+GPFSEventProcessorFactory.o \
+GPFSFsEvent.o \
+GPFSFsEventLogging.o \
+GPFSHandler.o \
+GPFSMiscEvent.o \
+GPFSMiscEventLogging.o \
+GPFSPerseusEvent.o \
+GPFSPerseusEventLogging.o \
+GPFSRefreshProcessor.o \
+commandlistener.o \
+thread.o \
+tlgpfsmon.o
+
+TEAL_GPFS_LIBS = libteal_gpfs.so
+TEAL_GPFS_PROGRAMS = tlgpfsmon tlgpfsstatus tlgpfserrhandler tlgpfspurge tlgpfsrefresh
+
+libteal_gpfs.so: $(LIBTEAL_GPFS_OBJ) libteal_common.so
+	$(CXX) $(LDFLAGS) -shared -Wl,-soname,$@.1 $(LIBTEAL_GPFS_OBJ) -o $@.1.0 $(LDLIBS) -lteal_common
+	ln -sf $@.1.0 $@.1
+	ln -sf $@.1 $@
+
+tlgpfsmon: $(TLGPFSMON_OBJ) $(TLGPFS_LIBS)
+	$(CXX) $(TLGPFS_LDFLAGS) -o $@ $(TLGPFSMON_OBJ) $(LDLIBS) $(TLGPFS_LDLIBS) -lmmantras
+	
+tlgpfsstatus: $(TLGPFSSTATUS_OBJ) $(TEALGPFS_LIBS)
+	$(CXX) $(TLGPFS_LDFLAGS) -o $@ $(TLGPFSSTATUS_OBJ) $(LDLIBS) $(TLGPFS_LDLIBS)
+
+tlgpfsrefresh: $(TLGPFSREFRESH_OBJ) $(TEALGPFS_LIBS)
+	$(CXX) $(TLGPFS_LDFLAGS) -o $@ $(TLGPFSREFRESH_OBJ) $(LDLIBS) $(TLGPFS_LDLIBS)
+
+tlgpfserrhandler: $(TLGPFSERRHANDLER_OBJ) $(TEALGPFS_LIBS)
+	$(CXX) $(TLGPFS_LDFLAGS) -o $@ $(TLGPFSERRHANDLER_OBJ) $(LDLIBS) $(TLGPFS_LDLIBS)
+
+tlgpfspurge: $(TLGPFSPURGE_OBJ) $(TLGPFS_LIBS)
+	$(CXX) $(TLGPFS_LDFLAGS) -o $@ $(TLGPFSPURGE_OBJ) $(LDLIBS) $(TLGPFS_LDLIBS)
+
+TEAL_BUILD_COMPS += build_gpfs
+TEAL_INSTALL_COMPS += install_gpfs
+TEAL_CLEAN_COMPS += clean_gpfs
+
+TEAL_OPT_FILES += \
+data/ibm/gpfs/sql/install/Teal_gpfs_db2.sql \
+data/ibm/gpfs/sql/install/Teal_gpfs_mysql.sql \
+data/ibm/gpfs/sql/uninstall/Teal_gpfs_rm_db2.sql \
+data/ibm/gpfs/sql/uninstall/Teal_gpfs_rm_mysql.sql \
+data/ibm/gpfs/tlgpfsmon.conf \
+data/ibm/gpfs/tlgpfsmon.conf.sample \
+data/ibm/teal/xml/GPFS_1.xml
+
+TEAL_XCAT_FILES += \
+perl/xCAT_schema/Teal_gpfs.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/GPFSConnectorFailed.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/GPFSConnectorMonitor.pm
+
+TEAL_ETC_FILES += \
+etc/teal/gpfs.conf
+
+build_gpfs: $(TEAL_GPFS_PROGRAMS) $(TEAL_GPFS_LIBS)
+
+clean_gpfs: 
+	rm $(TEAL_GPFS_PROGRAMS) $(TEAL_GPFS_LIBS) $(LIBTEAL_GPFS_OBJ) $(TLGPFSMON_OBJ) $(TLGPFSREFRESH_OBJ) $(TLGPFSSTATUS_OBJ) $(TEALGPFSERRHANDLER_OBJ) $(TEALGPFSPURGE_OBJ)
+
+install_gpfs_lib64:
+	mkdir -p $(RPM_BUILD_ROOT)/usr/lib64
+	cp -d libteal_gpfs* $(RPM_BUILD_ROOT)/usr/lib64
+
+install_gpfs_lib: 
+	mkdir -p $(RPM_BUILD_ROOT)/usr/lib
+	cp -d libteal_gpfs* $(RPM_BUILD_ROOT)/usr/lib
+	
+install_gpfs: $(INSTALL_TEAL_GPFS_LIBS)
+	mkdir -p $(RPM_BUILD_ROOT)/opt/teal/bin
+	cp @top_srcdir@/src/cpp/connector/gpfs/tlgpfschnode $(RPM_BUILD_ROOT)/opt/teal/bin
+	cp @top_srcdir@/src/cpp/connector/gpfs/tlgpfslauncher $(RPM_BUILD_ROOT)/opt/teal/bin
+	cp tlgpfsmon $(RPM_BUILD_ROOT)/opt/teal/bin
+	cp tlgpfsstatus $(RPM_BUILD_ROOT)/opt/teal/bin
+	cp tlgpfserrhandler $(RPM_BUILD_ROOT)/opt/teal/bin
+	cp tlgpfspurge $(RPM_BUILD_ROOT)/opt/teal/bin
+	cp tlgpfsrefresh $(RPM_BUILD_ROOT)/opt/teal/bin

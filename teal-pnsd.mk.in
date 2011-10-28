@@ -1,0 +1,33 @@
+
+VPATH += @top_srcdir@/src/cpp/connector/pnsd
+
+TEAL_BUILD_COMPS += build_pnsd
+TEAL_INSTALL_COMPS += install_pnsd
+TEAL_CLEAN_COMPS += clean_pnsd
+
+TEAL_OPT_FILES += \
+ibm/teal/connector/pnsd.py \
+data/ibm/pnsd/xml/PNSD_GEAR_rules.xml
+
+TEAL_XCAT_FILES += \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodePnsdStat.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodePnsdStat_H.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogPnsdEvent.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogPnsdEvent_H.pm 
+
+TEAL_XCAT_INSTALL_FILES += \
+perl/xCAT_monitoring/rmc/resources/node/IBM.Sensor/TealPnsdStat.pm \
+perl/xCAT_monitoring/rmc/resources/sn/IBM.Condition/TealAnyNodePnsdStat.pm
+
+TEAL_ETC_FILES += \
+etc/teal/pnsd.conf
+
+build_pnsd: tlpnsd_sensor
+
+clean_pnsd: 
+	rm tlpnsd_sensor
+
+install_pnsd:	
+	@mkdir -p $(XCAT_INSTALL_DIR)/scripts
+	@cp tlpnsd_sensor $(XCAT_INSTALL_DIR)/scripts
+	

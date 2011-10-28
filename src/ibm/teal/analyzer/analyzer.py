@@ -402,19 +402,19 @@ class EventAnalyzerCheckpoint(EventCheckpoint, EventAnalyzerCheckpointInterface)
             
     def need_to_analyze_COMPLETE(self, event):
         ''' If before my checkpointed rec_id then don't need to process '''
-        raise CheckpointRecoveryComplete('Checkpoint reached')
+        raise CheckpointRecoveryComplete(self.start_rec_id, '{0}'.format(self.name))
     
     def need_to_analyze(self, event):
         ''' If before my checkpointed rec_id then don't need to process '''
         if event.rec_id > self.start_rec_id:
-            raise CheckpointRecoveryComplete('Checkpoint reached')
+            raise CheckpointRecoveryComplete(self.start_rec_id,'{0}'.format(self.name))
         return False
     
 class EventAnalyzerCheckpointDisable(EventAnalyzerCheckpointInterface):
     ''' Used when Event Analyzer should not checkpoint '''
        
     def need_to_analyze(self, event):
-        raise CheckpointRecoveryComplete('Checkpoint disabled')
+        raise CheckpointRecoveryComplete(None, 'disabled')
     
     def set_checkpoint(self, rec_id, data=None):
         return 

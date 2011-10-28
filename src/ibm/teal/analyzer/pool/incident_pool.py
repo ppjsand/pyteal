@@ -17,8 +17,7 @@ from datetime import timedelta, datetime
 from ibm.teal.teal_error import TealError
 from ibm.teal.util.extendable_timer import ExtendableTimer
 from ibm.teal.analyzer.analyzer import EventAnalyzerCheckpoint
-from ibm.teal.checkpoint_mgr import CheckpointRecoveryComplete, \
-    CHECKPOINT_STATUS_SHUTDOWN
+from ibm.teal.checkpoint_mgr import CheckpointRecoveryComplete
 from ibm.teal.util.msg_target import MsgTargetLogger
 import sys
 import json
@@ -555,8 +554,8 @@ class IncidentPool(object):
                 result.extend(tsl)
         return result
 
-    def contains_incident(self, type, incident_id):
-        '''Determine if the pool contains at least one incident of the specified type and incident id'''
+    def contains_incident(self, incident_type, incident_id):
+        '''Determine if the pool contains at least one incident of the specified incident_type and incident id'''
         # Check unsuppressed
         return ((incident_id in self.incidents.keys() and len(self.incidents[incident_id]))or 
                 (incident_id in self.suppressed.keys() and len(self.suppressed[incident_id]))) 
@@ -773,7 +772,7 @@ class IncidentPoolEventCheckpoint(EventAnalyzerCheckpoint):
             if len(self.rec_ids) != 0:
                 self.msg_target.warning('Not all priming events were available.  Missing: {0}'.format(str(self.rec_ids)))
             self._start_pool()
-            raise CheckpointRecoveryComplete('Checkpoint Reached')
+            raise CheckpointRecoveryComplete(self.pool_rec_id, '{0}'.format(self.name))
         # Check if one of the priming events
         if chk_rec_id in self.rec_ids:
             self.prime_incidents.append(event)

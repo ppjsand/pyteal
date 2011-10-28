@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tables xmlns="http://www.ibm.com/teal" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.ibm.com/teal ../../../../xml/extension.xsd ">
+
+    <table name="filesystem" id="1">
+        <column name="rec_id" type="BIGINT"/>
+        <column name="severity" type="VARCHAR" size="256"/>
+        <column name="node_ip" type="VARCHAR" size="256"/>
+        <column name="sgmgr_ip" type="VARCHAR" size="256"/>
+        <column name="user_unba" type="VARCHAR" size="256"/>
+        <column name="meta_unba" type="VARCHAR" size="256"/>
+        <column name="user_ill_rep" type="VARCHAR" size="256"/>
+        <column name="meta_ill_rep" type="VARCHAR" size="256"/>
+        <column name="user_exposed" type="VARCHAR" size="256"/>
+        <column name="meta_exposed" type="VARCHAR" size="256"/>
+        <column name="pool_name" type="VARCHAR" size="256"/>
+        <column name="pool_status" type="VARCHAR" size="256"/>
+        <column name="pool_usage" type="INTEGER"/>
+    </table>
+    
+    <table name="disk" id="2">
+        <column name="rec_id" type="BIGINT"/>
+        <column name="severity" type="VARCHAR" size="256"/>
+        <column name="fs_name" type="VARCHAR" size="256"/>
+        <column name="node_name" type="VARCHAR" size="256"/>
+        <column name="node_ip" type="VARCHAR" size="256"/>
+        <column name="status" type="VARCHAR" size="256"/>
+        <column name="availability" type="VARCHAR" size="256"/>
+        <column name="fg_name" type="VARCHAR" size="256"/>
+        <column name="meta" type="VARCHAR" size="256"/>
+        <column name="data" type="VARCHAR" size="256"/>
+        <column name="cmd" type="VARCHAR" size="256"/>
+        <column name="my_role" type="VARCHAR" size="256"/>
+        <column name="ck_reason" type="VARCHAR" size="256"/>
+        <column name="other_node" type="VARCHAR" size="256"/>
+        <column name="data_len" type="INTEGER"/>
+        <column name="err_cnt_client" type="INTEGER"/>
+        <column name="err_cnt_serv" type="INTEGER"/>
+        <column name="err_cnt_nsd" type="INTEGER"/>
+        <column name="rpt_interval" type="INTEGER"/>
+        <column name="io_length" type="INTEGER"/>
+        <column name="io_time" type="INTEGER"/>
+        <column name="start_sector" type="BIGINT"/>
+    </table>
+    
+    <table name="perseus" id="3">
+        <column name="rec_id" type="BIGINT"/>
+        <column name="severity" type="VARCHAR" size="256"/>
+        <column name="node_name" type="VARCHAR" size="256"/>
+        <column name="location" type="VARCHAR" size="256"/>
+        <column name="fru" type="VARCHAR" size="256"/>
+        <column name="wwn" type="VARCHAR" size="256"/>
+        <column name="state" type="VARCHAR" size="256"/>
+        <column name="priority" type="INTEGER"/>
+    </table>
+    
+    <table name="misc" id="4">
+        <column name="rec_id" type="BIGINT"/>
+        <column name="severity" type="VARCHAR" size="256"/>
+        <column name="msg_text" type="VARCHAR" size="256"/>
+        <column name="diagnosis" type="VARCHAR" size="256"/>
+        <column name="wait_time" type="VARCHAR" size="256"/>
+        <column name="msg_level" type="INTEGER"/>
+    </table>
+</tables>

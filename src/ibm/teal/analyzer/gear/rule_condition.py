@@ -387,7 +387,8 @@ class GearCondition(GearEvaluatableContainer):
         '''Resolve and validate the condition''' 
         GearEvaluatableContainer.resolve_and_validate(self, rule, imin=1, imax=1)
         return
-       
+    
+   
     def get_truth_space(self, exclude_events, exclude_primes=False):
         ''' Get the sets of events that make the condition true 
         
@@ -952,16 +953,17 @@ class GearEvaluatableEventOccurred(GearEvaluatable):
         if new_loc in can_locs:
             can_locs.remove(new_loc)
         
-        for t_locs in itertools.combinations(can_locs, self.num.get_value() - 1):
-            event_lists_list = []
-            for t_loc in t_locs:
-                event_lists_list.append(self.events_by_loc[t_loc])
-            for t_events in itertools.product(*event_lists_list):
-                tmp_events = list(t_events)
-                tmp_events.append(event)
-                tmp_locs = list(t_locs)
-                tmp_locs.append(new_loc)
-                self.truth_space.add((frozenset(tmp_locs), frozenset(tmp_events)))
+        if len(can_locs) >= self.num.get_value() -1:
+            for t_locs in itertools.combinations(can_locs, self.num.get_value() - 1):
+                event_lists_list = []
+                for t_loc in t_locs:
+                    event_lists_list.append(self.events_by_loc[t_loc])
+                for t_events in itertools.product(*event_lists_list):
+                    tmp_events = list(t_events)
+                    tmp_events.append(event)
+                    tmp_locs = list(t_locs)
+                    tmp_locs.append(new_loc)
+                    self.truth_space.add((frozenset(tmp_locs), frozenset(tmp_events)))
         
         self.events_by_loc[new_loc].append(event)
         return 
