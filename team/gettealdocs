@@ -1,0 +1,132 @@
+#!/usr/bin/perl
+# IBM(c) 2007 EPL license http://www.eclipse.org/legal/epl-v10.html
+
+# Downloads/converts the TEAL docs on the sourceforge wiki to local HTML and PDF.
+# This script is not dependent on other TEAL code, so you can copy it to a machine
+# that has internet access to run it.  Before running this command, you must have
+# wget, python, and pisa installed.  See: https://sourceforge.net/apps/mediawiki/xcat/index.php?title=Editing_xCAT_Documentation_Pages#Converting_Wiki_Pages_to_HTML_and_PDFs .
+
+# Note: do not use the --upload option, unless your machine has authority to write to http://pyteal.sourceforge.net/doc/ .
+#       You also need to set $UPLOADUSER to your sourceforge user.
+
+use strict;
+use Getopt::Long;
+#use Data::Dumper;
+
+#my $VERSION;
+my $HELP;
+my $UPLOAD;
+my $UPLOADONLY;
+ 
+my $usage = sub {
+   	my $exitcode = shift @_;
+   	print "Usage: gettealdocs [-?|-h|--help] [-u|--upload] [--uploadonly] [<destination-dir>]\n";
+	exit $exitcode;
+};
+
+# Process the cmd line args
+Getopt::Long::Configure("bundling");
+#Getopt::Long::Configure("pass_through");
+Getopt::Long::Configure("no_pass_through");
+if (!GetOptions('h|?|help'  => \$HELP, 'u|upload' => \$UPLOAD, 'uploadonly' => \$UPLOADONLY )) { $usage->(1); }
+
+if ($HELP) { $usage->(0); }
+
+if ($^O =~ /^aix/i) { die "Error: this command is not yet supported on AIX.\n"; }
+
+my $destdir = scalar(@ARGV) ? $ARGV[0] : '.';
+chdir($destdir) or die "Can not cd to $destdir: $!\n";
+#my $docdir = $ENV{'PWD'};
+
+# Download the HTML
+my @dir;
+if (!$UPLOADONLY) {
+	mkdir('html');
+	chdir('html');
+	#system('pwd');
+	unlink <*>;		# delete all the files in the dir, in case they previously ran this
+	#system('rm -rf nfs skins');
+	#system('ls');
+	print "Downloading the TEAL wiki documentation...\n";
+	#    --html-extension --restrict-file-names=windows  --cut-dirs=3
+	# options that do not work:  --relative
+	my $wgetcmd = q(wget --verbose --reject '*title=Main_Page*,*title=Command*,index.html,*title=pyteal_talk:*,*title=File:*,*title=User:*,*title=User_talk:*,*&oldid*,*&action*,*&printable=yes,*title=MediaWiki:*,*title=Special:*,*title=Talk:*,*title=pyteal:*,*title=Help:*' --recursive --convert-links --no-verbose --progress=bar --level=1 --page-requisites --no-parent --no-host-directories --no-directories --execute robots=off --post-data='printable=yes' 'https://sourceforge.net/apps/mediawiki/pyteal/index.php?title=Main_Page&printable=yes'
+);
+	runwget($wgetcmd);
+    $wgetcmd = q(wget --verbose --reject '*title=Main_Page*,index.html,*title=pyteal_talk:*,*title=File:*,*title=User:*,*title=User_talk:*,*&oldid*,*&action*,*&printable=yes,*title=MediaWiki:*,*title=Special:*,*title=Talk:*,*title=pyteal:*,*title=Help:*' --recursive --convert-links --no-verbose --progress=bar --level=1 --page-requisites --no-parent --no-host-directories --no-directories --execute robots=off --post-data='printable=yes' 'https://sourceforge.net/apps/mediawiki/pyteal/index.php?title=Command_Reference&printable=yes');
+	runwget($wgetcmd);
+    unlink glob '*.1 *.2';
+	# remove the dir portion of links to other docs
+	#my $sedcmd = q(sed -i 's/<a href="\/apps\/mediawiki\/xcat\/index.php?title/<a href="index.php%3Ftitle/' *);
+	my $sedcmd = q(sed -i 's/<a href="index.php?title/<a href="index.php%3Ftitle/' *);
+	print "$sedcmd\n";
+	system($sedcmd);
+	# get the list of docs
+	opendir(DIR, '.') or die "Error: could not read the just created html directory.\n";
+	@dir = grep /^index.php\?title=/, readdir(DIR);		# /
+	close(DIR);
+	chdir('..');
+}
+
+# Convert to pdf
+if (!$UPLOADONLY) {
+	if (system('which xhtml2pdf >/dev/null 2>&1')) { die "xhtml2pdf is not installed.  See http://sourceforge.net/apps/mediawiki/xcat/index.php?title=Editing_xCAT_Documentation_Pages#Converting_Wiki_Pages_to_HTML_and_PDFs .\n"; }
+	mkdir('pdf');
+	chdir('pdf');
+	unlink <*>;		# delete all the files in the dir, in case they previously ran this
+	foreach my $file (@dir) {
+		if ($file =~ /^index.php\?title=MediaWiki:/ || $file eq 'index.php?title=Main_Page') { next; }
+		my ($docname) = $file =~ /^index.php\?title=(.+)$/;
+		print "Converting $docname to PDF format...\n";
+		my $url = "https://sourceforge.net/apps/mediawiki/pyteal/$file&printable=yes";
+		my $destfile = "$docname.pdf";
+		my $cmd = "xhtml2pdf '$url' '$destfile' ";
+		#print "$cmd\n";
+		runh2p($cmd);
+	}
+	chdir('..');
+}
+
+# tar/compress
+my $date=`date +%Y%m%d%H%M`;
+chop $date;
+my $docname="teal-docs-snap$date.tar.gz";
+#system('pwd');
+system("tar -zcf $docname html pdf 2>&1");
+
+# Optionally upload the tarball to sourceforge
+if ($UPLOAD || $UPLOADONLY) {
+	my $UPLOADUSER = 'ppjsand';
+	my $count = 1;
+	my $cmd = "rsync -v $docname $UPLOADUSER," . 'pyteal@web.sourceforge.net:/home/frs/project/p/py/pyteal/doc';
+	print "$cmd\n";
+	while ($count<=5 && system("$cmd 2>&1")) { $count++; }
+}
+exit 0;
+
+
+# Run the wget cmd and filter out some of the silly output
+sub runwget {
+	my $cmd = shift;
+	#print "$cmd\n";
+	open(OUT, "$cmd 2>&1 |") || die "can't fork $cmd: $!\n";
+	while (<OUT>) {
+		if (/URL:https*:\/\/sourceforge\.net.+\s+->\s+\"(\S+)\"\s+\[/) { print "Downloaded $1.\n"; }
+		else { print; }
+	}
+	close OUT || die "Error running $cmd: $! $?";
+}
+
+# Run the xhtml2pdf cmd and filter out some of the silly output
+sub runh2p {
+	my $cmd = shift;
+	#print "$cmd\n";
+	open(OUT, "$cmd 2>&1 |") || die "can't fork $cmd: $!\n";
+	while (<OUT>) {
+		next if /DeprecationWarning:\sthe sets module is deprecated/;
+		next if /from sets import ImmutableSet/;
+		next if /^Converting\ssourceforge.net/;
+		print;
+	}
+	close OUT || die "Error running $cmd: $! $?";
+}
