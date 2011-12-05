@@ -1,0 +1,10 @@
+#!/bin/bash
+flds=`echo $1 | sed 's/,/ :\|/g'`" :"
+#echo $flds
+awk "\
+function print_vals() {for (i = 1; i <= names_len; i++) { printf(\"%s \",vals[names[i]]); vals[names[i]] = \"None\" } print \"\" } \
+BEGIN {names_len = split(\"$1\",names,\",\")} \
+/$flds/{vals[\$1] = substr(\$0,index(\$0,\":\")+1)} \
+/\=\=\=\=\=/ { print_vals() } \
+END { print_vals() } \
+" </dev/stdin
