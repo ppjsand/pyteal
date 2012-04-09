@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -27,17 +27,17 @@ from ibm.teal.test.teal_unittest import TealTestCase
 import multiprocessing
 import unittest
 import sys
+from ibm.teal.event import EVENT_ATTR_REC_ID, EVENT_ATTR_EVENT_ID,\
+    EVENT_ATTR_SRC_COMP, EVENT_ATTR_TIME_OCCURRED, EVENT_ATTR_TIME_LOGGED
        
     
 class TestIncidentPoolBasic(TealTestCase):
 
     def setUp(self):
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
-        return
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, data_only=True, commit_alerts=False, commit_checkpoints=False)
 
     def tearDown(self):
-        return
+        self.teal.shutdown()
 
     def testCreation(self):
         '''Test creation of pool
@@ -97,11 +97,11 @@ class TestIncidentPoolBasic(TealTestCase):
         # Historic
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = None   # Validates that it is unused
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: None})   # validates that it is unused
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         self.assertEqual(len(p1.incidents), 1)
@@ -130,11 +130,11 @@ class TestIncidentPoolBasic(TealTestCase):
         # Historic
         p1 = IncidentPool.new_pool(POOL_MODE_LOGGED, 20, None)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_logged = right_now
-        te1.time_occurred = None   # Validates that it is unused
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: None,   # validates that it is unused
+                                   EVENT_ATTR_TIME_LOGGED: right_now})   
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         self.assertEqual(len(p1.incidents), 1)
@@ -164,11 +164,11 @@ class TestIncidentPoolBasic(TealTestCase):
         ac1 = ArrivalCheckCtl(4, 4, 2, 10)
         p1 = IncidentPool.new_pool(POOL_MODE_LOGGED, 20, None, arrival_check_ctl=ac1)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_logged = right_now
-        te1.time_occurred = None   # Validates that it is unused
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: None,  # validates that it is unused
+                                   EVENT_ATTR_TIME_LOGGED: right_now})   
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         self.assertEqual(len(p1.incidents), 1)
@@ -198,11 +198,11 @@ class TestIncidentPoolBasic(TealTestCase):
         ac1 = ArrivalCheckCtl(4, 4, 2, 10)
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None, arrival_check_ctl=ac1)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = None # So fails if use wrong one 
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: None})   # validates that it is unused
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         self.assertEqual(len(p1.incidents), 1)
@@ -226,10 +226,12 @@ class TestIncidentPoolBasic(TealTestCase):
 
         # Add the 2nd one
         right_now2 = right_now + timedelta(seconds=10)
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                           EVENT_ATTR_EVENT_ID:'IPT1', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now2,
+                           EVENT_ATTR_TIME_LOGGED: None})   # validates that it is unused
+
         te2.time_logged = None # To cause failures if incorrectly used 
         p1.add_incident(te2, 3, 5)
         self.assertEqual(len(p1.incidents), 2)
@@ -259,11 +261,11 @@ class TestIncidentPoolBasic(TealTestCase):
         ac1 = ArrivalCheckCtl(4, 4, 2, 11)
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None, arrival_check_ctl=ac1)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         # Add 1st
         p1.add_incident(te1, 2, 3)
@@ -290,11 +292,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(p1.get_arrival_extension(None), 0)
         # Add the 2nd one
         right_now2 = right_now + timedelta(seconds=10)
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 3, 5)
         self.assertEqual(len(p1.incidents), 2)
         self.assertTrue(p1.contains_incident('E', 'IPT1')) 
@@ -319,11 +321,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(p1.get_arrival_extension(None), 0)
         # Add the 3rd one
         right_now3 = right_now2 + timedelta(seconds=3)
-        te3 = teal.Event(3)
-        te3.event_id = 'IPT2'
-        te3.src_comp = 'TC'
-        te3.time_occurred = right_now3
-        te3.time_logged = right_now3
+        te3 = teal.Event.fromDict({EVENT_ATTR_REC_ID:3, 
+                           EVENT_ATTR_EVENT_ID:'IPT2', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now3,
+                           EVENT_ATTR_TIME_LOGGED: right_now3})  
         p1.add_incident(te3, 0, 0)
         self.assertEqual(len(p1.incidents), 3)
         self.assertTrue(p1.contains_incident('E', 'IPT2')) 
@@ -349,11 +351,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(p1.get_arrival_extension(None), 0)
         # Add the 4th one
         right_now4 = right_now3 + timedelta(seconds=7)
-        te4 = teal.Event(4)
-        te4.event_id = 'IPT3'
-        te4.src_comp = 'TC'
-        te4.time_occurred = right_now4
-        te4.time_logged = right_now4
+        te4 = teal.Event.fromDict({EVENT_ATTR_REC_ID:4, 
+                           EVENT_ATTR_EVENT_ID:'IPT3', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now4,
+                           EVENT_ATTR_TIME_LOGGED: right_now4})  
         p1.add_incident(te4, 0, 0)
         self.assertEqual(len(p1.incidents), 4)
         self.assertTrue(p1.contains_incident('E', 'IPT3')) 
@@ -401,11 +403,11 @@ class TestIncidentPoolBasic(TealTestCase):
         ac1 = ArrivalCheckCtl(3, 4, 2, 11)
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None, arrival_check_ctl=ac1)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         # Add 1st
         p1.add_incident(te1, 2, 3)
@@ -432,11 +434,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(p1.get_arrival_extension(None), 0)
         # Add the 2nd one
         right_now2 = right_now + timedelta(seconds=10)
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 3, 5)
         self.assertEqual(len(p1.incidents), 2)
         self.assertTrue(p1.contains_incident('E', 'IPT1')) 
@@ -461,11 +463,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(p1.get_arrival_extension(None), 0)
         # Add the 3rd one
         right_now3 = right_now2 + timedelta(seconds=3)
-        te3 = teal.Event(3)
-        te3.event_id = 'IPT2'
-        te3.src_comp = 'TC'
-        te3.time_occurred = right_now3
-        te3.time_logged = right_now3
+        te3 = teal.Event.fromDict({EVENT_ATTR_REC_ID:3, 
+                           EVENT_ATTR_EVENT_ID:'IPT2', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now3,
+                           EVENT_ATTR_TIME_LOGGED: right_now3})  
         p1.add_incident(te3, 0, 0)
         self.assertEqual(len(p1.incidents), 3)
         self.assertTrue(p1.contains_incident('E', 'IPT2')) 
@@ -493,11 +495,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(p1.get_arrival_extension(p1.duration), 0)
         # Add the 4th one
         right_now4 = right_now3 + timedelta(seconds=7)
-        te4 = teal.Event(4)
-        te4.event_id = 'IPT3'
-        te4.src_comp = 'TC'
-        te4.time_occurred = right_now4
-        te4.time_logged = right_now4
+        te4 = teal.Event.fromDict({EVENT_ATTR_REC_ID:4, 
+                           EVENT_ATTR_EVENT_ID:'IPT3', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now4,
+                           EVENT_ATTR_TIME_LOGGED: right_now4})  
         p1.add_incident(te4, 0, 0)
         self.assertEqual(len(p1.incidents), 4)
         self.assertTrue(p1.contains_incident('E', 'IPT3')) 
@@ -559,11 +561,11 @@ class TestIncidentPoolBasic(TealTestCase):
         # Historic
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         # Add 1st
         p1.add_incident(te1, 2, 3)
@@ -589,11 +591,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(p1.get_arrival_extension(None), 0)
         # Add the 2nd one
         right_now2 = datetime.now()
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT0'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 2, 3)
         self.assertEqual(len(p1.incidents), 1)
         self.assertEqual(len(p1.incidents['IPT0']), 2)
@@ -612,11 +614,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(len(p1.min_time_incidents), 2)
         # Add the 3rd one
         right_now3 = datetime.now()
-        te3 = teal.Event(3)
-        te3.event_id = 'IPT0'
-        te3.src_comp = 'TC'
-        te3.time_occurred = right_now3
-        te3.time_logged = right_now3
+        te3 = teal.Event.fromDict({EVENT_ATTR_REC_ID:3, 
+                           EVENT_ATTR_EVENT_ID:'IPT0', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now3,
+                           EVENT_ATTR_TIME_LOGGED: right_now3})  
         p1.add_incident(te3, 2, 3)
         self.assertEqual(len(p1.incidents), 1)
         self.assertEqual(len(p1.incidents['IPT0']), 3)
@@ -636,11 +638,11 @@ class TestIncidentPoolBasic(TealTestCase):
         self.assertEqual(len(p1.min_time_incidents), 3)
         # Add the 4th one
         right_now4 = datetime.now()
-        te4 = teal.Event(4)
-        te4.event_id = 'IPT0'
-        te4.src_comp = 'TC'
-        te4.time_occurred = right_now4
-        te4.time_logged = right_now4
+        te4 = teal.Event.fromDict({EVENT_ATTR_REC_ID:4, 
+                           EVENT_ATTR_EVENT_ID:'IPT0', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now4,
+                           EVENT_ATTR_TIME_LOGGED: right_now4})  
         p1.add_incident(te4, 2, 3)
         self.assertEqual(len(p1.incidents), 1)
         self.assertEqual(len(p1.incidents['IPT0']), 4)
@@ -668,20 +670,20 @@ class TestIncidentPoolBasic(TealTestCase):
         # Historic
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         # Add 1st
         p1.add_incident(te1, 2, 3)
         # Add the 2nd one
         right_now2 = datetime.now()
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 3, 5)
         self.assertEqual(len(p1.suppressed), 0)
         self.assertEqual(len(p1.suppressions), 0)
@@ -757,20 +759,20 @@ class TestIncidentPoolBasic(TealTestCase):
         # Historic
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         # Add 1st
         p1.add_incident(te1, 2, 3)
         # Add the 2nd one
         right_now2 = datetime.now()
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 3, 5)
         # Have te2 suppresses te1
         p1.suppresses(te1, set([te1]))
@@ -805,37 +807,37 @@ class TestIncidentPoolBasic(TealTestCase):
         # Historic
         p1 = IncidentPool.new_pool(POOL_MODE_OCCURRED, 20, None)
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         # Add 1st
         p1.add_incident(te1, 2, 3)
         # Add the 2nd one
         right_now2 = datetime.now()
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 3, 5)
         # Add the 3rd one
         right_now3 = datetime.now()
-        te3 = teal.Event(3)
-        te3.event_id = 'IPT2'
-        te3.src_comp = 'TC'
-        te3.time_occurred = right_now3
-        te3.time_logged = right_now3
+        te3 = teal.Event.fromDict({EVENT_ATTR_REC_ID:3, 
+                           EVENT_ATTR_EVENT_ID:'IPT2', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now3,
+                           EVENT_ATTR_TIME_LOGGED: right_now3})  
         p1.add_incident(te3, 0, 0)
         # Add the 4th one
         right_now4 = datetime.now()
-        te4 = teal.Event(4)
-        te4.event_id = 'IPT3'
-        te4.src_comp = 'TC'
-        te4.time_occurred = right_now4
-        te4.time_logged = right_now4
+        te4 = teal.Event.fromDict({EVENT_ATTR_REC_ID:4, 
+                           EVENT_ATTR_EVENT_ID:'IPT3', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now4,
+                           EVENT_ATTR_TIME_LOGGED: right_now4})  
         p1.add_incident(te4, 0, 0)
         self.assertEqual(len(p1.incidents), 4)
         self.assertEqual(len(p1.suppressed), 0)
@@ -883,23 +885,23 @@ class TestIncidentPoolBasic(TealTestCase):
 class TestIncidentPoolStates(TealTestCase):
 
     def setUp(self):
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, data_only=True, commit_alerts=False, commit_checkpoints=False)
         self.callback_occurred = False
+        self.callback_rec_id = -3
         self.my_event = multiprocessing.Event()
-        return
 
     def tearDown(self):
         self.my_event.clear()
-        return
+        self.teal.shutdown()
     
-    def setCallbackOccurred(self, reason):
+    def setCallbackOccurred(self, reason, rec_id):
         '''Callback test method
         
            Set a flag and the event
         '''
         self.callback_occurred = True
         self.callback_reason = reason
+        self.callback_rec_id = rec_id
         self.my_event.set()
         return
 
@@ -953,10 +955,10 @@ class TestIncidentPoolStates(TealTestCase):
         self.assertEqual(p1.planned_close_time, right_now + timedelta(seconds=20))
         self.assertEqual(p1.state, POOL_STATE_CLOSED)
         # add_incident to closed pool should be detected
-        te1 = teal.Event(1)
-        te1.event_id = 'idvalue0'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'idvalue0', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertRaises(IncidentPoolClosedError, p1.add_incident, te1, 2, 3)
         # Can't restart
         self.assertRaises(IncidentPoolStateTransitionError, p1.start, right_now)
@@ -1046,6 +1048,7 @@ class TestIncidentPoolStates(TealTestCase):
         self.my_event.wait(10)
         self.assertTrue(self.callback_occurred)
         self.assertEqual(self.callback_reason, 0)
+        self.assertEqual(self.callback_rec_id, None)
         self.assertRaises(IncidentPoolClosedError, p1.add_incident, None, 0, 0)
         return
  
@@ -1077,7 +1080,8 @@ class TestIncidentPoolStates(TealTestCase):
         self.assertEqual(p1.state, POOL_STATE_CLOSED)
         self.my_event.wait(10)
         self.assertTrue(self.callback_occurred)
-        self.assertEqual(self.callback_reason, POOL_CLOSE_REASON_SHUTDOWN)       
+        self.assertEqual(self.callback_reason, POOL_CLOSE_REASON_SHUTDOWN)  
+        self.assertEqual(self.callback_rec_id, None)     
         return
    
     def testCloseCallbackForceShutdownNew(self):
@@ -1103,6 +1107,7 @@ class TestIncidentPoolStates(TealTestCase):
         self.my_event.wait(10)
         self.assertTrue(self.callback_occurred)
         self.assertEqual(self.callback_reason, POOL_CLOSE_REASON_SHUTDOWN) 
+        self.assertEqual(self.callback_rec_id, None)
         return        
  
     def testCloseCallbackClosedByIncidentH(self):
@@ -1118,29 +1123,29 @@ class TestIncidentPoolStates(TealTestCase):
         self.assertFalse(self.callback_occurred)
         # Add the events        
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         # Add 1st
         p1.add_incident(te1, 2, 3)
         # Add the 2nd one
         right_now2 = datetime.now()
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 3, 5)
         # Add the 3rd one
         right_now3 = datetime.now()
-        te3 = teal.Event(3)
-        te3.src_comp = 'TC'
-        te3.event_id = 'IPT2'
-        te3.time_occurred = right_now3
-        te3.time_logged = right_now3
+        te3 = teal.Event.fromDict({EVENT_ATTR_REC_ID:3, 
+                           EVENT_ATTR_EVENT_ID:'IPT2', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now3,
+                           EVENT_ATTR_TIME_LOGGED: right_now3})  
         p1.add_incident(te3, 0, 0)
         # Make sure it worked
         self.assertEqual(len(p1.incidents), 3)
@@ -1160,15 +1165,16 @@ class TestIncidentPoolStates(TealTestCase):
         #
         # Add the 4th one beyond the end --> closes
         right_now4 = right_now + timedelta(seconds=30)
-        te4 = teal.Event(4)
-        te4.event_id = 'IPT3'
-        te4.src_comp = 'TC'
-        te4.time_occurred = right_now4
-        te4.time_logged = right_now4
+        te4 = teal.Event.fromDict({EVENT_ATTR_REC_ID:4, 
+                           EVENT_ATTR_EVENT_ID:'IPT3', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now4,
+                           EVENT_ATTR_TIME_LOGGED: right_now4})  
         self.assertRaises(IncidentPoolClosedError, p1.add_incident, te4, 0, 0)
         self.my_event.wait(10)
         self.assertTrue(self.callback_occurred)
-        self.assertEqual(self.callback_reason, POOL_CLOSE_REASON_INCIDENT_TIME)       
+        self.assertEqual(self.callback_reason, POOL_CLOSE_REASON_INCIDENT_TIME)   
+        self.assertEqual(self.callback_rec_id, te3.rec_id)    
         # only state should have changed
         self.assertEqual(len(p1.incidents), 3)
         self.assertTrue(p1.contains_incident('E', 'IPT0'))
@@ -1193,14 +1199,10 @@ class TestIncidentPoolStates(TealTestCase):
 class TestIncidentPoolNext(TealTestCase):
 
     def setUp(self):
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
-        return
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
     
     def tearDown(self):
-        '''Nothing to do ... yet
-        '''
-        return
+        self.teal.shutdown()
 
     def testNextFromEmpty(self):
         '''Test the next_pool constructor with an empty pool
@@ -1259,19 +1261,20 @@ class TestIncidentPoolNext(TealTestCase):
         self.assertEqual(p1.close_callback, None)
         # start by adding an event 
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT3'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT3', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT3'))
         p1.add_incident(te1, 0, 0)
         # Add another one 
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT2'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now + timedelta(seconds=18)
-        te2.time_logged = te2.time_occurred
+        right_now2 = right_now + timedelta(seconds=18)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                           EVENT_ATTR_EVENT_ID:'IPT2', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now2,
+                           EVENT_ATTR_TIME_LOGGED: right_now2})  
         self.assertFalse(p1.contains_incident('E', 'IPT2'))
         p1.add_incident(te2, 0, 0)
         # Check things ok
@@ -1317,19 +1320,20 @@ class TestIncidentPoolNext(TealTestCase):
         self.assertEqual(p1.close_callback, None)
         # start by adding an event 
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT3'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = te1.time_occurred
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT3', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT3'))
         p1.add_incident(te1, 0, 0)
         # Add another one 
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT2'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now + timedelta(seconds=18)
-        te2.time_logged = te2.time_occurred
+        right_now2 = right_now + timedelta(seconds=18)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT2', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         self.assertFalse(p1.contains_incident('E', 'IPT2'))
         p1.add_incident(te2, 0, 0)
         # Check things ok
@@ -1377,19 +1381,20 @@ class TestIncidentPoolNext(TealTestCase):
         self.assertEqual(p1.close_callback, None)
         # start by adding an event 
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = te1.time_occurred
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT3'))
         p1.add_incident(te1, 2, 3)
         # Add another one 
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now + timedelta(seconds=18)
-        te2.time_logged = te2.time_occurred
+        right_now2 = right_now + timedelta(seconds=18)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         self.assertFalse(p1.contains_incident('E', 'IPT2'))
         p1.add_incident(te2, 3, 5)
         # Check things ok
@@ -1438,19 +1443,20 @@ class TestIncidentPoolNext(TealTestCase):
         self.assertEqual(p1.close_callback, None)
         # start by adding an event 
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = te1.time_occurred
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         # Add another one 
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now + timedelta(seconds=22)
-        te2.time_logged = te2.time_occurred
+        right_now2 = right_now + timedelta(seconds=22)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                           EVENT_ATTR_EVENT_ID:'IPT1', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now2,
+                           EVENT_ATTR_TIME_LOGGED: right_now2})  
         self.assertFalse(p1.contains_incident('E', 'IPT1'))
         p1.add_incident(te2, 3, 5)
         # Check things ok
@@ -1499,19 +1505,20 @@ class TestIncidentPoolNext(TealTestCase):
         self.assertEqual(p1.close_callback, None)
         # start by adding an event 
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = te1.time_occurred
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         # Add another one 
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now + timedelta(seconds=22)
-        te2.time_logged = te2.time_occurred
+        right_now2 = right_now + timedelta(seconds=22)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         self.assertFalse(p1.contains_incident('E', 'IPT1'))
         p1.add_incident(te2, 3, 5)
         # Check things ok
@@ -1561,19 +1568,20 @@ class TestIncidentPoolNext(TealTestCase):
         self.assertEqual(p1.close_callback, None)
         # start by adding an event 
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred =  right_now
-        te1.time_logged = te1.time_occurred
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         # Add another one 
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now + timedelta(seconds=10)
-        te2.time_logged = te2.time_occurred        
+        right_now2 = right_now + timedelta(seconds=10)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         self.assertFalse(p1.contains_incident('E', 'IPT1'))
         p1.add_incident(te2, 3, 5)
         # Check things ok
@@ -1646,19 +1654,20 @@ class TestIncidentPoolNext(TealTestCase):
         self.assertEqual(p1.close_callback, None)
         # start by adding an event 
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred =  right_now
-        te1.time_logged = te1.time_occurred
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         # Add another one 
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT6'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now + timedelta(seconds=5)
-        te2.time_logged = te2.time_occurred        
+        right_now2 = right_now + timedelta(seconds=5)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                           EVENT_ATTR_EVENT_ID:'IPT6', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now2,
+                           EVENT_ATTR_TIME_LOGGED: right_now2})  
         self.assertFalse(p1.contains_incident('E', 'IPT6'))
         p1.add_incident(te2, 100, 0)
         # Check things ok
@@ -1685,15 +1694,11 @@ class IPCheckpointTest(IncidentPoolEventCheckpoint):
 class TestIncidentPoolCheckpointing(TealTestCase):
 
     def setUp(self):
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
-        return
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
     
     def tearDown(self):
-        '''Nothing to do ... yet
-        '''
-        return
-    
+        self.teal.shutdown()
+        
     def testAddFourDiffOccurred(self):
         '''Test that handles adding 2nd and detects adding same incident twice 
         '''
@@ -1708,14 +1713,14 @@ class TestIncidentPoolCheckpointing(TealTestCase):
         cp.set_checkpoint_from_pool()
         self.assertEqual(cp.start_rec_id, None)
         self.assertEqual(cp.data, None)
-        self.assertEqual(cp.get_starting_event_rec_id(), None)
+        self.assertEqual(cp.start_rec_id, None)
         # Add event
         right_now = datetime.now()
-        te1 = teal.Event(1)
-        te1.event_id = 'IPT0'
-        te1.src_comp = 'TC'
-        te1.time_occurred = right_now
-        te1.time_logged = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now,
+                                   EVENT_ATTR_TIME_LOGGED: right_now})  
         self.assertFalse(p1.contains_incident('E', 'IPT0'))
         p1.add_incident(te1, 2, 3)
         # Set and check
@@ -1723,40 +1728,39 @@ class TestIncidentPoolCheckpointing(TealTestCase):
         self.assertEqual(cp.start_rec_id, 0)
         expected = '["{0}", "1", ["1U-19+2"]]'.format(str(right_now + timedelta(seconds=p1.duration)))
         self.assertEqual(cp.data, expected)
-        self.assertEqual(cp.get_starting_event_rec_id(), 0)
+        self.assertEqual(cp.start_rec_id, 0)
         # Add a 2nd one 
         right_now2 = right_now + timedelta(seconds=10)
-        te2 = teal.Event(2)
-        te2.event_id = 'IPT1'
-        te2.src_comp = 'TC'
-        te2.time_occurred = right_now2
-        te2.time_logged = right_now2
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT1', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
         p1.add_incident(te2, 3, 5)
         # Set and check
         cp.set_checkpoint_from_pool()
         self.assertEqual(cp.start_rec_id, 0)
         expected = '["{0}", "2", ["1U-22+2","2U-10+3"]]'.format(str(right_now + timedelta(seconds=p1.duration)))
         self.assertEqual(cp.data, expected)
-        self.assertEqual(cp.get_starting_event_rec_id(), 0) 
+        self.assertEqual(cp.start_rec_id, 0) 
         # Add a 3rd
         right_now3 = right_now2 + timedelta(seconds=3)
-        te3 = teal.Event(3)
-        te3.event_id = 'IPT2'
-        te3.src_comp = 'TC'
-        te3.time_occurred = right_now3
-        te3.time_logged = right_now3
+        te3 = teal.Event.fromDict({EVENT_ATTR_REC_ID:3, 
+                           EVENT_ATTR_EVENT_ID:'IPT2', 
+                           EVENT_ATTR_SRC_COMP: 'TC', 
+                           EVENT_ATTR_TIME_OCCURRED: right_now3,
+                           EVENT_ATTR_TIME_LOGGED: right_now3})  
         p1.add_incident(te3, 0, 300)
-        print str(p1)
         # Set and check
         cp.set_checkpoint_from_pool()
         self.assertEqual(cp.start_rec_id, 0)
         expected = '["{0}", "3", ["1U-22+2","2U-10+3","3U288"]]'.format(str(right_now + timedelta(seconds=p1.duration)))
         self.assertEqual(cp.data, expected)
-        self.assertEqual(cp.get_starting_event_rec_id(), 0)
+        self.assertEqual(cp.start_rec_id, 0)
         # Close the pool and see that updates correctly
         p1.close(right_now3, 5)
         cp.set_checkpoint_from_pool()      
-        self.assertEqual(cp.get_starting_event_rec_id(), 2) 
+        self.assertEqual(cp.start_rec_id, 2) 
         expected = '["{0}", "3", ["3U288"]]'.format(str(right_now + timedelta(seconds=p1.duration)))
         self.assertEqual(cp.data, expected)
         return

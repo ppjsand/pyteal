@@ -209,7 +209,6 @@ int main()
     {
         msg = "popen failed!";
         log_error(msg);
-        pclose(fP);
         return TEAL_ERR_ARG;
     }
     char myBuf[100];

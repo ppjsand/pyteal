@@ -12,7 +12,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
      	  "event_loc": "MB-SL1-ET1-PT2", 
         "event_loc_type": "C", 
         "urgency": "N"
@@ -32,7 +32,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "event_loc": "MB-SL1-ET1-PT2", 
         "event_loc_type": "C", 
         "urgency": "N"
@@ -52,7 +52,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New",
+        "state": "Open",
         "event_loc": "MB-SL1-ET1-PT2", 
         "event_loc_type": "C",  
         "urgency": "N"
@@ -72,7 +72,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "event_loc": "MB-SL1-ET1-PT2", 
         "event_loc_type": "C", 
         "urgency": "N"
@@ -96,7 +96,7 @@
         "recommendation": "try again", 
         "severity": "E", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "I"
       }, 
       "delay": "0.0", 
@@ -114,7 +114,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "event_loc": "MB-SL1-ET1-PT1", 
         "event_loc_type": "C", 
         "urgency": "N"

@@ -14,8 +14,9 @@
 import unittest
 
 from ibm.teal import Teal
+from ibm.teal.test.teal_unittest import TealTestCase
 
-class TealTestSemaphoreInit(unittest.TestCase):
+class TealTestSemaphoreInit(TealTestCase):
     '''Test the situation where TEAL starts and then shuts down immediately without
     processing events. Testing to ensure the monitor semaphore which is touched during
     shutdown is initialized correctly.'''
@@ -23,7 +24,7 @@ class TealTestSemaphoreInit(unittest.TestCase):
     
     def setUp(self):
         '''Setup Teal'''
-        self.teal = Teal('data/checkpoint_test/configurationtest_05_semaphore.conf', 'stderr', msgLevel='info')
+        self.teal = Teal('data/checkpoint_test/configurationtest_05_semaphore.conf', 'stderr', msgLevel=self.msglevel)
         return
     
     def tearDown(self):

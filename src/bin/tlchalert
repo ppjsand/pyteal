@@ -21,21 +21,114 @@ t = gettext.translation('messages', localedir, fallback=True)
 _ = t.lgettext
 
 import sys
-from optparse import OptionParser
+import optparse
+from datetime import datetime
 
 from ibm.teal import Teal
 from ibm.teal import registry
+from ibm.teal import alert
+from ibm.teal.database import db_interface
 from ibm.teal.alert_mgr import AlertMgrError
+from ibm.teal.util import command
+
+# Query fields, operations and list information for parser
+qry_info = [('alert_id',['='],True,command.FIELD_TYPE_STRING),
+            ('creation_time',command.EQUALITY_OPS,False,command.FIELD_TYPE_TIMESTAMP),
+            ('severity','=',True,command.FIELD_TYPE_STRING),
+            ('urgency',['='],True,command.FIELD_TYPE_STRING),
+            ('event_loc',['='],False,command.FIELD_TYPE_STRING),
+            ('event_scope',['='],False,command.FIELD_TYPE_STRING),
+            ('src_name',['='],True,command.FIELD_TYPE_STRING),
+           ]
+
+query_text = _('''
+Valid query values and their operations and formats:
+    
+alert_id      - =           - A single id or a comma-separated list of ids (equals-only)
+
+creation_time - =,<.>,>=,<= - A time value in the format YYYY-MM-DD-HH:MM:SS
+
+severity      - =           - The severity level, listed in order of severity:
+                                  F=fatal, E=error, W=warning, I=info (equals-only)
+
+urgency       - =           - The urgency of the alert, listed in order of urgency:
+                             I=immediate, S=schedule, N=normal, D=defer, O=optional
+                (equals-only)
+
+event_loc     - =           - A location in the format <location type>:<location>.
+                               The location is optional; otherwise all events
+                               with the same location type will be included
+
+event_scope   - =           - A scoping value for the specified reporting location type
+
+src_name      - =           - A single value or a comma-separated list of values
+
+''')
+
+
+def do_update(user_qry):
+    ''' Excute the update of the alert
+    
+    This will affect the primary as well as all the duplicate alerts of the primary alerts
+    '''
+    db = registry.get_service(registry.SERVICE_DB_INTERFACE)
+
+    # All alerts that do not have an association
+    alert_assoc_qry = db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID], db_interface.TABLE_ALERT2ALERT)
+
+    # All alerts that don't have an association and are in the open state
+    base_where_flds = set([alert.ALERT_ATTR_REC_ID, alert.ALERT_ATTR_STATE])
+    base_alert_where = '${0} NOT IN ({1}) AND ${2} = {3}'.format(alert.ALERT_ATTR_REC_ID,
+                                                                 alert_assoc_qry,
+                                                                 alert.ALERT_ATTR_STATE,
+                                                                 alert.ALERT_STATE_OPEN)
+    if user_qry:
+        base_alert_where = base_alert_where + ' AND ' + user_qry[0]
+        where_flds = user_qry[1] | base_where_flds
+    else:
+        where_flds = base_where_flds
+
+    # Full select for alerts that don't have an association and are in the open state
+    base_alert_qry = db.gen_select([alert.ALERT_ATTR_REC_ID],
+                                    db_interface.TABLE_ALERT_LOG,
+                                    where=base_alert_where,
+                                    where_fields=where_flds)
+
+    # All alerts that are duplicates of the open set of alerts
+    dup_alert_where = "${0} IN ({1}) AND ${2} = '{3}'".format(alert.ALERT2ALERT_ATTR_ALERT_RECID,
+                                                            base_alert_qry,
+                                                            alert.ALERT2ALERT_ATTR_ASSOC_TYPE,
+                                                            alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE)
+
+    # Full select for alerts that are duplicates of the open set of alerts
+    dup_alert_qry = db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
+                                  db_interface.TABLE_ALERT2ALERT,
+                                  where=dup_alert_where,
+                                  where_fields=[alert.ALERT2ALERT_ATTR_ALERT_RECID, 
+                                                alert.ALERT2ALERT_ATTR_ASSOC_TYPE])
+
+
+
+    update_where = '${0} IN ({1}) OR ${0} IN ({2})'.format(alert.ALERT_ATTR_REC_ID, base_alert_qry, dup_alert_qry)
+    update_stmt = db.gen_update([alert.ALERT_ATTR_STATE],
+                                db_interface.TABLE_ALERT_LOG,
+                                where=update_where,
+                                where_fields=[alert.ALERT_ATTR_REC_ID])
+
+    # Update the alerts
+    conn = db.get_connection()
+    conn.execute(update_stmt, alert.ALERT_STATE_CLOSED)
+    conn.commit()
+    conn.close()
+    
 
 if __name__ == '__main__':
+    # Set up to have a nicer output of the query help text        
+    optparse.OptionParser.format_epilog = lambda self, formatter: self.epilog
+
     # Parse the command line        
-    parser = OptionParser()
-    parser.add_option('-i', '--id',
-                        type='long',
-                        action='store',
-                        dest='rec_id',
-                        default=-1,
-                        help=_('The record id of the alert. (use tllsalert)'))
+    parser = optparse.OptionParser(usage='%prog -s close -i <rec_id> | -q <query string> | -l <locations> [-c|-d <delim>]', epilog=query_text) 
+
     parser.add_option('-s', '--state',
                         type='choice',
                         choices=['close'],
@@ -43,27 +136,135 @@ if __name__ == '__main__':
                         action='store',
                         dest='state',
                         help=_('The new alert state. (close is the only valid value at this time.'))
-    
+
+    parser.add_option('-i', '--id',
+                        type='long',
+                        action='store',
+                        dest='rec_id',
+                        default=None,
+                        help=_('The record id of the alert. (use tllsalert)'))
+
+    parser.add_option('-q', '--query',
+                        type='string',
+                        action='store',
+                        dest='query',
+                        default=None,
+                        help=_('Query parameters used to limit the range of alerts listed. See list of valid values below'))
+
+    parser.add_option('-l', '--locations',
+                        type='string',
+                        action='store',
+                        dest='locations',
+                        default=None,
+                        help=_('Change all alerts at the specified locations'))
+
+    parser.add_option('-c', '--contained',
+                        action='store_true',
+                        dest='contained',
+                        default=False,
+                        help=_('Change alerts at all contained sublocations of the specified locations'))
+
+    parser.add_option('-d', '--delimiter',
+                        action='store',
+                        dest='delim',
+                        default=None,
+                        help=_('Delimiter between specified locations. Cannot be space (default: comma)'))
+
     (options, args) = parser.parse_args()
     
-    if options.rec_id < 0:
-        parser.error(_("Invalid id specified"))
-
+    # Validate the command line options/combinations
     if options.state is None:
         parser.error(_('Must specify at least one attribute to change'))
+    elif options.state != 'close':
+        parser.error(_('Invalid state specified. Valid values are: close'))
+    else:
+        # State option is valid
+        pass
+    
+    # User can specify one of the following options rec_id or a query string or a list of locations    
+    if ((options.query and options.locations) or 
+        (options.query and options.rec_id is not None) or 
+        (options.locations and options.rec_id is not None)):
+        parser.error(_('Can only specify one query option (--id, --query, or --locations)'))
+    
+    # rec_id option validation
+    if options.rec_id is not None:        
+        # All rec_ids are greater than or equal to zero
+        if options.rec_id < 0:
+            parser.error(_("Invalid id specified"))
+            
+    # Query validation   
+    elif options.query is not None:
+        # Validation of string done after TEAL started
+        pass
+    
+    # Locations validation
+    elif options.locations is not None:
+        # No validation necessary
+        pass
+    else:
+        parser.error(_('Must specify one option (--id, --query, or --locations)'))
+
+    # Extra options for location validation
+    if ((options.contained or options.delim is not None) and not options.locations):
+        parser.error(_('Can only use --contained and --delimiter with --locations'))
 
     # Prepare to use the database
     t = Teal(None, logFile='$TEAL_LOG_DIR/tlchalert.log', msgLevel='warning', data_only=True, commit_alerts=True)
     
-    alert_mgr = registry.get_service(registry.SERVICE_ALERT_MGR)
+    # Parse/validate/generate the query string
+    if options.query:
+        try:
+            qry = command.validate_qry_str(qry_info, options.query)
+        except optparse.OptionValueError, ove:
+            parser.error(ove)
+            
+        # Now update the alerts      
+        do_update(qry)
+        
+    # Parse/generate the location string
+    elif options.locations:
+        # Set the delimiter between locations if not passed in
+        if options.delim is None:
+            options.delim = ','
+        
+        # If contained then we wildcard the items in the where clause
+        if options.contained:
+            qry_str = "${0} LIKE '{{0}}%'".format(alert.ALERT_ATTR_EVENT_LOC)
+        else:
+            qry_str = '{0}'            
 
-    if options.state == 'close':
+        # Walk the list of locations and create the individual where clause items
+        qry_list = []
+        for loc in options.locations.split(options.delim):
+            if loc:
+                qry_list.append(qry_str.format(loc))
+        
+        # If there are locations then create the full where clause for the locations       
+        if qry_list:
+            if options.contained:
+                qry_str = '(' + ' OR '.join(qry_list) + ')'
+            else:
+                qry_str = "${0} IN ('{1}')".format(alert.ALERT_ATTR_EVENT_LOC, "','".join(qry_list))
+
+            # Create the tuple used by the update code to append to the full update where clause
+            qry = (qry_str, set([alert.ALERT_ATTR_EVENT_LOC]))
+        else:
+            qry = None
+        
+        # Now update the alerts  
+        do_update(qry)
+    else:
+        # Change alert by rec_id
+        alert_mgr = registry.get_service(registry.SERVICE_ALERT_MGR)
         try:
             alert_mgr.close(options.rec_id)
         except AlertMgrError, ame:
             print >>sys.stderr, _('Cannot close alert. Reason: {0}').format(ame)
             sys.exit(1)
-            
+                
     # All done, now shut down TEAL gracefully
     t.shutdown()
+
+
 

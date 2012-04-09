@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventMetadata  xmlns:tns="http://www.ibm.com/teal/eventmeta" 
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+				xsi:schemaLocation="http://www.ibm.com/teal/eventmeta ../../../../../xml/eventmeta.xsd ">>
+	<event id="GP000001" comp="GPFS">
+		<message>Filesystem mounted</message>
+	</event>
+	<event id="GP000002" comp="GPFS">
+		<message>Filesystem unmounted</message>
+	</event>
+	<event id="GP000003" comp="GPFS">
+		<message>Disk added</message>
+	</event>
+	<event id="GP000004" comp="GPFS">
+		<message>Disk deleted</message>
+	</event>
+	<event id="GP000005" comp="GPFS">
+		<message>Disk state changed</message>
+	</event>
+	<event id="GP000006" comp="GPFS">
+		<message>SGMGR takeover</message>
+	</event>
+	<event id="GP000007" comp="GPFS">
+		<message>Node failed</message>
+	</event>
+	<event id="GP000008" comp="GPFS">
+		<message>Node recovered</message>
+	</event>
+	<event id="GP000009" comp="GPFS">
+		<message>Filesystem created</message>
+	</event>
+	<event id="GP00000A" comp="GPFS">
+		<message>Filesystem deleted</message>
+	</event>
+	<event id="GP00000B" comp="GPFS">
+		<message>Filesystem state changed</message>
+	</event>
+	<event id="GP00000C" comp="GPFS">
+		<message>New connection to GPFS monitor</message>
+	</event>
+	<event id="GP00000D" comp="GPFS">
+		<message>Event collection buffer overflow</message>
+	</event>
+	<event id="GP00000E" comp="GPFS">
+		<message>Token manager status</message>
+	</event>
+	<event id="GP00000F" comp="GPFS">
+		<message>Hung thread</message>
+	</event>
+	<event id="GP000010" comp="GPFS">
+		<message>Storage pool utilization</message>
+	</event>
+	<event id="GP000011" comp="GPFS">
+		<message>SDR changed</message>
+	</event>
+	<event id="GP000012" comp="GPFS">
+		<message>mmadddisk command executed</message>
+	</event>
+	<event id="GP000014" comp="GPFS">
+		<message>Console log</message>
+	</event>
+	<event id="GP000015" comp="GPFS">
+		<message>Long I/O time</message>
+	</event>
+	<event id="GP000016" comp="GPFS">
+		<message>Recovery group takeover</message>
+	</event>
+	<event id="GP000017" comp="GPFS">
+		<message>Recovery group relenquish</message>
+	</event>
+	<event id="GP000018" comp="GPFS">
+		<message>Recovery group open failed</message>
+	</event>
+	<event id="GP000019" comp="GPFS">
+		<message>Recovery group panic</message>
+	</event>
+	<event id="GP000020" comp="GPFS">
+		<message>pdisk failed</message>
+	</event>
+	<event id="GP000021" comp="GPFS">
+		<message>pdisk recovered</message>
+	</event>
+	<event id="GP000022" comp="GPFS">
+		<message>Replace pdisk</message>
+	</event>
+	<event id="GP000023" comp="GPFS">
+		<message>pdisk path failed</message>
+	</event>
+	<event id="GP000024" comp="GPFS">
+		<message>Declustered array rebuild failed</message>
+	</event>
+	<event id="GP000025" comp="GPFS">
+		<message>NSD checksum mismatch</message>
+	</event>
+	<event id="GP010001" comp="GPFS">
+		<message>GPFS connector started</message>
+	</event>
+	<event id="GP010002" comp="GPFS">
+		<message>GPFS connector stopped</message>
+	</event>
+</eventMetadata>

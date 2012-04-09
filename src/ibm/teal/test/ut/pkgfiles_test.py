@@ -13,11 +13,9 @@
 
 import unittest
 from ibm.teal.registry import get_logger
-from ibm.teal import teal
 import os
 from string import replace
-from collections import defaultdict
-
+from ibm.teal.test.teal_unittest import TealTestCase
 
 EXT_755 = ['.pm', '.py', '.so']
 EXT_644 = ['.json', '.xml', '.conf', '.sql', '.pdf', '.sample', '.po', '.mo', '.pot']
@@ -46,11 +44,11 @@ def walk_path(base_dir, replace_base, files_to_exclude):
     tmp_files = []
     os.path.walk(base_dir, get_files_and_dirs, (failures, tmp_files, tmp_dirs, files_to_exclude))
     files = []
-    for file in tmp_files:
-        files.append('{0}{1}'.format(replace_base, file[len(base_dir)+1:]) )
+    for tmp_file in tmp_files:
+        files.append('{0}{1}'.format(replace_base, tmp_file[len(base_dir)+1:]) )
     dirs = []
-    for dir in tmp_dirs:
-        dirs.append('{0}{1}'.format(replace_base, dir[len(base_dir)+1:]) )
+    for tmp_dir in tmp_dirs:
+        dirs.append('{0}{1}'.format(replace_base, tmp_dir[len(base_dir)+1:]) )
     return (failures, files, dirs)
 
 def _load_spec_file(spec_loc, area, contains, failures):
@@ -122,8 +120,8 @@ def _load_il_file(il_loc, area, contains_files, contains_dirs, failures):
             if mode != '755':
                     failures.append('MODE: In {0} expected dir {1} to have mode 755 but it had {2}'.format(filename, dir, mode))
             _check_area(filename, dir, area, failures)
-            dir = dir.rstrip('/')
-            contains_dirs.append(dir)
+            tmp_dir = dir.rstrip('/')
+            contains_dirs.append(tmp_dir)
         elif line[:1] == 'F' or line[:1] == 'f':
             # File entry
             type, s1, s2, mode, fn = line.split()
@@ -393,7 +391,7 @@ TEAL_SRC_CTL = (
                   )              
                 )
 
-class TestPkgfiles(unittest.TestCase):
+class TestPkgfiles(TealTestCase):
 
 
     def test_pkg_files(self):
@@ -402,8 +400,7 @@ class TestPkgfiles(unittest.TestCase):
         #   /base /devel /test
         
         # Make sure logging is setup
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        self.create_temp_logger('info')
             
         # Get the environment variable
         spec_loc = os.environ.get(TEAL_UT_PKG_DIR, None)
@@ -505,6 +502,8 @@ class TestPkgfiles(unittest.TestCase):
         _load_spec_file(spec_loc, 'base', base_spec_files, failures )
         _load_spec_file(spec_loc, 'base-bg', base_bg_spec_files, failures )
         base_spec_files.remove('/etc/teal/teal.conf')
+        base_spec_files.remove('/etc/init.d/teal')
+        base_spec_files.remove('/opt/teal/doc/teal_guide.pdf')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_db2.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_dba_db2.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_mysql.sql')

@@ -575,7 +575,7 @@ void DbFsInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* temp, vo
    *tmp->change = anyChange?CHANGE_MODIFIED:CHANGE_NONE;
    // "status": possible values are "state_unknown" "needs_recovery" "recovering_phase1" "recovering_phase2" "recovering_phase3" "recovery_failed" "recovered" "Unknown SGStatus"
    //only when "status"=="recovered", declare it's healthy
-   *tmp->health = strcmp(tmp->status,"recovered")?UNHEALTHY:HEALTHY;
+   *tmp->health = strstr(tmp->status,"recovered")?HEALTHY:UNHEALTHY;
    updateTable(sqlStmt,table,tmp);
 
 }

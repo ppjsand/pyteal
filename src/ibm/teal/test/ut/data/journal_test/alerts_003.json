@@ -11,7 +11,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "N"
       }, 
       "delay": "0.0", 
@@ -28,7 +28,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "N"
       }, 
       "delay": "0.0", 
@@ -45,7 +45,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "N"
       }, 
       "delay": "0.0", 
@@ -62,7 +62,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "N"
       }, 
       "delay": "0.0", 
@@ -81,7 +81,7 @@
         "recommendation": "try again", 
         "severity": "E", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "I"
       }, 
       "delay": "0.0", 
@@ -98,7 +98,7 @@
         "recommendation": "Recommend doing something", 
         "severity": "W", 
         "src_name": "AnalyzerTest057a", 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "N"
       }, 
       "delay": "0.0", 

@@ -41,14 +41,9 @@ namespace TEAL {
 
 		private:
 			/**
-			 * Count value to update when updating the RMC sensor
-			 */
-			unsigned int ivCount;
-
-			/**
 			 * The system command used to update the sensor
 			 */
-			std::string ivCommand;
+			char ivCommand[128];
 	};
 }
 

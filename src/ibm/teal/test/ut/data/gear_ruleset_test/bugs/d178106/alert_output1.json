@@ -1,0 +1,48 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BD700025", 
+        "associations": [
+          "C:E:1", 
+          "C:E:2", 
+          "C:E:3"
+        ], 
+        "creation_time": "2011-12-07 17:21:45.488698", 
+        "event_loc": "FR007-CG03-SN001-DR0-HB0-LD01", 
+        "event_loc_type": "H", 
+        "raw_data": "{\"fru_list\":\"{ HFI_DDG,Isolation Procedure,,,, },{ HFI_CAB,Symbolic Procedure,6,,, },{ CBLCONT,Symbolic Procedure,2,,, },{ ,FRU,7,,, },{ ,FRU,3,,, }\",\"nbr_loc\":\"FR007-CG07-SN002-DR0-HB3-LD01\",\"nbr_typ\":\"H\",\"pwr_enc\":\"11\",\"eed_loc\":\"12\",\"encl_mtms\":\"10\"}", 
+        "reason": "D-link down between frame FR007 cage CG03 (superNode SN001 drawer DR0) hub HB0 port $nodePort and frame FR007 cage CG07 (superNode SN002 drawer DR0) hub HB3 port $neighbor_nodePort (D Link Port Down)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a D-Link.\nRecord the alert ID.\nRecord the location in the alert message.\nContact IBM Service.\nLog on to the Management Server.\nTo isolate to the proper FRU, run Link Diags and perform the actions that it recommends.\nIf no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "BD700025", 
+        "associations": [
+          "C:E:4"
+        ], 
+        "creation_time": "2011-12-07 17:21:45.490519", 
+        "event_loc": "FR008-CG03-SN004-DR0-HB0-LD01", 
+        "event_loc_type": "H", 
+        "raw_data": "{\"fru_list\":\"{ HFI_DDG,Isolation Procedure,,,, },{ HFI_CAB,Symbolic Procedure,6,,, },{ CBLCONT,Symbolic Procedure,2,,, },{ ,FRU,7,,, },{ ,FRU,3,,, }\",\"nbr_loc\":\"FR008-CG07-SN005-DR0-HB3-LD01\",\"nbr_typ\":\"H\",\"pwr_enc\":\"11\",\"eed_loc\":\"12\",\"encl_mtms\":\"10\"}", 
+        "reason": "D-link down between frame FR008 cage CG03 (superNode SN004 drawer DR0) hub HB0 port $nodePort and frame FR008 cage CG07 (superNode SN005 drawer DR0) hub HB3 port $neighbor_nodePort (D Link Port Down)", 
+        "rec_id": 2, 
+        "recommendation": "There is a problem with a D-Link.\nRecord the alert ID.\nRecord the location in the alert message.\nContact IBM Service.\nLog on to the Management Server.\nTo isolate to the proper FRU, run Link Diags and perform the actions that it recommends.\nIf no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

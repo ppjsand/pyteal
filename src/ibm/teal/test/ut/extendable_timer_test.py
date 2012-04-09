@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -18,26 +18,25 @@ from datetime import timedelta
 from ibm import teal
 from ibm.teal.util.extendable_timer import ExtendableTimer
 from ibm.teal.registry import get_logger
+from ibm.teal.test.teal_unittest import TealTestCase
 
 
-class TestBasicTimer(unittest.TestCase):
+class TestBasicTimer(TealTestCase):
 
     def setUp(self):
         '''Setup for logging, an event and an timer to use for testing
         '''
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, data_only=True, commit_alerts=False, commit_checkpoints=False)
         self.timeout_occurred = False
         self.my_event = multiprocessing.Event()
         self.timer = ExtendableTimer(5, self.setTimeoutOccurred)
-        return
 
     def tearDown(self):
         '''Clear the event and cancel the timer
         '''
         self.my_event.clear()
         self.timer.cancel()
-        return
+        self.teal.shutdown()
         
     def setTimeoutOccurred(self):
         '''Callback when timer completes

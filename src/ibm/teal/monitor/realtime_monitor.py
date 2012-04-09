@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -14,30 +14,24 @@
 # System imports
 from threading import Thread
 import os
+from datetime import datetime, timedelta 
 
 # TEAL imports
 from ibm.teal import registry
 from ibm.teal.registry import get_logger, SERVICE_EVENT_Q, SERVICE_DB_INTERFACE, \
-                              SERVICE_NOTIFIER,\
-    SERVICE_CHECKPOINT_MGR
-
+                              SERVICE_NOTIFIER, SERVICE_CHECKPOINT_MGR,\
+    SERVICE_SHUTDOWN_MODE, SHUTDOWN_MODE_IMMEDIATE
 from ibm.teal import Event
-from ibm.teal.event import EVENT_ATTR_RAW_DATA, \
-                           EVENT_ATTR_REC_ID, EVENT_ATTR_TIME_LOGGED, EVENT_ATTR_EVENT_ID, \
-                           EVENT_ATTR_SRC_COMP, EVENT_ATTR_SRC_LOC, \
-                           EVENT_ATTR_SRC_LOC_TYPE, EVENT_ATTR_TIME_OCCURRED, \
-                           EVENT_ATTR_RPT_COMP, EVENT_ATTR_RPT_LOC, EVENT_ATTR_RPT_LOC_TYPE, \
-                           EVENT_ATTR_ELAPSED_TIME,EVENT_ATTR_EVENT_CNT,EVENT_ATTR_RAW_DATA_FMT
-
-from ibm.teal.database.db_interface import TABLE_EVENT_LOG
+from ibm.teal.event import EVENT_COLS
+from ibm.teal.database import db_interface
 from ibm.teal.teal_error import ConfigurationError
 from ibm.teal.monitor.event_monitor import EventMonitor
 from ibm.teal.checkpoint_mgr import CheckpointListener
+from ibm.teal.util.teal_thread import TealThread
 
-
-BASIC_EVENTLOG_SELECT_COLS = ['rec_id', 'event_id', 'time_occurred', 'time_logged', 'src_comp', 'src_loc_type', 'src_loc', 'rpt_comp', 'rpt_loc_type', 'rpt_loc', 'event_cnt', 'elapsed_time', 'raw_data_fmt', 'raw_data']
 TEAL_TEST_NOTIFIER_CONFIG = 'TEAL_TEST_NOTIFIER_CONFIG'
-
+CFG_KEY_NOTIFIER = 'notifier'
+CFG_KEY_RECOVERY = 'recovery_mode'
     
 class RealtimeMonitor(EventMonitor):
     '''
@@ -45,23 +39,22 @@ class RealtimeMonitor(EventMonitor):
     the notification of database changes. 
     '''
     
-    def __init__(self,restart,config_dict):
+    def __init__(self, config_dict):
         '''Constructor.
         '''
-        
         # Validate configuration parameters
         if config_dict['enabled'] != 'realtime':
             raise ConfigurationError('Realtime monitor can only enabled for realtime use.  Unsupported value specified: {0}'.format(config_dict['enabled']))
 
-        self.running = False
-        CONFIG_KEY = 'notifier'
-        if CONFIG_KEY not in config_dict:
-            raise ConfigurationError('RealtimeMonitor requires notifier be specified in the configuration file')
-        # See if configuration overridden with environment variable
-        config_dict[CONFIG_KEY] = os.environ.get(TEAL_TEST_NOTIFIER_CONFIG, config_dict[CONFIG_KEY])
-        # create configuration class
+        cfg_notifier = os.environ.get(TEAL_TEST_NOTIFIER_CONFIG, None)
+        if cfg_notifier is None:
+            if CFG_KEY_NOTIFIER not in config_dict: 
+                raise ConfigurationError('RealtimeMonitor requires notifier be specified in the configuration file or as an environment variable')
+            else:
+                cfg_notifier = config_dict[CFG_KEY_NOTIFIER]
+        # create notifier class
         try:
-            module_name, class_name = config_dict[CONFIG_KEY].rsplit('.', 1)
+            module_name, class_name = cfg_notifier.rsplit('.', 1)
             module = __import__(module_name, globals(), locals(), [class_name])
         except ImportError,ie:
             get_logger().error(ie)
@@ -69,122 +62,68 @@ class RealtimeMonitor(EventMonitor):
         plugin_class = getattr(module, class_name)
         self.notifier = plugin_class()
         registry.register_service(SERVICE_NOTIFIER, self.notifier)
-        get_logger().info('Notifier {0} configured'.format(config_dict[CONFIG_KEY]))
+        get_logger().info('Notifier {0} configured'.format(cfg_notifier))
                         
-        self.restart = restart
         self.checkpointL = CheckpointListener('monitor_event_queue')
 
         # generate queries for later      
-        db = registry.get_service(SERVICE_DB_INTERFACE)
-        self.sql_runtime_query = db.gen_select(BASIC_EVENTLOG_SELECT_COLS, TABLE_EVENT_LOG, where='$rec_id > ?', where_fields=['rec_id'], order='rec_id') 
-        self.sql_max_event = db.gen_select_max('rec_id', TABLE_EVENT_LOG)
+        dbi = registry.get_service(SERVICE_DB_INTERFACE)
+        self.sql_runtime_query = dbi.gen_select(EVENT_COLS, db_interface.TABLE_EVENT_LOG, where='$rec_id > ?', where_fields=['rec_id'], order='rec_id') 
+        self.sql_max_event = dbi.gen_select_max('rec_id', db_interface.TABLE_EVENT_LOG)
         
-        get_logger().info('restart mode = {0}'.format(self.restart))
         override_recovery_mode = None
-        if 'recovery_mode' in config_dict:
-            override_recovery_mode = config_dict['recovery_mode']
+        if CFG_KEY_RECOVERY in config_dict:
+            override_recovery_mode = config_dict[CFG_KEY_RECOVERY]
             get_logger().info('Overriding restart mode with specified recovery mode = {0}'.format(override_recovery_mode))
 
         checkpoint_mgr = registry.get_service(SERVICE_CHECKPOINT_MGR)
-        self.startRecid, mode_used = checkpoint_mgr.get_starting_event_rec_id(override_recovery_mode)
+        self.start_recid, mode_used = checkpoint_mgr.get_starting_event_rec_id(override_recovery_mode)
 
-        get_logger().info('Restarting at rec_id = {0} with mode = {1};  '.format(self.startRecid, mode_used))
-        self.checkpointL.set_data('{0} {1}'.format(mode_used, str(self.startRecid)))
+        get_logger().info('Restarting at rec_id = {0} with mode = {1};  '.format(self.start_recid, mode_used))
+        self.checkpointL.set_data('{0} {1}'.format(mode_used, str(self.start_recid)))
         
-        # Process any backlog of events
-        new_startRecid = self.process_events(self.sql_runtime_query, self.startRecid)
-
-        if(new_startRecid is not None):
-            self.startRecid = new_startRecid
-
+        # Do this after logging so we can tell from log if it was 0 or None
+        if self.start_recid is None:
+            self.start_recid = 0
+        
         self.running = True # Set here so we don't run into timing issues in shutdown
-        self.monitor_thread = Thread(group=None,target=self.start,name='event_monitor',args=[restart])
+        self.monitor_thread = TealThread(group=None, target=self.start, name='event_monitor')
         self.monitor_thread.setDaemon(True)
         self.monitor_thread.start()
-        return
 
-    def start(self,args):
+    def start(self):
         '''Start the notifier-based event monitor running.
         '''
-        # This is the standard monitor loop; wait on the notifier
-        # and then grab everything since the last time.
-        while self.running:
-            items = self.notifier.wait()
-            if items == 0:
-                get_logger().debug('Processing events in monitor thread. startRecid = {0}'.format(self.startRecid))
-                self.startRecid = self.process_events(self.sql_runtime_query, self.startRecid)
-        return
-
-    def process_events(self, query, *args):
-        rtn_recid = 0
-    
-        get_logger().debug('process_events: Enter.{0}'.format(query))
-    
-        eventQueue = registry.get_service(SERVICE_EVENT_Q)
         try:
-            db = registry.get_service(SERVICE_DB_INTERFACE)
-            cnxn = db.get_connection()
-            cursor = cnxn.cursor()
-            for r in cursor.execute(query, args):
-                get_logger().debug('process_events: Processing row, rec_id = {0}'.format(r[0]))
-                get_logger().debug('process_events: time_occurred = {0}, time_logged = {1}'.format(r[2],r[3]))
-                recid_rd = r[0]
-                event_id_rd = r[1].strip()
-                time_occurred_rd = r[2]
-                time_logged_rd = r[3]
-                src_comp_rd = r[4].strip()
-                src_loc_type_rd = r[5].strip()
-                src_loc_rd = r[6].strip()
-                if r[7] is not None:
-                    rpt_comp_rd = r[7].strip()
-                else:
-                    rpt_comp_rd = r[7]
-                if r[8] is not None:
-                    rpt_loc_type_rd = r[8].strip()
-                else:
-                    rpt_loc_type_rd = r[8]
-                if r[9] is not None:
-                    rpt_loc_rd = r[9].strip()
-                else:
-                    rpt_loc_rd = r[9]
-                    
-                event_cnt_rd = r[10]
-                elapsed_time_rd = r[11]
-                raw_data_fmt_rd = r[12]
-                raw_data_rd = r[13]
-                
-                my_dict = ({EVENT_ATTR_REC_ID:recid_rd,
-                            EVENT_ATTR_TIME_OCCURRED:time_occurred_rd,
-                            EVENT_ATTR_TIME_LOGGED:time_logged_rd,
-                            EVENT_ATTR_EVENT_ID:event_id_rd,
-                            EVENT_ATTR_SRC_COMP:src_comp_rd,
-                            EVENT_ATTR_SRC_LOC_TYPE:src_loc_type_rd, 
-                            EVENT_ATTR_SRC_LOC:src_loc_rd,
-                            EVENT_ATTR_RPT_COMP:rpt_comp_rd,
-                            EVENT_ATTR_RPT_LOC_TYPE:rpt_loc_type_rd,
-                            EVENT_ATTR_RPT_LOC:rpt_loc_rd,
-                            EVENT_ATTR_EVENT_CNT:event_cnt_rd,
-                            EVENT_ATTR_ELAPSED_TIME:elapsed_time_rd,    
-                            EVENT_ATTR_RAW_DATA_FMT:raw_data_fmt_rd,
-                            EVENT_ATTR_RAW_DATA:raw_data_rd})
-                e = Event(in_dict=my_dict);
-                # This is a blocking put. We don't expect the queue
-                # to ever block as it does not have a set size.
-                eventQueue.put(e)
-                rtn_recid = recid_rd
-
-            if(rtn_recid == 0):
-                cursor.execute(self.sql_max_event)
-                row = cursor.fetchone()
-                if row and row[0]:
-                    rtn_recid = row[0]
-                
-            cnxn.close()
-        except StandardError,e:
-            get_logger().error('Checkpoint table event recid retrieval failed. {0}'.format(e))
-    
-        get_logger().debug('process_events: Exit. rtn_recid = {0}'.format(rtn_recid))    
-        return rtn_recid
+            event_queue =  registry.get_service(SERVICE_EVENT_Q)
+            dbi = registry.get_service(SERVICE_DB_INTERFACE)
+            next_failure_log = None
+            rc = 0   
+            
+            while self.running:
+                if rc == 0:
+                    get_logger().debug('Processing events in monitor event injection thread. startRecid = {0}'.format(self.start_recid))
+                    try:
+                        cnxn = dbi.get_connection()
+                        cursor = cnxn.cursor()
+                        for row in cursor.execute(self.sql_runtime_query, self.start_recid):
+                            get_logger().debug('Processing row, rec_id = {0} time_occurred = {1}, time_logged = {2}'.format(row[0], row[2],row[3]))
+                            e = Event.fromDB(row)
+                            event_queue.put(e)
+                            self.start_recid = row[0] 
+                            if self.running == False: 
+                                get_logger().info('Monitor event injection thread interrupted.  last recid = {0}'.format(self.start_recid))
+                                break 
+                        cnxn.close()
+                    except:
+                        cur_time = datetime.now()
+                        if next_failure_log is None or  cur_time > next_failure_log:
+                            get_logger().exception('Failure in monitor event injection thread')
+                            next_failure_log = cur_time + timedelta(minutes=10)
+                rc = self.notifier.wait()
+        except:
+            get_logger().exception('Monitor event injection thread failure')
+        get_logger().debug('Exiting monitor event injection thread.  Last recid = {0}'.format(self.start_recid))    
 
     def shutdown(self):
         '''Stop running the event monitor. 
@@ -195,9 +134,11 @@ class RealtimeMonitor(EventMonitor):
         
         get_logger().debug('Joining thread')
         self.monitor_thread.join()
-
+        
+        last_processed_recid = self.start_recid 
+        if registry.get_service(SERVICE_SHUTDOWN_MODE) == SHUTDOWN_MODE_IMMEDIATE:
+            # If immediate use the last one that was processed
+            last_processed_recid = self.checkpointL.event_checkpoint.start_rec_id
+        registry.get_service(SERVICE_CHECKPOINT_MGR).monitor_shutdown(last_processed_recid)
         get_logger().debug('Shutdown complete')
-        return
-
-# end class SemaphoreRASEventMonitor
 

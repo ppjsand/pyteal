@@ -28,6 +28,7 @@ from ibm.teal.alert import ALERT_ATTR_SRC_NAME, ALERT_ATTR_ALERT_ID,\
     ALERT_ATTR_RECOMMENDATION, ALERT_ATTR_RAW_DATA, ALERT_ATTR_MSG_TEMPLATE,\
     ALERT_ATTR_PRIORITY, ALERT_ATTR_CONDITION_EVENTS, ALERT_ATTR_EVENT_LOC,\
     ALERT_ATTR_EVENT_LOC_TYPE, dict2raw_data
+from ibm.teal.util.teal_thread import ThreadKilled
     
 #     Entries in bottom dictionary are var name: (type, init_str, required, static_only)
 GEHD_HANDLER_ALERT =  {
@@ -154,12 +155,16 @@ class GearErrorHandler(object):
         if self.use_metadata.get_value() == True:
             try:
                 metadata = get_service(SERVICE_ALERT_METADATA)
+            except ThreadKilled:
+                raise
             except:
                 metadata = None
             if metadata is None or len(metadata) == 0:
                 self.ruleset.parse_error(self.trace_id[0], 'create_alert element alert id validation failed trying to retrieve the alert metadata')
             try:
                 tmp_value = self.alert_id.get_value()
+            except ThreadKilled:
+                raise
             except:
                 # Happens if can't get a value from the alert_id (GEAR variable case)
                 get_logger().debug('Exception checking alert id {0}: {1}'.format(self.alert_id.in_str,str(sys.exc_info()[0])))
@@ -209,6 +214,8 @@ class GearErrorHandler(object):
         if self.init_class_callable is not None:
             try:
                 alert_dict = self.init_class_callable().update_init_data_main(alert_dict)
+            except ThreadKilled:
+                raise
             except ExtFatalError:
                 get_logger().exception('FATAL ERROR raised --> kill analyzer')
                 raise

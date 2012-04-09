@@ -44,7 +44,7 @@
       "data": {
         "alert_id": "Alert US", 
         "associations": [
-          "S:E:3", "S:A:4"
+          "S:E:3"
         ], 
         "creation_time": "2011-01-17 16:14:21.437000", 
         "reason": "no value", 

@@ -13,6 +13,8 @@
 
 import socket
 from ibm.teal.analyzer.gear.external_base_classes import ExtInitAlert
+from ibm.teal.analyzer.gear.external_base_classes import ExtEvaluate
+from ibm.teal.teal_error import ConfigurationError
 from ibm.teal.registry import get_logger
 
 class CnmInitAlert(ExtInitAlert):
@@ -150,7 +152,13 @@ class CnmInitAlert(ExtInitAlert):
 			        part_number="HFI_COM"
 				fruClass="Isolation Procedure"
                             else:
-                                servLoc, partNumber, ignoreserNum,ignoreecid,ignoreccin = self.get_part_info(my_event[0].raw_data[part])
+                                servLoc, partNumber, ignoreserNum,ignoreecid,ignoreccin = self.get_part_info(part)
+                        elif  fru_data[2] == "local_om2"  and  my_event[0].raw_data['local_om2'] is None:
+                                get_logger().debug('Local_om2 Symbolic Procedures for D-link optical module is dropped')
+                                continue
+                        elif  fru_data[2] == "nbr_om2"  and my_event[0].raw_data['nbr_om2'] is None:
+                                get_logger().debug('nbr_om2 Symbolic Procedures for D-link optical module is dropped')
+                                continue
                         else:
                             # not a common location from multiple events; just get from event[0]
                             servLoc, partNumber, ignoreserNum,ignoreecid,ignoreccin = self.get_part_info(my_event[0].raw_data[fru_data[2]])
@@ -183,7 +191,7 @@ class CnmInitAlert(ExtInitAlert):
 			   fruClass="Isolation Procedure"
 	
                         else:
-                            servLoc, partNumber, serNum,ecid,ccin = self.get_part_info(my_event[0].raw_data[part])
+                            servLoc, partNumber, serNum,ecid,ccin = self.get_part_info(part)
                     else:
                         servLoc, partNumber, serNum,ecid,ccin = self.get_part_info(my_event[0].raw_data[fru_data[1]])
 	                                
@@ -349,13 +357,6 @@ class CnmInitAlert(ExtInitAlert):
 	#print 'Local location ',local_location
 	#print 'Neighbor location ',nbr_location
 	
-	if match_nbr:
-	    return base_nbr_location
-
-             # match_local covers both match_local and match_local and match_nbr
-	if match_local:
-	    return base_local_location
-            
 	if not match_local and not match_nbr:
             #print 'No common location found'
 	    return None
@@ -369,4 +370,110 @@ class CnmInitAlert(ExtInitAlert):
 	if match_local and match_nbr:
 	    return 'both' 
 	            
+	if match_nbr:
+	    return base_nbr_location
+
+             # match_local covers both match_local and match_local and match_nbr
+	if match_local:
+	    return base_local_location
+            
 	return common_location
+
+#============================================================================
+#----------------------------------------------------------------------------
+# For consolidating events reported by both sides of the same link
+#----------------------------------------------------------------------------
+#============================================================================
+class IdentifyFailedLink(ExtEvaluate):
+    ''' Hardcoded check for pairs of the event type which have complementary location values 
+
+        This is intended to check for the same event occurring on both sides
+	of the same link one or more times. All instances will be consolidated
+	into a single condition being met and thus a single alert will be
+	created instead of two separate alerts (one for each side).
+    '''
+    
+    def __init__(self, parm_dict):
+        ''' Initialize the evaluation class using the parms specified on the evaluate element 
+        
+            This class odes not take any parameters and is hardcoded 
+        ''' 
+        self.comp = 'CNM'
+        if 'ids' not in parm_dict or parm_dict['ids'] is None or parm_dict['ids'] is '':
+            raise ConfigurationError('\'ids\' parm is required when using the EvaluatePairs evaluate class')
+        self.ids = parm_dict['ids'].strip().split(',')
+        get_logger().debug('looking for: {0} '.format(str(self.ids)))
+        # self.location_match hardcoded to identical 
+        # self.scope -- hardcoded to full scope 
+        # self.locations -- hardcoded to use src and neighbor 
+        self.primes = set()
+        self.events = []
+     
+    def prime(self, event):
+        ''' Prime the condition '''
+        if event.event_id not in self.ids or event.src_comp != self.comp:
+            return
+        self.primes.add(event)
+        self.accumulate(event)
+
+    def accumulate(self, event):
+        ''' Accumulate events '''
+        if event.event_id not in self.ids or event.src_comp != self.comp:
+            return
+        self.events.append(event)
+    
+    def get_truth_space(self, exclude_events, exclude_primes=False):
+        ''' Get the set of truth points (loc, truth events) that make the condition true '''
+        if exclude_primes == True:
+            prime_set = self.primes
+        else:
+            prime_set = set()
+        result_set = set()
+        if exclude_events is not None:
+            tmp_events = [e for e in self.events if e not in exclude_events]
+        else:
+            tmp_events = self.events
+            
+        get_logger().debug('evaluating events: {0}'.format(str(tmp_events)))
+        locs_and_events = []
+        new_locs_and_events = []
+        for event in tmp_events: 
+            # get location set for current event
+            n_locs = set()
+            if event.src_loc is not None:
+                n_locs.add(event.src_loc)
+            if 'neighbor_loc' in event.raw_data:
+                neb_loc = event.raw_data['neighbor_loc']
+                if neb_loc is not None:
+                    n_locs.add(neb_loc)
+            n_events = set([event])
+            
+            # Accumulate anything it overlaps and move forward anything it doesn't
+            for locs, events in locs_and_events:
+                if locs.isdisjoint(n_locs) == False:  
+                    n_locs |= locs
+                    n_events.update(events)
+                else: 
+                    new_locs_and_events.append((locs, events))
+                
+            locs_and_events = new_locs_and_events
+            new_locs_and_events = []
+            locs_and_events.append((n_locs, n_events))
+            
+        # convert to a results set 
+        for locs, events in locs_and_events:
+            if events <= prime_set:
+                continue
+            result_set.add((frozenset(locs), frozenset(events)))
+        return result_set
+        
+    def reset(self):
+        '''Reset the condition'''
+        self.primes = set()
+        self.events = []
+    
+    def get_cross_ref(self):
+        ''' return even ids analyzed -- OPTIONAL 
+            Doing this optimizes when the condition gets called, so worth doing
+        '''
+        return self.ids

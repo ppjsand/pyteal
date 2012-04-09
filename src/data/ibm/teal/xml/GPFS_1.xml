@@ -5,7 +5,6 @@
     xsi:schemaLocation="http://www.ibm.com/teal ../../../../xml/extension.xsd ">
 
     <table name="filesystem" id="1">
-        <column name="rec_id" type="BIGINT"/>
         <column name="severity" type="VARCHAR" size="256"/>
         <column name="node_ip" type="VARCHAR" size="256"/>
         <column name="sgmgr_ip" type="VARCHAR" size="256"/>
@@ -21,7 +20,6 @@
     </table>
     
     <table name="disk" id="2">
-        <column name="rec_id" type="BIGINT"/>
         <column name="severity" type="VARCHAR" size="256"/>
         <column name="fs_name" type="VARCHAR" size="256"/>
         <column name="node_name" type="VARCHAR" size="256"/>
@@ -46,7 +44,6 @@
     </table>
     
     <table name="perseus" id="3">
-        <column name="rec_id" type="BIGINT"/>
         <column name="severity" type="VARCHAR" size="256"/>
         <column name="node_name" type="VARCHAR" size="256"/>
         <column name="location" type="VARCHAR" size="256"/>
@@ -57,7 +54,6 @@
     </table>
     
     <table name="misc" id="4">
-        <column name="rec_id" type="BIGINT"/>
         <column name="severity" type="VARCHAR" size="256"/>
         <column name="msg_text" type="VARCHAR" size="256"/>
         <column name="diagnosis" type="VARCHAR" size="256"/>

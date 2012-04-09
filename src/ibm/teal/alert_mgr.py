@@ -26,6 +26,7 @@ from ibm.teal.registry import get_logger, get_service, SERVICE_DB_INTERFACE,\
 from ibm.teal.teal_error import ConfigurationError, TealError
 from string import upper
 import weakref
+from ibm.teal.util.teal_thread import ThreadKilled
 
 ALERT_DUPLICATE_CHECK = 'TEAL_ALERT_DUPLICATE_CHECK'
 
@@ -140,6 +141,8 @@ class AlertMgr(object):
             try:
                 try:
                     dbi.insert(cursor, tmp_dict.keys(), db_interface.TABLE_ALERT_LOG, tmp_dict.values())
+                except ThreadKilled:
+                    raise
                 except:
                     get_logger().exception('Commit of alert {0}({1}) failed init_dict = {2}'.format(alert.alert_id, alert.rec_id, str(tmp_dict)))
                     raise
@@ -155,12 +158,16 @@ class AlertMgr(object):
                     # If duplicate then add association from the alert this is a duplicate of
                     if duplicate_of is not None:
                         dbi.insert(assoc_cursor, ALERT2ALERT_COLS, db_interface.TABLE_ALERT2ALERT, (duplicate_of, 'D', alert.rec_id))
+                except ThreadKilled:
+                    raise 
                 except:
                     get_logger().exception('Commit of alert {0}({1}) association update failed'.format(alert.alert_id, alert.rec_id))
                     get_logger().error('    suppressions = {0}'.format(str(alert.supresses)))
                     get_logger().error('    condition events = {0}'.format(str(alert.condition_events)))
                     raise
                 cnxn.commit()
+            except ThreadKilled:
+                raise 
             except:
                 cnxn.rollback()
             cnxn.close()
@@ -428,6 +435,8 @@ class AlertMgr(object):
             teal_alert = self.allocate(alert_id, in_dict=alert_init_dict)
             self.commit(teal_alert, disable_dup=disable_dup)
             get_service(SERVICE_ALERT_DELIVERY_Q).put(teal_alert)
+        except ThreadKilled:
+            raise
         except:
             get_logger().exception('Unable to create alert with alert id = {0}'.format(alert_id))
             if alert_init_dict is not None:

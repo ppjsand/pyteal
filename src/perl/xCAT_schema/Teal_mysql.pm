@@ -35,6 +35,7 @@ package xCAT_schema::Teal_mysql;
            raw_data_fmt => 'BIGINT UNSIGNED',
            raw_data => 'VARCHAR(1024)'
         },
+	engine => 'InnoDB',  
         table_desc => 'TEAL Event Log',
         descriptions => {
            rec_id => 'Unique id assigned by DB for each item. It will be auto incremented on insertion.',
@@ -76,6 +77,7 @@ package xCAT_schema::Teal_mysql;
            raw_data => 'VARCHAR(2048)'
         },
         table_desc => 'TEAL Alert Log',
+	engine => 'InnoDB',  
         descriptions => {
            rec_id => 'Unique id assigned by DB for each item. It will be auto incremented on insertion.',
            alert_id => 'A unique id within the entire system for alerts that occur. This is defined by the component.',
@@ -106,6 +108,7 @@ package xCAT_schema::Teal_mysql;
            t_alert_recid => 'BIGINT'
         },
         table_desc => 'TEAL Alert 2 Alert Table. Lists what Alerts are associated with a particular Alert',
+	engine => 'InnoDB',  
         descriptions => {
             assoc_id => 'Database record id of association.',
             alert_recid => 'The Alert record id reported in the Alert Log.',
@@ -127,6 +130,7 @@ package xCAT_schema::Teal_mysql;
            t_event_recid => 'BIGINT'
         },
         table_desc => 'TEAL Alert 2 Event Table. Lists what Events are associated with a particular Alert',
+	engine => 'InnoDB',  
         descriptions => {
             assoc_id => 'Database record id of association.',
             alert_recid => 'The Alert record id reported in the Alert Log.',
@@ -148,6 +152,7 @@ package xCAT_schema::Teal_mysql;
             data => 'VARCHAR(1024)'
         },
         table_desc => 'TEAL Event Processing Checkpoint Table.',
+	engine => 'InnoDB',  
         descriptions => {
             chkpt_id => 'Database record id of checkpoint',
             status => 'Indicates the last status checkpointed',

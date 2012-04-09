@@ -703,7 +703,7 @@ void DbNodeInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* temp, 
    //"healthy": possible values are "yes", "no"
    //"status": possible values are "unknown", "down", "up", "failed","Unknown NodeStatus"
    //only when healthy == "yes" and status == "up", healthy status is healthy. Otherwise, unhealthy.
-   if(!strcmp(tmp->healthy,"yes") && !strcmp(tmp->status,"up"))
+   if(strstr(tmp->healthy,"yes") && strstr(tmp->status,"up"))
        *tmp->health = HEALTHY;
    else
        *tmp->health = UNHEALTHY;

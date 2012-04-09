@@ -37,10 +37,15 @@ SERVICE_NOTIFIER = 'notifier'
 SERVICE_HISTORIC_QUERY = 'historic_query'
 SERVICE_CHECKPOINT_MGR = 'checkpoint_mgr'
 SERVICE_TIME_MODE = 'time_mode'
+SERVICE_SHUTDOWN_MODE = 'shutdown_mode'
 
-#These are the valid run modes
+# These are the valid run modes
 RUN_MODE_REALTIME = 'realtime'
 RUN_MODE_HISTORIC = 'historic' 
+
+# These are the valid shutdown modes
+SHUTDOWN_MODE_DEFERRED = 'deferred'
+SHUTDOWN_MODE_IMMEDIATE = 'immediate'
 
 # These services must match their environment variables
 TEAL_ROOT_DIR = 'TEAL_ROOT_DIR'

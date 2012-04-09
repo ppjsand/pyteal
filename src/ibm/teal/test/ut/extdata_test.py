@@ -17,11 +17,12 @@ from ibm.teal.teal import Teal
 from ibm.teal.extdata import ExtensionData, extdata_fmt2table_name
 from ibm.teal.location import Location
 from ibm.teal.database import db_interface  
+from ibm.teal.test.teal_unittest import TealTestCase
 
-class ExtensionDataTest(unittest.TestCase):
+class ExtensionDataTest(TealTestCase):
 
     def setUp(self):
-        self.teal = Teal('data/common/configurationtest.conf', 'stderr', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
 
     def tearDown(self):
         self.teal.shutdown()
@@ -113,11 +114,8 @@ class ExtensionDataTest(unittest.TestCase):
         self.assertEqual(loc,ed['neighbor'])
         self.assertEqual(len(ed.keys()),2)
         self.assertEqual(fmt,ed.get_format())
-        print ed
         tmp_dict = ed.write_to_dictionary()
-        print tmp_dict
         new_ed = ExtensionData(fmt, None, None, tmp_dict)
-        print new_ed
         self.assertEqual(raw_data, new_ed['raw_data'])
         self.assertEqual(loc, new_ed['neighbor'])
         self.assertEqual(len(new_ed.keys()), 2)

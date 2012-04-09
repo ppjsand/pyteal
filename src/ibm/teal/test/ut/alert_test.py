@@ -27,7 +27,7 @@ import sys
 class AlertTestBasic(TealTestCase):
     
     def setUp(self):
-        self.teal = Teal('data/common/configurationtest.conf','stderr',msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/common/configurationtest.conf','stderr',msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
           
     def tearDown(self):
         '''Nothing to do ... yet
@@ -129,7 +129,7 @@ class AlertTestStates(TealTestCase):
     
     def testStateIncompleteIM(self):
         ''' Test alert gets created in memory in incomplete state'''
-        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         am = get_service(SERVICE_ALERT_MGR)
         t_alert = am.allocate('TestAlert', {})
         self.assertEquals(t_alert.state, ALERT_STATE_INCOMPLETE)
@@ -139,7 +139,7 @@ class AlertTestStates(TealTestCase):
         
     def testStateIncompleteDB(self):
         ''' Test alert gets created in memory in incomplete state'''
-        self.teal = Teal('data/alert_test/test.conf', 'stderr', msgLevel='debug', commit_alerts=True, commit_checkpoints=False)
+        self.teal = Teal('data/alert_test/test.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=True, commit_checkpoints=False)
         am = get_service(SERVICE_ALERT_MGR)
         t_alert = am.allocate('TestAlert', {})
         self.assertEquals(t_alert.state, ALERT_STATE_INCOMPLETE)
@@ -149,7 +149,7 @@ class AlertTestStates(TealTestCase):
 
     def testStateOtherStatesIM(self):
         '''test alert state NEW in memory'''
-        self.teal = Teal('data/alert_test/test.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/alert_test/test.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
 
         j_in_dq = Journal('j_in_DQ', 'data/alert_test/inject_DQ_alerts.json')
         tq = ListenableQueue('test LQ')
@@ -208,7 +208,7 @@ class AlertTestStates(TealTestCase):
     def testStateOtherStatesDB(self):
         '''test alert state NEW in memory'''
         self.prepare_db()
-        self.teal = Teal('data/alert_test/test.conf', 'stderr', msgLevel='debug', commit_alerts=True, commit_checkpoints=False)
+        self.teal = Teal('data/alert_test/test.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=True, commit_checkpoints=False)
 
         j_in_dq = Journal('j_in_DQ', 'data/alert_test/inject_DQ_alerts.json')
         tq = ListenableQueue('test LQ')
@@ -303,7 +303,7 @@ class AlertTestDuplicateSupport(TealTestCase):
     
     def testDisableDup(self):
         ''' Test That disable dup works'''
-        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         am = get_service(SERVICE_ALERT_MGR)
         self.assertEqual(len(am.in_mem_alerts), 0)
         self.assertEqual(len(am.in_mem_alerts_duplicate), 0)

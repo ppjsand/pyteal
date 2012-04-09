@@ -84,10 +84,10 @@ class DBInterfacePyODBC(db_interface.DBInterface):
         '''
         return self.sql_generator.gen_select(fields, table, where, where_fields, order) 
        
-    def gen_select_max(self, field, table):
+    def gen_select_max(self, field, table, where=None, where_fields=None):
         ''' return the generated select max string
         '''
-        return self.sql_generator.gen_select_max(field, table) 
+        return self.sql_generator.gen_select_max(field, table, where=None, where_fields=None) 
     
     def gen_truncate(self, table):
         ''' return the truncate string
@@ -129,13 +129,13 @@ class DBInterfacePyODBC(db_interface.DBInterface):
         else:
             return cursor.execute(self.sql_generator.gen_select(fields, table, where, where_fields, order), parms)
     
-    def select_max(self, cursor, field, table, parms=None):
+    def select_max(self, cursor, field, table, where=None, where_fields=None, parms=None):
         ''' execute the select max
         '''
         if parms is None:
-            return cursor.execute(self.sql_generator.gen_select_max(field, table))
+            return cursor.execute(self.sql_generator.gen_select_max(field, table, where, where_fields))
         else:
-            return cursor.execute(self.sql_generator.gen_select_max(field, table), parms)
+            return cursor.execute(self.sql_generator.gen_select_max(field, table, where, where_fields), parms)
     
     def truncate(self, cursor, table):
         ''' truncate the table
@@ -211,7 +211,7 @@ class ConfigurationXCAT(Configuration):
         # Well-known path to the information.
         ds_file = '{0}/{1}'.format(DB_CONF_PATH,DB_CONF_FILE)
         get_logger().debug('DB Configuration: {0}'.format(ds_file))
-
+        
         try:
             conf_file = open(ds_file,'r')
         except IOError, e:
@@ -385,7 +385,7 @@ class SQLGenerator:
         pass
        
     @abstractmethod
-    def gen_select_max(self, field, table):
+    def gen_select_max(self, field, table, where=None, where_fields=None):
         ''' return the generated select max string
         '''
         pass    
@@ -417,14 +417,14 @@ class SQLGeneratorDB2(SQLGenerator):
         ''' return the generated insert string
         '''
         t = table.upper()
-        f = '"'+'","'.join(fields)+'"'
+        f = ','.join(map(self.gen_field_name, fields))
         return '''INSERT INTO {0}({1}) VALUES({2})'''.format(t,f,('?, '*len(fields)).rstrip(', '))
        
     def gen_insert_dependent(self, pk_field, fields, table):
         ''' return the generated insert string
         '''
         t = table.upper()
-        f = '"'+'","'.join(fields)+'"'
+        f = ','.join(map(self.gen_field_name, fields))
         return '''INSERT INTO {0}("{1}",{2}) VALUES(IDENTITY_VAL_LOCAL(),{3})'''.format(t,pk_field,f,('?, '*len(fields)).rstrip(', '))
        
     def gen_select(self, fields, table, where=None, where_fields=None, order=None):
@@ -437,7 +437,7 @@ class SQLGeneratorDB2(SQLGenerator):
         if (len(fields) == 1) and (fields[0] == '*'):
             f = fields[0]
         else:
-            f = '"'+'","'.join(fields)+'"'
+            f = ','.join(map(self.gen_field_name, fields))
 
         select_str =  '''SELECT {0} FROM {1}'''.format(f, table.upper())
         if where:
@@ -446,12 +446,16 @@ class SQLGeneratorDB2(SQLGenerator):
             order_str =  '''ORDER BY "{0}" ASC'''.format(order)
         return ' '.join([select_str, where_str, order_str])
        
-    def gen_select_max(self, field, table):
+    def gen_select_max(self, field, table, where=None, where_fields=None):
         ''' return the generated select max string
         '''
         t = table.upper()
-        f = '"'+field+'"'
-        return '''SELECT max({0}) FROM {1}'''.format(f, t)
+        f = self.gen_field_name(field)
+        where_str = ""
+        select_str =  '''SELECT max({0}) FROM {1}'''.format(f, t)
+        if where:
+            where_str = '''WHERE {0}'''.format(self.gen_where(where, where_fields))
+        return ' '.join([select_str, where_str])
     
     def gen_truncate(self, table):
         ''' return the generated truncate string
@@ -467,7 +471,7 @@ class SQLGeneratorDB2(SQLGenerator):
         else:
             where_str = ''
         t = table.upper()
-        f = '"'+'" = ?, "'.join(fields)+'" = ?'
+        f = ' = ?, '.join(map(self.gen_field_name, fields))+' = ?'
         update_str = '''UPDATE {0} SET {1}'''.format(t, f)
         return ' '.join([update_str, where_str])
     
@@ -501,14 +505,14 @@ class SQLGeneratorMySQL(SQLGenerator):
         ''' return the generated insert string
         '''
         t = table
-        f = ",".join(fields)
+        f = ','.join(map(self.gen_field_name, fields))
         return '''INSERT INTO {0}({1}) VALUES({2})'''.format(t,f,('?, '*len(fields)).rstrip(', '))
 
     def gen_insert_dependent(self, pk_field, fields, table):
         ''' return the generated insert string
         '''
         t = table
-        f = ",".join(fields)
+        f = ','.join(map(self.gen_field_name, fields))
         return '''INSERT INTO {0}({1},{2}) VALUES(LAST_INSERT_ID(),{3})'''.format(t,pk_field,f,('?, '*len(fields)).rstrip(', '))
        
     def gen_select(self, fields, table, where=None, where_fields=None, order=None):
@@ -516,7 +520,7 @@ class SQLGeneratorMySQL(SQLGenerator):
         '''
         where_str = ""
         order_str = ""
-        f = ','.join(fields)
+        f = ','.join(map(self.gen_field_name, fields))
         select_str =  '''SELECT {0} FROM {1}'''.format(f,table)
         if where:
             where_str = '''WHERE {0}'''.format(self.gen_where(where, where_fields))
@@ -524,12 +528,16 @@ class SQLGeneratorMySQL(SQLGenerator):
             order_str =  '''ORDER BY {0} ASC'''.format(order)
         return ' '.join([select_str,where_str,order_str])
 
-    def gen_select_max(self, field, table):
+    def gen_select_max(self, field, table, where=None, where_fields=None):
         ''' return the generated select max string
         '''
         t = table
-        f = field
-        return '''SELECT max({0}) FROM {1}'''.format(f,t)
+        f = self.gen_field_name(field)
+        where_str = ""
+        select_str =  '''SELECT max({0}) FROM {1}'''.format(f, t)
+        if where:
+            where_str = '''WHERE {0}'''.format(self.gen_where(where, where_fields))
+        return ' '.join([select_str, where_str])
     
     def gen_truncate(self, table):
         ''' return the generated truncate string
@@ -545,7 +553,7 @@ class SQLGeneratorMySQL(SQLGenerator):
         else:
             where_str = ''
         t = table
-        f = ' = ?, '.join(fields)+' = ?'
+        f = ' = ?, '.join(map(self.gen_field_name, fields))+' = ?'
         update_str = '''UPDATE {0} SET {1}'''.format(t, f)
         return ' '.join([update_str,where_str])
 

@@ -14,6 +14,7 @@
 from ibm.teal.location import Location
 from ibm.teal.teal_error import XMLParsingError, ConfigurationError
 from ibm.teal.registry import get_service, SERVICE_LOCATION, get_logger
+from ibm.teal.util.teal_thread import ThreadKilled
 
 #GRSE = GEAR RuleSet Element
 GRSE_GEAR_CTL = 'gear_control'
@@ -43,6 +44,8 @@ def gearstr2loc(loc_str):
         loc_id.strip()
         loc_data.strip()
         return Location(loc_id, loc_data)
+    except ThreadKilled:
+        raise
     except:
         raise XMLParsingError('Invalid location specification: {0}'.format(loc_str))
     return None
@@ -61,6 +64,8 @@ def gearstr2scope(scope_str):
         scope_data.strip()
         if not get_service(SERVICE_LOCATION).is_scope_valid(scope_type, scope_data):
             raise XMLParsingError('Invalid scope: {0}'.format(scope_str))
+    except ThreadKilled:
+        raise
     except:
         raise XMLParsingError('Invalid scope: {0}'.format(scope_str))
     return scope_type, scope_data

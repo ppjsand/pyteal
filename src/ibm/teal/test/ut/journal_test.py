@@ -23,11 +23,11 @@ from time import sleep
 import unittest
 
 
-class JournalTest(unittest.TestCase):
+class JournalTest(TealTestCase):
 
 
     def setUp(self):        
-        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
 
     def tearDown(self):
         self.teal.shutdown()
@@ -42,25 +42,25 @@ class JournalTest(unittest.TestCase):
     def testJournalQueue(self):
         ''' Test injecting the Journal through a queue'''
         lq = ListenableQueue('test journal queue')
-        j = Journal('test journal', file='data/journal_test/data_sample_001_NEW.json')
-        j_rec = Journal('j_rec')
+        j = Journal('test journal -- input', file='data/journal_test/data_sample_001_NEW.json')
+        j_rec = Journal('j_rec -- output')
         lq.register_listener(j_rec)
         j.inject_queue(lq)
         while len(j) != len(j_rec):
             # p rint ('waiting for queue to process %s of %s' % (str(len(j_rec)), str(len(j))))
             sleep(1.0)
-        # p rint j
-        # p rint j_rec
+        #p rint j
+        #p rint j_rec
         self.assertTrue(j.deep_match(j))
         self.assertTrue(j.deep_match(j_rec, ignore_delay=True))
         return
      
 
-class JournalTestWithOptionalData(unittest.TestCase):
+class JournalTestWithOptionalData(TealTestCase):
 
 
     def setUp(self):
-        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
 
     def tearDown(self):
         self.teal.shutdown()
@@ -93,7 +93,7 @@ class JournalTestWithDB(TealTestCase):
     def testJournalWriteEventDB1(self):
         ''' Test writing to Event log DB basic
         '''
-        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel='debug')
+        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel=self.msglevel)
         j = Journal('DB test journal to write', file='data/journal_test/events_001.json')
         j.insert_in_db(truncate=True, no_delay=True)
         jdb = Journal('DB test journal to read')
@@ -107,7 +107,7 @@ class JournalTestWithDB(TealTestCase):
     def testJournalWriteEventDB2(self):
         ''' Test writing to Event log DB without recids
         '''
-        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel='debug')
+        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel=self.msglevel)
         j = Journal('DB test journal to write', file='data/journal_test/events_001.json')
         j.insert_in_db(truncate=True, use_rec_ids=False, no_delay=True)
         jdb = Journal('DB test journal to read')
@@ -121,7 +121,7 @@ class JournalTestWithDB(TealTestCase):
     def testJournalWriteEventDB3(self):
         ''' Test reading from event DB with a subset of fields 
         '''
-        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel='debug')
+        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel=self.msglevel)
         j = Journal('DB test journal to write', file='data/journal_test/events_001.json')
         j.insert_in_db(truncate=True, use_rec_ids=False, no_delay=True)
         jdb = Journal('DB test journal to read')
@@ -135,7 +135,7 @@ class JournalTestWithDB(TealTestCase):
 
     def testJournalWriteAlertDB1(self):
         ''' Test writing of Alert log DB basic '''
-        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel='debug')
+        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel=self.msglevel)
         # Events
         je = Journal('DB test input EVENTS', file='data/journal_test/events_002.json')
         je.insert_in_db(truncate=True, no_delay=True)
@@ -159,7 +159,7 @@ class JournalTestWithDB(TealTestCase):
     
     def testJournalWriteAlertDB2(self):
         ''' Test getting alerts without associations '''
-        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel='debug')
+        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel=self.msglevel)
         # Events
         je = Journal('DB test input EVENTS', file='data/journal_test/events_002.json')
         je.insert_in_db(truncate=True, no_delay=True)
@@ -178,7 +178,7 @@ class JournalTestWithDB(TealTestCase):
     
     def testJournalWriteAlertDB3(self):
         ''' Test getting only some fields of an alert '''
-        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel='debug')
+        self.teal = Teal('data/journal_test/events_001.conf','stderr',msgLevel=self.msglevel)
         # Events
         je = Journal('DB test input EVENTS', file='data/journal_test/events_002.json')
         je.insert_in_db(truncate=True, no_delay=True)
@@ -199,7 +199,7 @@ class JournalTestWithDB(TealTestCase):
         ''' Test writing of Alert log queue after reading from DB '''
         # This test does not work with duplicate checking -- probably don't want it to 
         keep_ADC = self.force_env('TEAL_ALERT_DUPLICATE_CHECK', 'No')
-        self.teal = Teal('data/journal_test/events_002.conf','stderr',msgLevel='debug')
+        self.teal = Teal('data/journal_test/events_002.conf','stderr',msgLevel=self.msglevel)
         # Events
         je = Journal('DB test input EVENTS', file='data/journal_test/events_002.json')
         je.insert_in_db(truncate=True, no_delay=True)

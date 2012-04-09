@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -24,7 +24,8 @@ from ibm.teal.metadata import Metadata, META_TYPE_EVENT, META_EVENT_ID, META_EVE
          META_ALERT_FRU_LIST, META_EVENT_DESCRIPTION, META_ALERT_DESCRIPTION,\
     META_ALERT_PRIORITY
          
-from ibm.teal.event import Event
+from ibm.teal.event import Event, EVENT_ATTR_REC_ID, EVENT_ATTR_EVENT_ID,\
+    EVENT_ATTR_SRC_COMP, EVENT_ATTR_TIME_OCCURRED
 from ibm.teal.teal_error import XMLParsingError, ConfigurationError
 
 class EventMetadataTest(TealTestCase):
@@ -32,14 +33,12 @@ class EventMetadataTest(TealTestCase):
     def setUp(self):
         '''Setup TEAL if needed
         '''
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
-        return
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, data_only=True, commit_alerts=False, commit_checkpoints=False)
 
     def tearDown(self):
         '''Not currently used
         '''
-        return
+        self.teal.shutdown()
 
     def testBasicNoFiles(self):
         '''Test if no files are specified
@@ -108,10 +107,10 @@ class EventMetadataTest(TealTestCase):
         register_service(SERVICE_EVENT_METADATA, esm1)
         event_id = 'idvalue1'
         event_comp = 'TST'
-        e1 = Event(1)
-        e1.event_id = event_id
-        e1.src_comp = 'TST'
-        e1.time_occurred = datetime.now()
+        e1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                           EVENT_ATTR_EVENT_ID:event_id, 
+                           EVENT_ATTR_SRC_COMP: 'TST', 
+                           EVENT_ATTR_TIME_OCCURRED: datetime.now()})  
         meta_dict2 = e1.get_metadata()
         self.assertEqual(meta_dict2[META_EVENT_ID], event_id)
         self.assertEqual(meta_dict2[META_EVENT_COMP], event_comp)
@@ -270,7 +269,7 @@ class EventMetadataTestConf(TealTestCase):
     def testLoadingFromConNone(self):
         '''Test if no files are specified in the config file
         '''
-        teal_inst = teal.Teal('data/metadata_test/load_config_01.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        teal_inst = teal.Teal('data/metadata_test/load_config_01.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         esm1 = get_service(SERVICE_EVENT_METADATA)
         self.assertEqual(len(esm1), 0)
         asm1 = get_service(SERVICE_ALERT_METADATA)
@@ -281,17 +280,17 @@ class EventMetadataTestConf(TealTestCase):
     def testLoadingFromConOne(self):
         '''Test if one files for each are specified in the config file in one section
         '''
-        teal_inst = teal.Teal('data/metadata_test/load_config_02.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        teal_inst = teal.Teal('data/metadata_test/load_config_02.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         # it loaded event_metadata_05 and alert_metadata_03
         # Check event metadata via event
         esm1 = get_service(SERVICE_EVENT_METADATA)
         self.assertEqual(len(esm1), 2)
         event_id = 'idvalue1'
         event_comp = 'TST'
-        e1 = Event(1)
-        e1.event_id = event_id
-        e1.src_comp = 'TST'
-        e1.time_occurred = datetime.now()
+        e1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                           EVENT_ATTR_EVENT_ID:event_id, 
+                           EVENT_ATTR_SRC_COMP: 'TST', 
+                           EVENT_ATTR_TIME_OCCURRED: datetime.now()})  
         meta_dict2 = e1.get_metadata()
         self.assertEqual(meta_dict2[META_EVENT_ID], event_id)
         self.assertEqual(meta_dict2[META_EVENT_COMP], event_comp)
@@ -341,17 +340,17 @@ class EventMetadataTestConf(TealTestCase):
     def testLoadingFromConTwo(self):
         '''Test if one files for each are specified in the config file in two sections
         '''
-        teal_inst = teal.Teal('data/metadata_test/load_config_03.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        teal_inst = teal.Teal('data/metadata_test/load_config_03.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         # it loaded event_metadata_05 and alert_metadata_03
         # Check event metadata via event
         esm1 = get_service(SERVICE_EVENT_METADATA)
         self.assertEqual(len(esm1), 2)
         event_id = 'idvalue1'
         event_comp = 'TST'
-        e1 = Event(1)
-        e1.event_id = event_id
-        e1.src_comp = 'TST'
-        e1.time_occurred = datetime.now()
+        e1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                           EVENT_ATTR_EVENT_ID:event_id, 
+                           EVENT_ATTR_SRC_COMP: 'TST', 
+                           EVENT_ATTR_TIME_OCCURRED: datetime.now()})  
         meta_dict2 = e1.get_metadata()
         self.assertEqual(meta_dict2[META_EVENT_ID], event_id)
         self.assertEqual(meta_dict2[META_EVENT_COMP], event_comp)

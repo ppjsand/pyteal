@@ -16,6 +16,8 @@ from ibm.teal.analyzer.gear.rule_value import GRVA_TYPE_LOCATION_MATCH_IDENTICAL
     GRVA_TYPE_LOCATION_MATCH_IGNORE
 from ibm.teal.teal_error import TealError
 import itertools
+from ibm.teal.registry import get_logger
+from ibm.teal.util.teal_thread import ThreadKilled
 
 
 class InstanceError(TealError):
@@ -162,6 +164,8 @@ class ConditionData(object):
         ''' Use an instance component '''
         try:
             instance = loc.get_comp_value(self.comp)
+        except ThreadKilled:
+            raise
         except:
             raise InstanceError('Unable to get comp {0} from location {1}'.format(self.comp, str(loc)), error=False)
         if self.instances.in_comparison(instance) == False:
@@ -196,41 +200,49 @@ class ConditionData(object):
     
     def _collect_at_loc_unique(self, dict_by_loc, min_needed, dups):
         ''' Collect values by location for unique locations ''' 
+        # If don't have the minimum then not True
         if len(dict_by_loc.keys()) < min_needed:
             return list()
-        tmp_events_dict = {}
-        # Get results for each combination
-        for t_locs in itertools.combinations(dict_by_loc.keys(), min_needed):
-            dict_by_id_list = [dict_by_loc[t_loc] for t_loc in t_locs]
-                
-            tmp_events = self._collect_at_id(dict_by_id_list, min_needed, dups)
-            if tmp_events is not None and len(set(tmp_events)) >= min_needed:
-                # See if overlaps existing key 
-                found = False
-                ck_loc_set = set(t_locs)
-                for key, value in tmp_events_dict.items(): 
-                    if key.isdisjoint(ck_loc_set) == False:
-                        found = True
-                        break
-                if found == True:
-                    del tmp_events_dict[key]
-                    tmp_events.extend(value)
-                    ck_loc_set = ck_loc_set.union(key)
-                tmp_events_dict[frozenset(ck_loc_set)] = tmp_events
-                        
-        # Add the truth points 
-        truth_points = []
-        for key, value in tmp_events_dict.items():
-            truth_points.append((key, frozenset(value)))      
-        return truth_points     
-                
+        
+        # Check if enough found that it has to be true
+        if len(dict_by_loc.keys()) > (min_needed - 1) * dups + 1:
+            found_truth = True
+        else:
+            found_truth = False
+            
+            # Have to look at perms until we find one that is true or check all of them
+            get_logger().warning('Unable to shortcut permutation checking.  (min_needed = {0} and dups = {1})'.format(min_needed, dups))
+
+            # Get results for each combination
+            for t_locs in itertools.combinations(dict_by_loc.keys(), min_needed):
+                dict_by_id_list = [dict_by_loc[t_loc] for t_loc in t_locs]
+                tmp_events = self._collect_at_id(dict_by_id_list, min_needed, dups)
+                if len(set(tmp_events)) >= min_needed:
+                    found_truth = True
+                    break
+                            
+        if found_truth == True:
+            # Collect all events
+            event_list = []
+            for loc_v in dict_by_loc.values():
+                for id_v in loc_v.values():
+                    for inst_v in id_v.values():
+                        if inst_v is not None: 
+                            event_list.extend(inst_v)
+            #get_logger().warning('({0}) {1}'.format(','.join([str(l) for l in dict_by_loc.keys()]), ','.join([e.brief_str() for e in event_list])))
+            return [(frozenset(set(dict_by_loc.keys())),frozenset(set(event_list)))]
+        
+        # Not true
+        get_logger().info('permutation checking completed -- Not True')
+        return []
+        
     # Collect at id level
     def _collect_at_id(self, dict_by_id_list, min_needed, dups):
         ''' Collect at id level 
             Default is to ignore the id '''
         dict_by_inst_list = []
         for dict_by_id in dict_by_id_list:
-            # There should be only one key that is None ... so don't really need to do this.
+            # There should be only one key that is None ... so should only ever be one
             for dict_by_inst in dict_by_id.values():
                 dict_by_inst_list.append(dict_by_inst)
         return self._collect_at_inst(dict_by_inst_list, min_needed, dups)
@@ -242,14 +254,16 @@ class ConditionData(object):
         #  Call down with a list of each perm of dicts by instance (contained dict)
         tmp_events = []
         if len(dict_by_id_list) == 1:
-            tmp_dict_by_id = dict_by_id_list[0]
-            if len(tmp_dict_by_id.keys()) >= min_needed:
-                for t_ids in itertools.combinations(tmp_dict_by_id.keys(), min_needed):
-                    tmp_dict_by_inst_list = [tmp_dict_by_id[t_id] for t_id in t_ids]
+            # Only one entry
+            if len(dict_by_id_list[0].keys()) >= min_needed:
+                # Enough that it could be true -- try perms 
+                for t_ids in itertools.permutations(dict_by_id_list[0].keys(), min_needed):
+                    tmp_dict_by_inst_list = [dict_by_id_list[0][t_id] for t_id in t_ids]
                     tmp_events.extend(self._collect_at_inst(tmp_dict_by_inst_list, min_needed, dups))
         else:
-            # It was unique above us so we'll get min_needed entries in the dict and have
-            # to look at combinations over that
+            # More than one entry so make temporary combined list 
+            # TODO: HERE
+            
             tmp_ids_list_list = [t_dict.keys() for t_dict in dict_by_id_list]
             for ids_prod in itertools.product(*tmp_ids_list_list):
                 if len(set(ids_prod)) < min_needed:

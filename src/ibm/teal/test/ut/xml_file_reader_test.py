@@ -14,9 +14,10 @@
 import unittest
 
 from ibm.teal.util.xml_file_reader import read_xml_file
+from ibm.teal.test.teal_unittest import TealTestCase
 
 
-class Test(unittest.TestCase):
+class Test(TealTestCase):
 
     def testReadNoXMLFile(self):
         ''' Read with no file specified '''

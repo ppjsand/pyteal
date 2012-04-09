@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -55,7 +55,7 @@ def get_event_using_rec_id(rec_id):
     if row is None:
         get_logger().fatal('Table did not cotains an entry for event with rec_id = {0}'.format(rec_id))
         raise ValueError
-    result_event = Event(in_dict=dict(zip(EVENT_COLS,row)))
+    result_event = Event.fromDB(row)
     event_cnxn.close()
     return result_event         
 
@@ -69,116 +69,146 @@ class Event(Incident):
     Currently changes made to instances of this class are NOT
     reflected back into the DB
     '''
+    
+    @classmethod
+    def fromDB(cls, in_tuple):
+        ''' Create Event using DB row (tuple) ''' 
+        new_obj = cls()
+        try:
+            new_obj.rec_id = in_tuple[0]
+            new_obj.event_id = in_tuple[1].strip()
+            new_obj.time_occurred = in_tuple[2]
+            new_obj.time_logged = in_tuple[3]
+            new_obj.src_comp = in_tuple[4].strip()
+            try:
+                new_obj.src_loc = Location(in_tuple[6].strip(), in_tuple[5].strip())
+            except:
+                get_logger().exception('source location could not be created from Event DB tuple {0}'
+                                     .format(str(in_tuple)))
+                new_obj.src_loc = None
+            # Optional attributes
+            if in_tuple[7] is None:
+                new_obj.rpt_comp = None
+            else:
+                new_obj.rpt_comp = in_tuple[7].strip()
+            if in_tuple[9] is None or in_tuple[8] is None:
+                new_obj.rpt_loc = None
+            else:
+                try:
+                    new_obj.rpt_loc = Location(in_tuple[9].strip(), in_tuple[8].strip())
+                except:
+                    get_logger().exception('source location could not be created from Event DB tuple {0}'
+                                             .format(str(in_tuple)))
+                    new_obj.rpt_loc = None 
+            new_obj.event_cnt = in_tuple[10]
+            new_obj.elapsed_time = in_tuple[11]
+            new_obj.ext_key = None
+            new_obj.raw_data_fmt = in_tuple[12]
+            try:
+                new_obj.raw_data = new_obj.raw_data = ExtensionData(new_obj.raw_data_fmt, new_obj.rec_id, in_tuple[13])
+            except:
+                get_logger().exception('Raw Data could not be created from Event DB tuple {0}'
+                                              .format(str(in_tuple)))
+                new_obj.raw_data = None 
+        except:
+            get_logger().exception('creation with DB tuple failed for event {0}'.format(str(in_tuple)))
+        get_logger().debug('Created an event for rec_id {0}'.format(str(new_obj.rec_id)))
+        return new_obj
+    
+    @classmethod
+    def fromDict(cls, in_dict):
+        new_obj = cls()
+        # Required attributes
+        new_obj.rec_id = None
+        new_obj.event_id = None
+        new_obj.time_occurred = None
+        new_obj.time_logged = None
+        new_obj.src_comp = None
+        new_obj.src_loc = None
+        # Optional attributes
+        new_obj.rpt_comp = None
+        new_obj.rpt_loc = None
+        new_obj.event_cnt = None
+        new_obj.elapsed_time = None
+        new_obj.ext_key = None
+        new_obj.raw_data_fmt = None
+        new_obj.raw_data = None
+        
+        try:
+            for key in in_dict:
+                value = in_dict[key]
+                if key == EVENT_ATTR_TIME_OCCURRED:
+                    new_obj.time_occurred = value
+                elif key == EVENT_ATTR_TIME_LOGGED:
+                    new_obj.time_logged = value 
+                elif key == EVENT_ATTR_EVENT_ID:
+                    new_obj.event_id = value
+                elif key == EVENT_ATTR_SRC_COMP:
+                    new_obj.src_comp = value
+                elif key == EVENT_ATTR_SRC_LOC:
+                    try:
+                        new_obj.src_loc = Location(in_dict[EVENT_ATTR_SRC_LOC_TYPE],value)
+                    except:
+                        get_logger().exception('source location could not be created from event dict {0}. value {1}'
+                                             .format(new_obj._dump_event_info(in_dict),value))
+                elif key == EVENT_ATTR_SRC_LOC_TYPE:
+                    pass # Value is used to create the source location
+                elif key == EVENT_ATTR_RPT_COMP:
+                    new_obj.rpt_comp = value
+                elif key == EVENT_ATTR_RPT_LOC:
+                    if value is not None:
+                        try:
+                            new_obj.rpt_loc = Location(in_dict[EVENT_ATTR_RPT_LOC_TYPE],value)
+                        except:
+                            get_logger().exception('reporting location could not be created from event dict {0}.  value {1}'
+                                                  .format(new_obj._dump_event_info(in_dict),value))
+                    else:
+                        new_obj.rpt_loc = None
+                elif key == EVENT_ATTR_RPT_LOC_TYPE:
+                    pass # Value is used to create the reporting location 
+                elif key == EVENT_ATTR_EVENT_CNT:
+                    new_obj.event_cnt = value
+                elif key == EVENT_ATTR_ELAPSED_TIME:
+                    new_obj.elapsed_time = value
+                elif key == EVENT_ATTR_RAW_DATA_FMT:
+                    raw_data = in_dict.get(EVENT_ATTR_RAW_DATA, None)
+                    ext_key = in_dict.get(EVENT_ATTR_REC_ID, new_obj.rec_id)
+                    if (raw_data is not None or ext_key is not None):
+                        try:
+                            if isinstance(raw_data, dict):
+                                new_obj.raw_data = ExtensionData(value, ext_key, None, raw_data)
+                            else:
+                                if raw_data is not None and raw_data[:1] == '{':
+                                    tmp_dict = ast.literal_eval(raw_data)
+                                    new_obj.raw_data = ExtensionData(value, ext_key, None, tmp_dict)
+                                else:
+                                    new_obj.raw_data = ExtensionData(value, ext_key, raw_data)
+                        except:
+                            get_logger().exception('Raw Data could not be created from event dict {0}'
+                                                  .format(new_obj._dump_event_info(in_dict)))
+                    else:
+                        raise ValueError, 'Raw data format specified without raw data or extension key for event {0}'.format(new_obj._dump_event_info(in_dict))
+                elif key == EVENT_ATTR_RAW_DATA:
+                    pass # Value used to create extension data
+                elif key == EVENT_ATTR_REC_ID:
+                    new_obj.rec_id = value
+                else:
+                    get_logger().warning('Read from dictionary from event dict (0) encountered unexpected element {1}'
+                                          .format(new_obj._dump_event_info(in_dict),value))
+        except:
+            get_logger().exception('Read event from dictionary failed for event {0}'.format(new_obj._dump_event_info(in_dict)))
+        
+        get_logger().debug('Created an event for rec_id {0}'.format(str(new_obj.rec_id)))
+        return new_obj
 
-    def __init__(self, rec_id=None, in_dict=None):
+    def __init__(self):
         '''Constructor
              rec_id -- a unique id (the primary key)
              in_dict -- a dictionary of all attributes for the Event
              
         '''
         get_logger().debug('Creating an event')
-        # Required attributes
-        self.rec_id = rec_id
-        self.event_id = None
-        self.time_occurred = None
-        self.time_logged = None
-        self.src_comp = None
-        self.src_loc = None
-        # Optional attributes
-        self.rpt_comp = None
-        self.rpt_loc = None
-        self.event_cnt = None
-        self.elapsed_time = None
-        self.ext_key = None
-        self.raw_data_fmt = None
-        self.raw_data = None
         Incident.__init__(self)
-        # dictionary may load relationships
-        if in_dict is not None:
-            self.read_from_dictionary(in_dict)
-        if self.rec_id is None:
-            get_logger().error('Record id was not set')
-            #print 'in_dict',in_dict
-            raise ValueError
-        get_logger().debug('Created an event for rec_id {0}'.format(str(self.rec_id)))
-        return
-    
-    def read_from_dictionary(self, in_dict):
-        '''Set the attributes of Event from information from a dictionary'''
-        try:
-            for key in in_dict:
-                value = in_dict[key]
-                if key == EVENT_ATTR_TIME_OCCURRED:
-                    self.time_occurred = value
-                elif key == EVENT_ATTR_TIME_LOGGED:
-                    self.time_logged = value 
-                elif key == EVENT_ATTR_EVENT_ID:
-                    self.event_id = value
-                elif key == EVENT_ATTR_SRC_COMP:
-                    self.src_comp = value
-                elif key == EVENT_ATTR_SRC_LOC:
-                    try:
-                        self.src_loc = Location(in_dict[EVENT_ATTR_SRC_LOC_TYPE],value)
-                    except:
-                        get_logger().exception('source location could not be created for event {0}. value {1}'
-                                             .format(self._dump_event_info(in_dict),value))
-                elif key == EVENT_ATTR_SRC_LOC_TYPE:
-                    pass # Value is used to create the source location
-                elif key == EVENT_ATTR_RPT_COMP:
-                    self.rpt_comp = value
-                elif key == EVENT_ATTR_RPT_LOC:
-                    if value is not None:
-                        try:
-                            self.rpt_loc = Location(in_dict[EVENT_ATTR_RPT_LOC_TYPE],value)
-                        except:
-                            get_logger().exception('reporting location could not be created for event {0}.  value {1}'
-                                                  .format(self._dump_event_info(in_dict),value))
-                    else:
-                        self.rpt_loc = None
-                elif key == EVENT_ATTR_RPT_LOC_TYPE:
-                    pass # Value is used to create the reporting location 
-                elif key == EVENT_ATTR_EVENT_CNT:
-                    self.event_cnt = value
-                elif key == EVENT_ATTR_ELAPSED_TIME:
-                    self.elapsed_time = value
-                elif key == EVENT_ATTR_RAW_DATA_FMT:
-                    raw_data = in_dict.get(EVENT_ATTR_RAW_DATA, None)
-                    ext_key = in_dict.get(EVENT_ATTR_REC_ID, self.rec_id)
-                    if (raw_data is not None or ext_key is not None):
-                        try:
-                            if isinstance(raw_data, dict):
-                                self.raw_data = ExtensionData(value, ext_key, None, raw_data)
-                            else:
-                                if raw_data is not None and raw_data[:1] == '{':
-                                    tmp_dict = ast.literal_eval(raw_data)
-                                    self.raw_data = ExtensionData(value, ext_key, None, tmp_dict)
-                                else:
-                                    self.raw_data = ExtensionData(value, ext_key, raw_data)
-                        except:
-                            get_logger().exception('Raw Data could not be created for event {0}'
-                                                  .format(self._dump_event_info(in_dict)))
-                    else:
-                        raise ValueError, 'Raw data format specified without raw data or extension key for event {0}'.format(self._dump_event_info(in_dict))
-                elif key == EVENT_ATTR_RAW_DATA:
-                    pass # Value used to create extension data
-                elif key == EVENT_ATTR_REC_ID:
-                    if self.get_rec_id() is None:
-                        self.rec_id = value
-                    elif value != self.get_rec_id():
-                        get_logger().error('rec ids did not match {0} != {1}'.format(value, self.get_rec_id()))
-                        # Force failure by not setting 
-                        self.rec_id = None
-                else:
-                    get_logger().warning('Read from dictionary for event (0) encountered unexpected element {1}'
-                                          .format(self._dump_event_info(in_dict),value))
-        except:
-            get_logger().exception('Read event from dictionary failed for event {0}'.format(self._dump_event_info(in_dict)))
-            return
-        
-        if self.is_valid() == False:
-            # TODO: should probably raise something else
-            #raise ValueError
-            pass
         return
     
     def _dump_event_info(self, in_dict):
@@ -260,18 +290,6 @@ class Event(Incident):
                 result.append(getattr(self,col)) 
         return tuple(result)
     
-    def read_from_tuple(self, in_tup, in_cols=EVENT_COLS ):
-        ''' Read from the tuple into the specified columns
-        if cols is None then all values are included and they
-        are in the order of the ALERT_COLS constant
-        '''
-        # validate input   TODO: remove?
-        if len(in_tup) != len(in_cols):
-            get_logger().fatal('Event read_from_tuple called with mismatched parms: {0} != {1}'.format(len(in_tup), len(in_cols)))
-            raise ValueError()
-        self.read_from_dictionary(dict(zip(in_tup,in_cols)))
-        return                            
-
     def is_valid(self):
         '''Check if the event has values for all of the required attributes'''
         # Check for required 

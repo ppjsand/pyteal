@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2011     
+# (C) Copyright IBM Corp.  2011,2012     
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -162,13 +162,17 @@ package xCAT_schema::Teal_gpfs;
               fru
               wwn
               state
+              reason
+              dev_name
               priority
+              rem_redund
+              err
               comments
               disable
               )
         ],
         keys     => [qw(rec_id)],
-        required => [qw(rec_id severity node_name location fru wwn)],
+        required => [qw(rec_id severity node_name)],
         types    => {
             rec_id    => 'BIGINT',
             severity  => 'VARCHAR(256)',
@@ -177,7 +181,11 @@ package xCAT_schema::Teal_gpfs;
             fru       => 'VARCHAR(256)',
             wwn       => 'VARCHAR(256)',
             state     => 'VARCHAR(256)',
+            reason    => 'VARCHAR(256)',
+            dev_name  => 'VARCHAR(256)',
             priority  => 'INTEGER',
+            rem_redund=> 'INTEGER',
+            err       => 'INTEGER',
         },
         tablespace =>'XCATTBS32K', 
         table_desc   => 'TEAL GPFS Perseus-related event data',
@@ -189,7 +197,11 @@ package xCAT_schema::Teal_gpfs;
             fru       => 'FRU information of pdisk',
             wwn       => 'Worldwide SCSI name of pdisk',
             state     => 'State of pdisk',
+            reason    => 'Reason of failure',
+            dev_name  => 'Device name',
             priority  => 'Priority of pdisk replacement',
+            rem_redund=> 'Remaining redundancy',
+            err       => 'Error number',
             comments  => 'Any user-written notes.',
             disable   => q(Set to 'yes' or '1' to comment out this row.),
         },
@@ -1173,8 +1185,8 @@ package xCAT_schema::Teal_gpfs;
         types    => {
             cluster_id => 'VARCHAR(128)',
             rg_name    => 'VARCHAR(64)',
-            rg_act_svr => 'VARCHAR(32)',
-            rg_svrs    => 'VARCHAR(64)',
+            rg_act_svr => 'VARCHAR(64)',
+            rg_svrs    => 'VARCHAR(128)',
             rg_id      => 'VARCHAR(20)',
             rg_das     => 'INTEGER',
             rg_vdisks  => 'INTEGER',
@@ -1219,8 +1231,8 @@ package xCAT_schema::Teal_gpfs;
         types    => {
             cluster_id => 'VARCHAR(128)',
             rg_name    => 'VARCHAR(64)',
-            rg_act_svr => 'VARCHAR(32)',
-            rg_svrs    => 'VARCHAR(64)',
+            rg_act_svr => 'VARCHAR(64)',
+            rg_svrs    => 'VARCHAR(128)',
             rg_id      => 'VARCHAR(20)',
             rg_das     => 'INTEGER',
             rg_vdisks  => 'INTEGER',
@@ -1341,7 +1353,7 @@ package xCAT_schema::Teal_gpfs;
             da_pdisks        => 'INTEGER',
             da_spares        => 'INTEGER',
             da_replace_thres => 'INTEGER',
-            da_free_space    => 'INTEGER',
+            da_free_space    => 'BIGINT',
             da_scrub_dura    => 'INTEGER',
             change           => 'INTEGER',
             health           => 'INTEGER',

@@ -122,7 +122,7 @@ class AlertDeliveryTest(TealTestCase):
     def setUp(self):
         '''Setup Teal'''
         self.keep_ADC = self.force_env('TEAL_ALERT_DUPLICATE_CHECK', 'No')
-        self.teal = Teal('data/alert_delivery_test/test_local_filters.conf', "stderr", msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/alert_delivery_test/test_local_filters.conf', "stderr", msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         return
     
     def tearDown(self):
@@ -154,14 +154,10 @@ class AlertDeliveryTest(TealTestCase):
         self.assertTrue(j_out_alert_id.wait_for_entries(3))
         self.assertTrue(j_out_ai_urgent.wait_for_entries(2))
         #
-        print j_out_all
         j_out_all_exp = Journal('j_out_all_exp', 'data/alert_delivery_test/data_sample_out_all_alerts.json')
-        print j_out_all_exp
         self.assertTrue(j_out_all.deep_match(j_out_all_exp, ignore_delay=True, ignore_times=True))
-        print j_out_alert_id
         j_out_alert_id_exp = Journal('j_out_alert_id_exp', 'data/alert_delivery_test/data_sample_out_alert_id.json')
         self.assertTrue(j_out_alert_id.deep_match(j_out_alert_id_exp, ignore_delay=True, ignore_times=True))
-        print j_out_ai_urgent
         j_out_ai_urgent_exp = Journal('j_out_ai_urgent_exp', 'data/alert_delivery_test/data_sample_out_ai_urgent.json')
         self.assertTrue(j_out_ai_urgent.deep_match(j_out_ai_urgent_exp, ignore_delay=True, ignore_times=True))
         return
@@ -174,7 +170,7 @@ class AlertAnalyzerFilterTest(TealTestCase):
         '''Setup Teal'''
         # Not testing duplicates, so OK to turn off
         self.keep_ADC = self.force_env('TEAL_ALERT_DUPLICATE_CHECK', 'No')
-        self.teal = Teal('data/alert_delivery_test/analyzer_filter/test.conf', "stderr", msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/alert_delivery_test/analyzer_filter/test.conf', "stderr", msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         return
     
     def tearDown(self):
@@ -186,7 +182,6 @@ class AlertAnalyzerFilterTest(TealTestCase):
     def testGeneralFilters(self):
         '''test alert delivery with global and local filtering'''
         j_in_dq = Journal('j_in_DQ', 'data/alert_delivery_test/analyzer_filter/inject_DQ_alerts.json')
-        print j_in_dq
         dq_q = get_service(SERVICE_ALERT_DELIVERY_Q)
         # Get the AlertListenerJournal journals
         listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
@@ -237,7 +232,7 @@ class AlertListenerFailureTest(TealTestCase):
         '''Setup Teal'''
         # Not testing duplicates, so OK to turn off
         self.keep_ADC = self.force_env('TEAL_ALERT_DUPLICATE_CHECK', 'No')
-        self.teal = Teal('data/alert_delivery_test/listener_failure/test.conf', "stderr", msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/alert_delivery_test/listener_failure/test.conf', "stderr", msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         return
     
     def tearDown(self):
@@ -249,7 +244,6 @@ class AlertListenerFailureTest(TealTestCase):
     def testGeneralFilters(self):
         '''test alert delivery with global and local filtering'''
         j_in_dq = Journal('j_in_DQ', 'data/alert_delivery_test/listener_failure/inject_DQ_alerts.json')
-        print j_in_dq
         dq_q = get_service(SERVICE_ALERT_DELIVERY_Q)
         # Get the AlertListenerJournal journals
         listeners = get_service(SERVICE_ALERT_DELIVERY).listeners
@@ -277,8 +271,6 @@ class AlertListenerFailureTest(TealTestCase):
         self.assertEqual(len(j_out_all)-len(j_out_all_exp), 3)
         #self.assertTrue(j_out_all.deep_match(j_out_all_exp, ignore_delay=True, ignore_times=True))
         self.assertTrue(j_out_analyzer1.deep_match(j_out_analyzer1_exp, ignore_delay=True, ignore_times=True))
-        print j_out_all
-        #print j_out_analyzer1
         return
     
 

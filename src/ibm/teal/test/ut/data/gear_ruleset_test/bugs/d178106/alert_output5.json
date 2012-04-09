@@ -1,0 +1,46 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BD700027", 
+        "associations": [
+          "C:E:3"
+        ], 
+        "creation_time": "2011-12-08 10:21:04.693625", 
+        "event_loc": "FR007-CG03-SN001-DR0-HB0-LL03", 
+        "event_loc_type": "H", 
+        "raw_data": "{\"fru_list\":\"{ ,FRU,3,,, }\",\"nbr_loc\":\"FR007-CG04-SN001-DR0-HB3-LL03\",\"nbr_typ\":\"H\",\"pwr_enc\":\"11\",\"eed_loc\":\"12\",\"encl_mtms\":\"10\"}", 
+        "reason": "LL-link down in frame FR007 cage CG03 (superNode SN001 drawer DR0) (Llocal Link Port Down)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with a hub module.\nRecord the alert ID.\nRecord the location from the alert message.\nContact IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "BD700027", 
+        "associations": [
+          "C:E:4"
+        ], 
+        "creation_time": "2011-12-08 10:21:04.694458", 
+        "event_loc": "FR007-CG03-SN001-DR0-HB0-LL04", 
+        "event_loc_type": "H", 
+        "raw_data": "{\"fru_list\":\"{ ,FRU,3,,, }\",\"nbr_loc\":\"FR007-CG04-SN001-DR0-HB3-LL04\",\"nbr_typ\":\"H\",\"pwr_enc\":\"11\",\"eed_loc\":\"12\",\"encl_mtms\":\"10\"}", 
+        "reason": "LL-link down in frame FR007 cage CG03 (superNode SN001 drawer DR0) (Llocal Link Port Down)", 
+        "rec_id": 2, 
+        "recommendation": "There is a problem with a hub module.\nRecord the alert ID.\nRecord the location from the alert message.\nContact IBM Service.\nReplace the the local reporting FRU according the FRU list.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

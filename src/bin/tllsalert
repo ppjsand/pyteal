@@ -23,6 +23,7 @@ _ = t.lgettext
 
 import sys
 import csv
+import optparse
 
 from ibm.teal import Teal
 from ibm.teal import registry
@@ -31,7 +32,8 @@ from ibm.teal import metadata
 from ibm.teal.util import command
 from ibm.teal.database import db_interface
 
-query_text = _('''Valid query values and their operations and formats:
+query_text = _('''
+Valid query values and their operations and formats:
     
 rec_id        - =           - A single id or a comma-separated list of ids (equals-only)
 
@@ -114,17 +116,16 @@ def build_query(query, state_str):
     return db.gen_select(alert.ALERT_COLS_SELECT,db_interface.TABLE_ALERT_LOG,where=where_str,where_fields=where_fields,order=alert.ALERT_ATTR_REC_ID)
 
 if __name__ == '__main__':
-    # Start up teal in data-only mode since we don't need the pipeline set up
-    t = Teal(None, logFile='$TEAL_LOG_DIR/tllsalert.log', msgLevel='warning', data_only=True)
-
-    # Parse the command line        
-    parser = command.TealOptionParser(qry_info,epilog=query_text)
+    # Set up to have a nicer output of the query help text        
+    optparse.OptionParser.format_epilog = lambda self, formatter: self.epilog
+    
+    # Parse the command line    
+    parser = optparse.OptionParser(epilog=query_text)
     parser.add_option('-q', '--query',
                         type='string',
-                        action='callback',
-                        callback=parser.query_str_check,
+                        action='store',
                         dest='query',
-                        default="",
+                        default=None,
                         help=_('Query parameters used to limit the range of alerts listed. See list of valid values below'))
     parser.add_option('-f', '--format',
                         type='choice',
@@ -170,13 +171,23 @@ if __name__ == '__main__':
     if options.xref and options.output_format == 'brief':
         parser.error(_("Cannot specify --xref with 'brief' formatting"))
 
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tllsalert.log', msgLevel='warning', data_only=True)
+
+    # Validate the query string
+    try:
+        qry = command.validate_qry_str(qry_info, options.query)
+    except optparse.OptionValueError, ove:
+        parser.error(ove)
+    
+    # Parse the command line        
     db = registry.get_service(registry.SERVICE_DB_INTERFACE)
 
     # Build the query
     state_str = build_state_where(options.all_alerts, 
                                   options.closed_alerts, 
                                   options.dup_alerts)
-    select = build_query(options.query, state_str)
+    select = build_query(qry, state_str)
     
     # Prepare to use the database
     cnxn = db.get_connection()
@@ -216,7 +227,7 @@ if __name__ == '__main__':
             
         print ','.join(result_cols)    
         writer = csv.DictWriter(sys.stdout,result_cols,quoting=csv.QUOTE_MINIMAL)
-        
+            
     for row in cursor.execute(select):
         alert_recid = row[0]
         alert_id = row[1]

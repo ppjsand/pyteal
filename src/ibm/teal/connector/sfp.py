@@ -650,7 +650,13 @@ def event_filtered(errm_env, event_data):
     ''' Determine if the event should be filtered or not.
      
     Filtering is based on fixed values as well as values written in the configuration file
-    '''    
+    '''
+    
+    # If the problem number is negative then this is an HMC internal update to a problem
+    # and should be ignored    
+    if EVENT_PROB_NUM in event_data and int(event_data[EVENT_PROB_NUM]) < 0:
+        return True
+    
     if EVENT_REFCODE in event_data:
         refcode = event_data[EVENT_REFCODE]
         # Do not process SFP events that have a refcode that is 

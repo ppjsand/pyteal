@@ -85,9 +85,38 @@
     		<component type="ploc"/>
     	</simple>
     </location>
-    <location id="G" type="gpfs" separator=";;">
-        <simple>
-            <component type="cluster"/>
-        </simple>
-    </location>
+    <location id="G" type="gpfs" separator="|">
+    	<complex>
+	        <!-- Level 1 -->
+	        <component type="cluster" id="C" pattern=":.+">
+	            <compref ref="filesystem"/>
+	            <compref ref="disk"/>
+	            <compref ref="recoveryGroup"/>
+	            <compref ref="node"/>
+	        </component>
+	
+	        <!-- Level 2 -->
+	        <component type="filesystem" id="FS" pattern=":.+">
+	            <compref ref="storagePool"/>
+	            <compref ref="fileSet"/>
+	        </component>
+	        <component type="disk" id="DK" pattern=":.+"/>
+	        <component type="recoveryGroup" id="RG" pattern=":.+">
+	            <compref ref="declusteredArray"/>
+	        </component>
+	        <component type="node" id="N" pattern=":.+"/>
+	        
+	        <!-- Level 3 -->
+	        <component type="storagePool" id="SP" pattern=":.+"/>
+	        <component type="fileSet" id="FT" pattern=":.+"/>
+	        <component type="declusteredArray" id="DA" pattern=":.+">
+	            <compref ref="pdisk"/>
+	            <compref ref="vdisk"/>
+	        </component>
+	        
+	        <!-- Level 4 -->
+	        <component type="pdisk" id="PD" pattern=":.+"/>
+	        <component type="vdisk" id="VD" pattern=":.+"/>
+		</complex>
+    </location> 
 </cluster>

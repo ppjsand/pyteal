@@ -33,6 +33,7 @@ from ibm.teal.teal_error import XMLParsingError
 from ibm.teal.analyzer.gear.control import GCTL_DEFAULT_CREATE_ALERT_INIT_CLASS
 from ibm.teal.analyzer.gear.external_base_classes import ExtExecute,\
     ExtInitAlert, ExtFatalError
+from ibm.teal.util.teal_thread import ThreadKilled
 
 GACT_TYPE_CREATE_ALERT = 'create_alert'
 GACT_TYPE_SUPPRESS_EVENTS = 'suppress_events'
@@ -516,12 +517,16 @@ class GearActionableCreateAlert(GearActionable):
         if self.use_metadata.get_value() == True:
             try:
                 metadata = get_service(SERVICE_ALERT_METADATA)
+            except ThreadKilled:
+                raise
             except:
                 metadata = None
             if metadata is None or len(metadata) == 0:
                 self.ruleset.parse_error(self.trace_id[0], 'create_alert element alert id validation failed trying to retrieve the alert metadata')
             try:
                 tmp_value = self.id.get_value()
+            except ThreadKilled:
+                raise
             except:
                 # Happens if can't get a value from the alert_id (GEAR variable case)
                 get_logger().debug('Exception checking alert id {0}: {1}'.format(self.id.in_str,str(sys.exc_info()[0])))
@@ -556,6 +561,8 @@ class GearActionableCreateAlert(GearActionable):
                 for s_loc in truth_point[0]:
                     try:
                         con_loc_key.add(s_loc.new_location_by_scope(self.event_loc_scope.get_value()[1]))
+                    except ThreadKilled:
+                        raise
                     except:
                         get_logger().exception('scoping failure')
                         continue
@@ -624,6 +631,8 @@ class GearActionableCreateAlert(GearActionable):
                                 loc = event.src_loc
                                 if self.event_loc_scope.is_set() and self.event_loc_scope.get_value()[1] is not None:
                                     loc = loc.new_location_by_scope(self.event_loc_scope.get_value()[1])
+                            except ThreadKilled:
+                                raise
                             except:
                                 continue
                             if loc is not None:
@@ -640,6 +649,8 @@ class GearActionableCreateAlert(GearActionable):
                     if self.init_class_callable is not None:
                         try:
                             alert_dict = self.init_class_callable().update_init_data_main(alert_dict)
+                        except ThreadKilled:
+                            raise
                         except ExtFatalError:
                             get_logger().exception('FATAL ERROR raised --> kill analyzer')
                             raise
@@ -702,6 +713,8 @@ class GearActionableExecute(GearActionable):
             module_name, class_name = class_spec.rsplit('.', 1)
             module = __import__(module_name, globals(), locals(), [class_name])
             tmp_class = getattr(module, class_name)
+        except ThreadKilled:
+            raise
         except:
             self.ruleset.parse_error(self.trace_id[0], 'execute element was unable to load specified the class: {0}'.format(self.class_spec))
             get_logger().exception('execute element exception')
@@ -717,6 +730,8 @@ class GearActionableExecute(GearActionable):
         init_dict['execute_name'] = self.name.in_str
         try:
             self.call_class = tmp_class(init_dict)
+        except ThreadKilled:
+            raise
         except:
             self.logger().exception('execute element with name {0} failed during initialization'.format(self.name.in_str))
             raise
@@ -745,6 +760,8 @@ class GearActionableExecute(GearActionable):
         ''' Execute the suppression stage actions '''
         try:
             self.call_class.execute_accumulate_suppression_stage(truth_point, pool, rule)
+        except ThreadKilled:
+            raise
         except ExtFatalError:
             get_logger().exception('FATAL ERROR raised --> kill analyzer')
             raise
@@ -757,6 +774,8 @@ class GearActionableExecute(GearActionable):
         ''' Execute the suppression stage actions '''
         try:
             self.call_class.execute_finalize_suppression_stage(pool, rule)
+        except ThreadKilled:
+            raise
         except ExtFatalError:
             get_logger().exception('FATAL ERROR raised --> kill analyzer')
             raise
@@ -769,6 +788,8 @@ class GearActionableExecute(GearActionable):
         ''' Execute the accumulate alert stage actions '''
         try:
             self.call_class.execute_accumulate_alert_stage(truth_point, pool, rule)
+        except ThreadKilled:
+            raise
         except ExtFatalError:
             get_logger().exception('FATAL ERROR raised --> kill analyzer')
             raise
@@ -783,6 +804,8 @@ class GearActionableExecute(GearActionable):
         try:    
             # Extending because paranoid that won't get list back
             new_alerts.extend(self.call_class.execute_create_alert_stage(pool, rule))
+        except ThreadKilled:
+                raise
         except ExtFatalError:
             get_logger().exception('FATAL ERROR raised --> kill analyzer')
             raise
@@ -795,6 +818,8 @@ class GearActionableExecute(GearActionable):
         '''Reset the condition'''
         try:
             self.call_class.reset()
+        except ThreadKilled:
+            raise
         except:
             self.ruleset.trace_error(self.trace_id[1], 'execute {0} call failed with exception'.format(self.name))
             get_logger().exception('')

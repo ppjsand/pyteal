@@ -91,6 +91,12 @@ extern "C" {
         TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
                 dbe.what());
         ret = TEAL_ERR_CONN_GEN;
+    } catch (TEAL::TealException &te) {
+      TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+              "tlgpfs_write_disk_event: ");
+      TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+              te.what());
+      ret = TEAL_ERR_CONN_GEN;
     } catch (...) {
         TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
                 "tlgpfs_write_disk_event: DB disconnect - unknown error");
@@ -156,6 +162,12 @@ TEAL_ERR_T tlgpfs_write_fs_event(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_write_fs_event: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_write_fs_event: DB disconnect - unknown error");
@@ -221,6 +233,12 @@ TEAL_ERR_T tlgpfs_write_perseus_event(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_write_perseus_event: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_write_perseus_event: DB disconnect - unknown error");
@@ -286,6 +304,12 @@ TEAL_ERR_T tlgpfs_write_misc_event(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_write_misc_event: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_write_misc_event: DB disconnect - unknown error");
@@ -338,6 +362,12 @@ TEAL_ERR_T tlgpfs_update_cluster_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_cluster_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_cluster_info: DB disconnect - unknown error");
@@ -389,6 +419,12 @@ TEAL_ERR_T tlgpfs_update_node_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_node_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_node_info: DB disconnect - unknown error");
@@ -441,6 +477,12 @@ TEAL_ERR_T tlgpfs_update_fs_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_fs_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_fs_info: DB disconnect - unknown error");
@@ -494,6 +536,12 @@ TEAL_ERR_T tlgpfs_update_stg_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_stg_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_stg_info: DB disconnect - unknown error");
@@ -546,6 +594,12 @@ TEAL_ERR_T tlgpfs_update_disk_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_disk_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_disk_info: DB disconnect - unknown error");
@@ -598,6 +652,12 @@ TEAL_ERR_T tlgpfs_update_fset_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_fset_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_fset_info: DB disconnect - unknown error");
@@ -650,6 +710,12 @@ TEAL_ERR_T tlgpfs_update_rg_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_rg_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_rg_info: DB disconnect - unknown error");
@@ -702,6 +768,12 @@ TEAL_ERR_T tlgpfs_update_da_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_da_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_da_info: DB disconnect - unknown error");
@@ -754,6 +826,12 @@ TEAL_ERR_T tlgpfs_update_pdisk_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_pdisk_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_pdisk_info: DB disconnect - unknown error");
@@ -806,6 +884,12 @@ TEAL_ERR_T tlgpfs_update_vdisk_info(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_update_vdisk_info: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_update_vdisk_info: DB disconnect - unknown error");
@@ -860,6 +944,12 @@ TEAL_ERR_T tlgpfs_query_cluster_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_cluster_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_cluster_status: DB disconnect - unknown error");
@@ -913,6 +1003,12 @@ TEAL_ERR_T tlgpfs_query_node_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_node_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_node_status: DB disconnect - unknown error");
@@ -965,6 +1061,12 @@ TEAL_ERR_T tlgpfs_query_fs_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_fs_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_fs_status: DB disconnect - unknown error");
@@ -1018,6 +1120,12 @@ TEAL_ERR_T tlgpfs_query_disk_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_disk_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_disk_status: DB disconnect - unknown error");
@@ -1071,6 +1179,12 @@ TEAL_ERR_T tlgpfs_query_stg_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_stg_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_stg_status: DB disconnect - unknown error");
@@ -1123,6 +1237,12 @@ TEAL_ERR_T tlgpfs_query_fset_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_fset_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_fset_status: DB disconnect - unknown error");
@@ -1175,6 +1295,12 @@ TEAL_ERR_T tlgpfs_query_rg_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_rg_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_rg_status: DB disconnect - unknown error");
@@ -1227,6 +1353,12 @@ TEAL_ERR_T tlgpfs_query_da_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_da_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_da_status: DB disconnect - unknown error");
@@ -1279,6 +1411,12 @@ TEAL_ERR_T tlgpfs_query_pdisk_status(teal_connector_handle handle,
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
       ret = TEAL_ERR_CONN_GEN;
+  } catch (TEAL::TealException &te) {
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            "tlgpfs_query_pdisk_status: ");
+    TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+            te.what());
+    ret = TEAL_ERR_CONN_GEN;
   } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               "tlgpfs_query_pdisk_status: DB disconnect - unknown error");
@@ -1330,6 +1468,12 @@ TEAL_ERR_T tlgpfs_query_vdisk_status(teal_connector_handle handle,
               "tlgpfs_query_vdisk_status: ");
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
+      ret = TEAL_ERR_CONN_GEN;
+    } catch (TEAL::TealException &te) {
+      TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+              "tlgpfs_query_vdisk_status: ");
+      TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+              te.what());
       ret = TEAL_ERR_CONN_GEN;
     } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
@@ -1413,6 +1557,12 @@ TEAL_ERR_T tlgpfs_update_overall_status(teal_connector_handle handle,
         TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
                 dbe.what());
         ret = TEAL_ERR_CONN_GEN;
+      } catch (TEAL::TealException &te) {
+        TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+                "tlgpfs_update_overall_status: ");
+        TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+                te.what());
+        ret = TEAL_ERR_CONN_GEN;
       } catch (...) {
         TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
                 "tlgpfs_update_overall_status: DB disconnect - unknown error");
@@ -1490,6 +1640,12 @@ TEAL_ERR_T tlgpfs_purge_cluster(teal_connector_handle handle,
               "tlgpfs_purge_cluster: ");
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
               dbe.what());
+      ret = TEAL_ERR_CONN_GEN;
+    } catch (TEAL::TealException &te) {
+      TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+              "tlgpfs_purge_cluster: ");
+      TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",
+              te.what());
       ret = TEAL_ERR_CONN_GEN;
     } catch (...) {
       TEAL::getLog().printForced(TEAL::TEAL_LOG_ERROR, "GPFS_CONN",

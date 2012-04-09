@@ -12,7 +12,7 @@
         "recommendation": "do stuff", 
         "severity": "W", 
         "src_name": null, 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "N"
       }, 
       "delay": "0.0", 
@@ -30,7 +30,7 @@
         "recommendation": "do stuff", 
         "severity": "W", 
         "src_name": null, 
-        "state": "New", 
+        "state": "Open", 
         "urgency": "N"
       }, 
       "delay": "0.0", 

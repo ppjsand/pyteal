@@ -99,7 +99,7 @@ class SmtpAlertListenerTest(TealTestCase):
         ''' Test the SMTP Alert Listener '''
         server = start_smtp_server()
         
-        t = teal.Teal('data/alert_listener_test/test_01.conf', msgLevel='warn', logFile='stderr', commit_alerts=False, commit_checkpoints=False)
+        t = teal.Teal('data/alert_listener_test/test_01.conf', msgLevel=self.msglevel, logFile='stderr', commit_alerts=False, commit_checkpoints=False)
         
         in_j = Journal('SMTP Journal', 'data/alert_test/inject_DQ_alerts.json')
         in_j.inject_queue(registry.get_service(SERVICE_ALERT_DELIVERY_Q))

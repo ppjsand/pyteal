@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2011     
+# (C) Copyright IBM Corp.  2011, 2012 
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -14,11 +14,12 @@ from ibm.teal.registry import get_logger, get_service, SERVICE_CHECKPOINT_MGR,\
     SERVICE_DB_INTERFACE, SERVICE_EVENT_Q
 from ibm.teal.util.listenable_queue import QueueListener
 from ibm.teal.control_msg import CONTROL_MSG_TYPE_END_OF_DATA
-from ibm.teal.teal_error import ConfigurationError, TealError
+from ibm.teal.teal_error import ConfigurationError
 from ibm.teal.database import db_interface
 import threading
 from ibm.teal.event import EVENT_ATTR_REC_ID
 import exceptions
+from ibm.teal.util.teal_thread import TealThread
 
 # Restart modes 
 RESTART_MODES = ['now', 'begin', 'recovery', 'lastproc']
@@ -32,9 +33,9 @@ MAX_CHECKPOINT_DATA_SIZE = 1024
 CHECKPOINT_STATUS_RUNNING = 'R'
 CHECKPOINT_STATUS_SHUTDOWN = 'S'
 CHECKPOINT_STATUS_FAILED = 'F'
-CHECKPOINT_STATUS_TIMED_OUT = 'T'
 CHECKPOINT_STATUS_UNKNOWN = 'U'  # Should not be persisted
 CHECKPOINT_STATUS_DELETED = 'D'
+CHECKPOINT_STATUS_INTERRUPTED = 'I'
 
 # Constants for event checkpoint fields
 EVENT_CPF_CHKPT_ID = 'chkpt_id'
@@ -44,12 +45,9 @@ EVENT_CPF_EVENT_RECID = 'event_recid'
 EVENT_CPF_DATA = 'data'
 
 # Constant SQL statements
-_SQL_EVENT_INSERT = None
-_SQL_EVENT_SELECT_BY_NAME = None
-_SQL_EVENT_UPDATE_CHECKPOINT = None
-_SQL_EVENT_UPDATE_CHECKPOINT_NO_DATA = None
-_SQL_EVENT_UPDATE_STATUS = None
-_SQL_EVENT_INSERT = None
+_SQL_EVENT_CP_INSERT = None
+_SQL_EVENT_CP_SELECT_BY_NAME = None
+_SQL_EVENT_CP_UPDATE_CHECKPOINT = None
 
 
 def get_current_min_checkpoint_rec_id():
@@ -96,6 +94,7 @@ class CheckpointMgr(object):
         self.use_db = use_db
         self.chkpt_recid_lock = threading.Lock()
         self.event_checkpoint_rec_id = 0
+        self.shutdown_recid = None 
         
         # Validate restart mode
         if restart_mode is not None and restart_mode not in RESTART_MODES:
@@ -109,39 +108,23 @@ class CheckpointMgr(object):
             db = get_service(SERVICE_DB_INTERFACE)
             
             #   Insert event row
-            global _SQL_EVENT_INSERT
-            _SQL_EVENT_INSERT = db.gen_insert(
+            global _SQL_EVENT_CP_INSERT
+            _SQL_EVENT_CP_INSERT = db.gen_insert(
                     [EVENT_CPF_CHKPT_ID, EVENT_CPF_NAME, EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA],
                     db_interface.TABLE_CHECKPOINT)
             
             #   Get event row
-            global _SQL_EVENT_SELECT_BY_NAME
-            _SQL_EVENT_SELECT_BY_NAME = db.gen_select(
+            global _SQL_EVENT_CP_SELECT_BY_NAME
+            _SQL_EVENT_CP_SELECT_BY_NAME = db.gen_select(
                     [EVENT_CPF_CHKPT_ID, EVENT_CPF_NAME, EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA],
                     db_interface.TABLE_CHECKPOINT, 
                     where='${0} = ?'.format(EVENT_CPF_NAME),
                     where_fields=[EVENT_CPF_NAME])
            
             #   Update event checkpoint
-            global _SQL_EVENT_UPDATE_CHECKPOINT
-            _SQL_EVENT_UPDATE_CHECKPOINT = db.gen_update(
-                    [EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA],
-                    db_interface.TABLE_CHECKPOINT, 
-                    where='${0} = ?'.format(EVENT_CPF_CHKPT_ID),
-                    where_fields=[EVENT_CPF_CHKPT_ID])
-            
-            #   Update event checkpoint
-            global _SQL_EVENT_UPDATE_CHECKPOINT_NO_DATA
-            _SQL_EVENT_UPDATE_CHECKPOINT_NO_DATA = db.gen_update(
-                    [EVENT_CPF_EVENT_RECID],
-                    db_interface.TABLE_CHECKPOINT, 
-                    where='${0} = ?'.format(EVENT_CPF_CHKPT_ID),
-                    where_fields=[EVENT_CPF_CHKPT_ID])
-            
-            #   Update event status
-            global _SQL_EVENT_UPDATE_STATUS
-            _SQL_EVENT_UPDATE_STATUS = db.gen_update(
-                    [EVENT_CPF_STATUS],
+            global _SQL_EVENT_CP_UPDATE_CHECKPOINT
+            _SQL_EVENT_CP_UPDATE_CHECKPOINT = db.gen_update(
+                    [EVENT_CPF_STATUS, EVENT_CPF_EVENT_RECID, EVENT_CPF_DATA],
                     db_interface.TABLE_CHECKPOINT, 
                     where='${0} = ?'.format(EVENT_CPF_CHKPT_ID),
                     where_fields=[EVENT_CPF_CHKPT_ID])
@@ -156,48 +139,57 @@ class CheckpointMgr(object):
             get_logger().debug('Checkpoint Manager starting after rec_id = {0}'.format(self.event_checkpoint_rec_id))
             cnxn.close()
             
+            # Setup for asynchronous update of checkpoints in DB
+            self.update_db_event = threading.Event()
+            self.t1 = CheckpointDBUpdater(self)
+            self.t1.setDaemon(True)
+            self.t1.start()
         return
         
     def get_next_event_checkpoint_rec_id(self): 
         ''' Get the next event checkpoint rec id '''
         tmp_rec_id = None
         if self.use_db == True: 
-            self.chkpt_recid_lock.acquire()
-            self.event_checkpoint_rec_id += 1
-            tmp_rec_id = self.event_checkpoint_rec_id
-            self.chkpt_recid_lock.release()
+            with self.chkpt_recid_lock:
+                self.event_checkpoint_rec_id += 1
+                tmp_rec_id = self.event_checkpoint_rec_id
         return tmp_rec_id
       
     def register_event_checkpoint(self, checkpoint):
-        ''' Register the event checkpoint with the manager '''
+        ''' Register the event checkpoint with the manager 
+        
+            Note does not check for duplicates
+        '''
         self.event_checkpoints[checkpoint.name] = checkpoint
         return 
     
     def unregister_event_checkpoint(self, checkpoint):
-        ''' Unregister the event checkpoint with the manager '''
+        ''' Unregister the event checkpoint with the manager 
+        
+            Note does not tolerate unregistering a checkpoint that hasn't been registered
+        '''
         del self.event_checkpoints[checkpoint.name]
         return 
         
     def get_starting_event_rec_id(self, override_restart_mode=None):
         '''
-        Use the mode and checkpoints to determine what rec_id should
-        be used to start event retrieval
+        Use the mode and checkpoints to determine what rec_id should be used to start event retrieval
         
            Mode         Behavior
             begin        start at first event in event log (0)
-            recovery     start at first failure.  If not failures then like lastproc
-            lastproc     start at the last event in the event log that was processed by anyone.
+            recovery     start at lowest checkpoint rec id
+            lastproc     start at the last event in the event log that was processed by anyone (highest checkpoint)
             now          start after max rec_id in event log
              
-        default is recovery
+        default mode is recovery
            if specified during init (from TEAL input) then that is used
-           else if specified in the monitoring stanza that is used 
+           else if specified in override_restart_mode (the monitoring stanza) that is used 
            
-        Checkpoints are prepared for restart    
+        Checkpoints are prepared for restart as part of this method 
         
         Returns (start_event_rec_id, mode_used)
         '''
-        t_restart_mode = self.restart_mode
+        t_restart_mode = self.restart_mode # value from init (TEAL startup)
         if t_restart_mode is None:
             if override_restart_mode is not None:
                 if override_restart_mode not in RESTART_MODES:
@@ -206,38 +198,29 @@ class CheckpointMgr(object):
             else:
                 t_restart_mode = RESTART_MODE_RECOVERY
                 
-        start_eri = None
+        start_eri = None   # Where the monitor should start
+        max_start = None   # The last one processed
         # Process based on restart mode 
         if t_restart_mode == RESTART_MODE_RECOVERY:
-            # Find the earliest we have to start to retry failures
-            min_start = None
-            # Find the last one anyone processed
-            max_start = None
-            
+            # Find the earliest we have to restart
             for t_ckpt in self.event_checkpoints.values():
-                # Collect minimum of non-shutdown checkpoints
-                if t_ckpt.status != CHECKPOINT_STATUS_SHUTDOWN:
-                    t_min_start = t_ckpt.get_starting_event_rec_id()
-                    if t_min_start is not None:
-                        if min_start is None:
-                            min_start = t_min_start
-                        else:
-                            min_start = min(min_start, t_min_start)
-                # Collect maximum of all checkpoints
-                t_max_start = t_ckpt.start_rec_id
-                if t_max_start is not None:
-                    if max_start is None:
-                        max_start = t_max_start
+                value = t_ckpt.start_rec_id
+                if value is not None: 
+                    # Collect minimum of checkpoints
+                    if start_eri is None:
+                        start_eri = value
                     else:
-                        max_start = max(max_start, t_max_start)
-            # if there is a min, something failed, so use it
-            if min_start is not None:
-                start_eri = min_start
-            else:
-                start_eri = max_start
+                        start_eri = min(start_eri, value)
+                    # Collect maximum 
+                    if max_start is None:
+                        max_start = value
+                    else:
+                        max_start = max(max_start, value)
                 
         elif t_restart_mode == RESTART_MODE_BEGIN:
             start_eri = 0
+            max_start = 0
+            
         elif t_restart_mode == RESTART_MODE_LASTPROC:
             # Find the last event processed
             for t_ckpt in self.event_checkpoints.values():
@@ -247,44 +230,88 @@ class CheckpointMgr(object):
                         start_eri = t_start
                     else:
                         start_eri = max(start_eri, t_start)
+            max_start = start_eri
         # ELSE: default (None) is what should be returned for 'now' (the only option left) 
-        
-        if start_eri is None and self.use_db == True:
-            # Get the last rec_id as the one to start after 
-            try: 
+        if self.use_db == True: 
+            # See if need to use last event rec_id and, if so, get it
+            if start_eri is None:
+                # Get the last rec_id as the one to start after 
+                try: 
+                    db = get_service(SERVICE_DB_INTERFACE)
+                    cnxn = db.get_connection()
+                    cursor = cnxn.cursor()
+                    db.select_max(cursor, EVENT_ATTR_REC_ID, db_interface.TABLE_EVENT_LOG)
+                    row = cursor.fetchone()
+                    if row and row[0]:
+                        start_eri = row[0]
+                    cnxn.close()
+                except:
+                    get_logger().exception('Unable to determine maximum event rec_id - starting with None')
+                    start_eri = None   
+                   
+            # Clear away the inactive checkpoint entries in the DB
+            try:
+                # Get the active checkpoint rec_ids from the DB
+                tmp_ckpts = []
                 db = get_service(SERVICE_DB_INTERFACE)
                 cnxn = db.get_connection()
                 cursor = cnxn.cursor()
-                db.select_max(cursor, EVENT_ATTR_REC_ID, db_interface.TABLE_EVENT_LOG)
-                row = cursor.fetchone()
-                if row and row[0]:
-                    start_eri = row[0]
+                db.select(cursor, [EVENT_CPF_CHKPT_ID], db_interface.TABLE_CHECKPOINT)
+                rows = cursor.fetchall()
+                for row in rows: 
+                    tmp_ckpts.append(row[0])
+                
+                # remove the active rec_ids from the 
+                for t_ckpt in self.event_checkpoints.values():
+                    keep_ckpt = t_ckpt.ckpt_rec_id
+                    if keep_ckpt not in tmp_ckpts:
+                        get_logger().warning('Checkpoint with primary key {0} not in list from DB {1}'.format(keep_ckpt, str(tmp_ckpts)))
+                    else:
+                        tmp_ckpts.remove(keep_ckpt)
+                        
+                # delete the inactive entries (all minus active)
+                for del_ckpt in tmp_ckpts:
+                    db.delete(cursor, db_interface.TABLE_CHECKPOINT, 
+                              where='${0} = ?'.format(EVENT_CPF_CHKPT_ID), where_fields=[EVENT_CPF_CHKPT_ID], parms=(del_ckpt))
+                cnxn.commit()
                 cnxn.close()
             except:
-                get_logger().exception('Unable to determine maximum event rec_id - starting with None')
-                start_eri = None    
+                get_logger().exception('Unable to clear out inactive checkpoints')
+             
                     
         get_logger().info('Checkpoint manager used \'{0}\' to determine starting event rec id = {1}'.format(t_restart_mode, str(start_eri)))
 
         # Prepare checkpoints for restart 
         for t_ckpt in self.event_checkpoints.values():
-            t_ckpt.prepare_for_restart(t_restart_mode, start_eri)
+            t_ckpt.prepare_for_restart(t_restart_mode, start_eri, max_start)
         
         return (start_eri, t_restart_mode)
     
+    def monitor_shutdown(self, recid):
+        ''' Called by the monitor to indicate what '''
+        get_logger().debug('monitor shutdown notification {0}'.format(str(recid)))
+        if recid != 0: 
+            self.shutdown_recid = recid
+        return
+    
     def shutdown(self):
         ''' Do any shutdown processing '''
+        get_logger().debug('checkpoint manager shutting down')
         if len(self.event_checkpoints) != 0:
             if self.use_db == True:
+                # Ensure that all checkpoints written to DB
+                self.t1.running = False 
+                self.update_db_event.set()
+                self.t1.join()
+                
                 dump = False
                 for t_ckpt in self.event_checkpoints.values():
                     if t_ckpt.status != CHECKPOINT_STATUS_SHUTDOWN:
                         dump = True
                 if dump == False:
                     return 
-                
-            get_logger().info('<<START: SHUTDOWN DUMP OF CHECKPOINTS\n {0}'.format(str(self)))
-            get_logger().info('>>END: SHUTDOWN DUMP OF CHECKPOINTS')
+            get_logger().info('<<START: CHECKPOINTS AT SHUTDOWN\n {0}'.format(str(self)))
+            get_logger().info('>>END: CHECKPOINTS AT SHUTDOWN')
         return 
     
     def __str__(self):
@@ -299,7 +326,40 @@ class CheckpointMgr(object):
             for e_ckpt in self.event_checkpoints.values():
                 outstr += '     ' + str(e_ckpt)
         return outstr
-        
+    
+    
+class CheckpointDBUpdater(TealThread):
+    '''This class is used to asynchronously update the checkpoints in the DB
+    '''
+    
+    def __init__(self, mgr):
+        '''Constructor
+        '''
+        self.mgr = mgr
+        self.running = True
+        TealThread.__init__(self)
+        return
+    
+    def run(self):
+        '''Wait for an update event 
+        '''
+        while self.running:
+            self.mgr.update_db_event.wait()
+            self.mgr.update_db_event.clear()
+            # Iterate and update
+            try: 
+                dbi = get_service(SERVICE_DB_INTERFACE)
+                cnxn = dbi.get_connection()
+                cursor = cnxn.cursor()
+                for checkpoint in self.mgr.event_checkpoints.values():
+                    checkpoint.update_db(cursor)
+                cnxn.commit()
+                cnxn.close()
+            except:
+                get_logger().exception('Unable to update checkpoints in DB')
+        get_logger().debug('run method ended')
+        return
+      
         
 class EventCheckpoint(object): 
     ''' Event Checkpoint
@@ -315,29 +375,33 @@ class EventCheckpoint(object):
         self.status = CHECKPOINT_STATUS_RUNNING
         self.start_rec_id = None
         self.data = None
-        checkpoint_mgr = get_service(SERVICE_CHECKPOINT_MGR)
-        if checkpoint_mgr.use_db == True:
+        self.checkpoint_mgr = get_service(SERVICE_CHECKPOINT_MGR)
+        if self.checkpoint_mgr.use_db == True:
             # Get entry for name in DB
             dbi = get_service(SERVICE_DB_INTERFACE)
             cnxn = dbi.get_connection()
             cursor = cnxn.cursor()
-            cursor.execute(_SQL_EVENT_SELECT_BY_NAME, (name))
+            cursor.execute(_SQL_EVENT_CP_SELECT_BY_NAME, (name))
             row = cursor.fetchone()
-
             if row is not None:
                 get_logger().debug('Found entry for {0}'.format(name))
                 self.ckpt_rec_id, self.name, self.status, self.start_rec_id, self.data = row 
             else:
-                self.ckpt_rec_id = checkpoint_mgr.get_next_event_checkpoint_rec_id()
-                cursor.execute(_SQL_EVENT_INSERT, (self.ckpt_rec_id, self.name, self.status, self.start_rec_id, self.data))
+                get_logger().debug('Creating new entry for {0}'.format(name))
+                self.ckpt_rec_id = self.checkpoint_mgr.get_next_event_checkpoint_rec_id()
+                cursor.execute(_SQL_EVENT_CP_INSERT, (self.ckpt_rec_id, self.name, self.status, self.start_rec_id, self.data))
                 cnxn.commit()
-            cnxn.close()       
- 
+            cnxn.close()    
+            
+            # Use DB methods    
             self.set_status = self.set_status_DB
             self.set_checkpoint = self.set_checkpoint_DB
             self.set_checkpoint_no_data = self.set_checkpoint_no_data_DB
             
-        checkpoint_mgr.register_event_checkpoint(self)
+            self.changed = False
+            self.lock = threading.RLock()
+            
+        self.checkpoint_mgr.register_event_checkpoint(self)
         return 
     
     def get_status(self):
@@ -350,19 +414,21 @@ class EventCheckpoint(object):
         ''' get the checkpoint data '''
         return (self.start_rec_id, self.data)
     
-    def get_starting_event_rec_id(self):
-        ''' Return the rec_id to start with '''
-        # If shutdown or not starting rec_id don't have special requirements 
-        if self.status == CHECKPOINT_STATUS_SHUTDOWN or self.start_rec_id is None:
-            return None
-        return self.start_rec_id
+    def is_checkpoint_rec_id(self, value):
+        ''' check if the value of the checkpoint is what was passed ''' 
+        return value == self.start_rec_id
     
-    def prepare_for_restart(self, restart_mode, restart_rec_id):        
+    def prepare_for_restart(self, restart_mode, restart_rec_id, max_start):        
         ''' Prepare for restarting with the restart mode and specified rec_id
         based on the context of the mode and the starting rec_id to determine what to do.
         '''
-        self.set_status(CHECKPOINT_STATUS_RUNNING)
-        if restart_mode == RESTART_MODE_NOW or restart_mode == RESTART_MODE_BEGIN:
+        if restart_mode == RESTART_MODE_RECOVERY:
+            if self.status == CHECKPOINT_STATUS_SHUTDOWN:
+                self.set_status(CHECKPOINT_STATUS_RUNNING)
+            if self.get_checkpoint()[0] is None:
+                self.set_checkpoint(max_start) 
+        else: # RESTART_MODE_BEGIN, LAST_PROC or NOW
+            self.set_status(CHECKPOINT_STATUS_RUNNING)
             self.set_checkpoint(None)
         return 
         
@@ -374,19 +440,11 @@ class EventCheckpoint(object):
     
     def set_status_DB(self, status):
         ''' set status '''
-        get_logger().info('Updating status for {0} from {1} to {2}'.format(self.name, self.status, status))
-        self.status = status
-        try:
-            dbi = get_service(SERVICE_DB_INTERFACE)
-            cnxn = dbi.get_connection()
-            cursor = cnxn.cursor()
-            if cursor.execute(_SQL_EVENT_UPDATE_STATUS, (status, self.ckpt_rec_id)).rowcount == 0:
-                self.retry_db_update(dbi, cnxn, cursor)
-            cnxn.commit()
-            cnxn.close()
-        except:
-            # Log and hope we get it the next time
-            get_logger().exception('Failure updating checkpoint {0}'.format(str(self)))
+        get_logger().info('Updating status for {0} from {1} to {2} (start = {3})'.format(self.name, self.status, status, str(self.start_rec_id)))
+        with self.lock:
+            self.status = status
+            self.changed = True
+            self.checkpoint_mgr.update_db_event.set()
         return
 
     def set_status_DELETED(self, status):
@@ -407,22 +465,14 @@ class EventCheckpoint(object):
     def set_checkpoint_DB(self, start_rec_id, data=None):
         ''' set the checkpoint data '''
         get_logger().debug('Updating checkpoint for {0} from {1} to {2}'.format(self.name, self.start_rec_id, start_rec_id))
-        self.start_rec_id = start_rec_id
-        self.data = data
-        try:
+        with self.lock: 
+            self.start_rec_id = start_rec_id
+            self.data = data
             if data is not None and len(data) > MAX_CHECKPOINT_DATA_SIZE:
                 get_logger().warning('Checkpoint failure: length of data {0} too large\n data: {1}'.format(len(data), str(data))) 
                 self.data = None
-            dbi = get_service(SERVICE_DB_INTERFACE)
-            cnxn = dbi.get_connection()
-            cursor = cnxn.cursor()
-            if cursor.execute(_SQL_EVENT_UPDATE_CHECKPOINT, (start_rec_id, self.data, self.ckpt_rec_id)).rowcount == 0:
-                self.retry_db_update(dbi, cnxn, cursor)
-            cnxn.commit()
-            cnxn.close()
-        except:
-            # Log and hope we get it the next time
-            get_logger().exception('Failure updating checkpoint {0}'.format(str(self)))
+            self.changed = True
+            self.checkpoint_mgr.update_db_event.set()
         return 
     
     def set_checkpoint_no_data(self, start_rec_id):
@@ -433,19 +483,11 @@ class EventCheckpoint(object):
     
     def set_checkpoint_no_data_DB(self, start_rec_id):
         ''' set the checkpoint data '''
-        get_logger().debug('Updating checkpoint for {0} from {1} to {2}'.format(self.name, self.start_rec_id, start_rec_id))
-        self.start_rec_id = start_rec_id
-        try:
-            dbi = get_service(SERVICE_DB_INTERFACE)
-            cnxn = dbi.get_connection()
-            cursor = cnxn.cursor()
-            if cursor.execute(_SQL_EVENT_UPDATE_CHECKPOINT_NO_DATA, (start_rec_id, self.ckpt_rec_id)).rowcount == 0:
-                self.retry_db_update(dbi, cnxn, cursor)
-            cnxn.commit()
-            cnxn.close()
-        except:
-            # Log and hope we get it the next time
-            get_logger().exception('Failure updating checkpoint {0}'.format(str(self)))
+        get_logger().debug('Updating checkpoint (no data) for {0} from {1} to {2}'.format(self.name, self.start_rec_id, start_rec_id))
+        with self.lock:
+            self.start_rec_id = start_rec_id
+            self.changed = True
+            self.checkpoint_mgr.update_db_event.set()
         return 
     
     def set_checkpoint_DELETED(self, start_rec_id, data=None):
@@ -453,11 +495,50 @@ class EventCheckpoint(object):
         get_logger().warning('Tried to set checkpoint on deleted checkpoint {0}'.format(self.name))
         return 
     
+    def update_db(self, cursor):
+        ''' Update the DB using the provided cursor with the latest information from this checkpoint '''
+        with self.lock:
+            if self.changed == True:
+                cursor.execute(_SQL_EVENT_CP_UPDATE_CHECKPOINT, (self.status, self.start_rec_id, self.data, self.ckpt_rec_id))
+                self.changed = False 
+        return
+    
+    def shutdown(self, status_only=False):
+        ''' Update the checkpoint for shutdown.   Need to make sure that the monitor has passed the checkpoint 
+            before aligning with it
+        '''
+        with self.lock:
+            shutdown_recid = self.checkpoint_mgr.shutdown_recid
+            if (shutdown_recid is not None and shutdown_recid >= self.start_rec_id) or (shutdown_recid == self.start_rec_id):
+                # If the shutdown recid is set and has reached my checkpoint then clear it out
+                self.set_status(CHECKPOINT_STATUS_SHUTDOWN)
+                if status_only == False:
+                    self.set_checkpoint(shutdown_recid, None)
+        return
+    
+    def shutdown_immediate(self, status_only=False):
+        ''' Update the checkpoint for immediate shutdown.   Need to make sure that it has passed the checkpoint 
+            before aligning with it
+        '''
+        shutdown_recid = self.checkpoint_mgr.shutdown_recid
+        if (shutdown_recid is not None and shutdown_recid >= self.start_rec_id) or (shutdown_recid == self.start_rec_id):
+            # If the shutdown recid is set and has reached my checkpoint then clear it out
+            self.set_status(CHECKPOINT_STATUS_SHUTDOWN)
+            if status_only == False:
+                self.set_checkpoint(shutdown_recid, None)
+        return
+            
     def delete(self):
-        ''' Mark the checkpoint as deleted '''
-        checkpoint_mgr = get_service(SERVICE_CHECKPOINT_MGR)
-        checkpoint_mgr.unregister_event_checkpoint(self)
+        ''' Mark the checkpoint as deleted 
+        '''
+        if self.checkpoint_mgr.use_db == True: 
+            with self.lock:
+                self.changed = False    # Stop any updates
+                self.checkpoint_mgr.unregister_event_checkpoint(self)
+        else:
+            self.checkpoint_mgr.unregister_event_checkpoint(self)
         
+        # Change in memory values 
         self.status = CHECKPOINT_STATUS_DELETED
         self.start_rec_id = None
         self.data = None
@@ -465,7 +546,8 @@ class EventCheckpoint(object):
         self.set_status = self.set_status_DELETED
         self.set_checkpoint = self.set_checkpoint_DELETED
         
-        if checkpoint_mgr.use_db == True:
+        # Delete from DB 
+        if self.checkpoint_mgr.use_db == True:
             try:
                 dbi = get_service(SERVICE_DB_INTERFACE)
                 cnxn = dbi.get_connection()
@@ -481,38 +563,19 @@ class EventCheckpoint(object):
                 raise
         return 
     
-    def retry_db_update(self, dbi, cnxn, cursor):
-        ''' DB write failed -- retry it '''
-        # Try to validate the data
-        try:
-            if self.start_rec_id is not None:
-                # See if the value for self.start_rec_id is valid
-                dbi.select(cursor,
-                           [EVENT_ATTR_REC_ID],
-                           db_interface.TABLE_EVENT_LOG, 
-                           where='${0} = ?'.format(EVENT_ATTR_REC_ID),
-                           where_fields=[EVENT_ATTR_REC_ID], 
-                           parms=(self.start_rec_id))
-                if cursor.rowcount == 0 or cursor.fetchone() is None:
-                    # Checkpoint rec id is no longer valid
-                    self.start_rec_id = None
-                    self.data = None 
-            # See if entry for this checkpoint
-            if cursor.execute(_SQL_EVENT_SELECT_BY_NAME, (self.name)).rowcount == 0 or cursor.fetchone() is None:
-                # No entry, so insert it
-                cursor.execute(_SQL_EVENT_INSERT, (self.ckpt_rec_id, self.name, self.status, self.start_rec_id, self.data))
-            else:
-                # Entry, so try to update it
-                cursor.execute(_SQL_EVENT_UPDATE_CHECKPOINT, (self.start_rec_id, self.data, self.ckpt_rec_id) )
-                cursor.execute(_SQL_EVENT_UPDATE_STATUS, (self.status, self.ckpt_rec_id) )
-        except:
-            # Log and hope we get it the next time
-            get_logger().exception('Failure updating checkpoint {0}'.format(str(self)))
-        return 
+    def confirm_checkpoint(self):
+        ''' Confirm that checkpoint data in DB matches in memory values
+            Default is no DB so nothing to do
+        '''
+        pass
     
     def __str__(self):
         ''' dump the checkpoint into a string '''
-        outstr = 'Checkpoint {0}({1}) -- {2} '.format(self.name, self.ckpt_rec_id, self.get_status())
+        if self.checkpoint_mgr.use_db == True and self.changed == True:
+            t_c = '*'
+        else: 
+            t_c = ''
+        outstr = 'Checkpoint {0}({1}){2} -- {3} '.format(self.name, self.ckpt_rec_id, t_c, self.get_status())
         if self.start_rec_id is None:
             outstr += 'at -unspecified- '
         else:
@@ -549,9 +612,21 @@ class CheckpointListener(QueueListener):
 
     def shutdown(self):
         get_logger().debug('Shutdown CheckpointListener.')
-        return
+        self.event_checkpoint.shutdown(status_only=True)  # Only status because used to record high water mark
 
-    def process_event(self,event,context):
+    def shutdown_immediate(self):
+        get_logger().debug('Shutdown (immediate) CheckpointListener.')
+        # Shutdown where it is currently
+        self.process_event = self.process_event_SHUTDOWN
+        self.process_alert = self.process_alert_SHUTDOWN
+        self.process_control_msg = self.process_control_msg_SHUTDOWN
+        try:
+            self.event_checkpoint.shutdown_immediate(status_only=True)
+        except:
+            pass
+        self.listenQ.unregister_listener(self)
+
+    def process_event(self, event, context):
         get_logger().debug('CheckpointListener: process_event')
         # Get the needed event information.
         try:
@@ -559,25 +634,35 @@ class CheckpointListener(QueueListener):
         except:
             get_logger().exception('Unable to update checkpoint rec_id for {0}'.format(self.name))
         return False
+    
+    def process_event_SHUTDOWN(self, event, context):
+        ''' shutdown, so stop processing ''' 
+        return False 
 
-    def process_alert(self,alert,context):
+    def process_alert(self, alert, context):
         ''' Handle double dispatch from an alert.
         This listener does not handle alerts. '''
         get_logger().error('CheckpointListener was given an alert.')
+        return False
+    
+    def process_alert_SHUTDOWN(self, alert, context):
+        ''' shutdown, so stop processing ''' 
         return False
 
     def process_control_msg(self, control_msg, context):
         get_logger().debug('CheckpointListener: process_control_msg')
         if (control_msg.msg_type == CONTROL_MSG_TYPE_END_OF_DATA):
             try:
-                self.event_checkpoint.set_status(CHECKPOINT_STATUS_SHUTDOWN)
-                # Default is to leave checkpointed rec id alone 
+                self.shutdown() 
             except:
                 get_logger().exception('Unable to update checkpoint status to shutdown for {0}'.format(self.name))
 
-            self.shutdown()
             self.listenQ.unregister_listener(self)
         return True
+    
+    def process_control_msg_SHUTDOWN(self, control_msg, context):
+        ''' shutdown, so stop processing ''' 
+        return True 
     
     
 class CheckpointRecoveryComplete(exceptions.Exception):

@@ -36,7 +36,7 @@ class FileAlertListener(AlertListener):
             if self.formatter in ['json','csv','text','brief']:
                 pass
             else:
-                get_logger().warn('Invalid formatter specified: {0}. Defaulting to csv'.format(self.formatter))
+                get_logger().warn('Invalid formatter specified: \'{0}\'. Defaulting to \'csv\''.format(self.formatter))
                 self.formatter = "csv"
         else:
             self.formatter = "csv"
@@ -54,7 +54,7 @@ class FileAlertListener(AlertListener):
             elif cfg_mode == 'write':
                 mode = 'w'
             else:        
-                get_logger().warn('Invalid mode specified: {0}. Defaulting to "append"'.format(mode))
+                get_logger().warn('Invalid mode specified: \'{0}\'. Defaulting to \'append\''.format(cfg_mode))
                 mode = 'a'                
         else:
             mode = 'a'
@@ -68,12 +68,11 @@ class FileAlertListener(AlertListener):
                 self.file = open(self.file_name, mode)
                 
             if self.formatter == 'csv':
-                self.writer = csv.DictWriter(self.file, ALERT_COLS_SELECT,extrasaction='ignore')
+                self.writer = csv.DictWriter(self.file, ALERT_COLS_SELECT, extrasaction='ignore')
                 get_logger().info("CSV Headings: {0}".format(ALERT_COLS_SELECT))
         except IOError,e:
-            get_logger().error('Could not open {0}: {1}'.format(self.file_name,e))
+            get_logger().error('Could not open {0}: {1}'.format(self.file_name, e))
             self.file = None    
-
          
     def process_alert(self, alert):
         ''' Process the alert by writing it to a file in the configured format

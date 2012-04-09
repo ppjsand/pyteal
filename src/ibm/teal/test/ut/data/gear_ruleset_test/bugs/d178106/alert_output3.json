@@ -1,0 +1,46 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BD700026", 
+        "associations": [
+          "C:E:4"
+        ], 
+        "creation_time": "2011-12-07 17:30:06.993183", 
+        "event_loc": "FR008-CG03-SN004-DR0-HB0-LR03", 
+        "event_loc_type": "H", 
+        "reason": "LR-link down between frame FR008 cage CG03 (superNode SN004 drawer DR0) hub HB0 port $remotePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_remotePort (LR Link Port Down)", 
+        "rec_id": 1, 
+        "recommendation": "There is a problem with an LR-Link.\nRecord the alert ID.\nRecord the location in the alert message.\nContact IBM Service.\nLog on to the Management Server.\nTo isolate to the proper FRU, run Link Diags and perform the actions that it recommends.\nIf no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "BD700026", 
+        "associations": [
+          "C:E:1", 
+          "C:E:2", 
+          "C:E:3"
+        ], 
+        "creation_time": "2011-12-07 17:30:06.993939", 
+        "event_loc": "FR007-CG03-SN001-DR0-HB0-LR03", 
+        "event_loc_type": "H", 
+        "reason": "LR-link down between frame FR007 cage CG03 (superNode SN001 drawer DR0) hub HB0 port $remotePort and frame $neighbor_frame cage $neighbor_cage (superNode $neighbor_supernode drawer $neighbor_drawer) hub $neighbor_hub port $neighbor_remotePort (LR Link Port Down)", 
+        "rec_id": 2, 
+        "recommendation": "There is a problem with an LR-Link.\nRecord the alert ID.\nRecord the location in the alert message.\nContact IBM Service.\nLog on to the Management Server.\nTo isolate to the proper FRU, run Link Diags and perform the actions that it recommends.\nIf no action is recommended, because Diags cannot isolate to the proper FRU, replace the FRUs in the order listed.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

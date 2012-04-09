@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -24,6 +24,7 @@ import json
 from abc import ABCMeta, abstractmethod
 import os
 import re
+from ibm.teal.util.teal_thread import ThreadKilled
 
 POOL_STATE_AS_STRING = ['New', 'Running', 'Closed', 'Failed']
 POOL_STATE_NEW = 0
@@ -356,7 +357,13 @@ class IncidentPool(object):
                     del self.min_time_incidents[incident]
                 # Callback 
                 if self.close_callback is not None:
-                    self.close_callback(reason)
+                    try:
+                        tmp_rec_id = self.last_incident.rec_id
+                    except ThreadKilled:
+                        raise
+                    except:
+                        tmp_rec_id = None 
+                    self.close_callback(reason, tmp_rec_id)
             elif self.state == POOL_STATE_NEW:
                 # Pool doesn't have anything in it (created but no incidents added)
                 # Set all the times as close time
@@ -370,7 +377,7 @@ class IncidentPool(object):
                 self.msg_target.debug('Closing {0}' \
                                          .format(POOL_CLOSE_REASON_AS_STRING[reason]))
                 if self.close_callback is not None:
-                    self.close_callback(reason)
+                    self.close_callback(reason, None)
             else:
                 #self.lock.release()
                 raise IncidentPoolStateTransitionError('Closed when in {0} state'.format(POOL_STATE_AS_STRING[self.state]))
@@ -378,15 +385,16 @@ class IncidentPool(object):
 
     def shutdown(self):
         '''Shutdown the pool.  This includes closing it with shutdown=True'''
-        if self.state == POOL_STATE_CLOSED:
-            # Nobody cares since callback was already called
-            return
-        elif self.state == POOL_STATE_NEW:
-            # start it so we can close it
-            now = datetime.now()
-            self.start(now)
-        # Now close it with shutdown indicator
-        self.close(self.planned_close_time, POOL_CLOSE_REASON_SHUTDOWN)
+        with self.lock:
+            if self.state == POOL_STATE_CLOSED:
+                # Nobody cares since callback was already called
+                return
+            elif self.state == POOL_STATE_NEW:
+                # start it so we can close it
+                now = datetime.now()
+                self.start(now)
+            # Now close it with shutdown indicator
+            self.close(self.planned_close_time, POOL_CLOSE_REASON_SHUTDOWN)
         return
 
     def failed(self):
@@ -397,6 +405,8 @@ class IncidentPool(object):
         self.msg_target.error('Pool failed:')
         try:
             self.msg_target.error('{0}'.format(self.dump()))
+        except ThreadKilled:
+            raise
         except:
             pass
         return
@@ -427,6 +437,8 @@ class IncidentPool(object):
             self.incidents[incident.get_incident_id()].append(incident)
             self.msg_target.debug('Started and {0} added'.format(incident))
             self.add_incident = self._add_incident_ACTIVE_SUBSEQUENT
+        except ThreadKilled:
+            raise
         except:
             self.lock.release()
             raise
@@ -468,6 +480,8 @@ class IncidentPool(object):
                 self.min_time_incidents[incident] = (min_time, point_in_pool, ext_dur)
             if self.use_timer is True:
                 self.timer.add_time(increment)
+        except ThreadKilled:
+            raise
         except:
             self.lock.release()
             raise
@@ -571,6 +585,8 @@ class IncidentPool(object):
             # Now close it
             try:
                 self.close(self.planned_close_time, POOL_CLOSE_REASON_TIMER)
+            except ThreadKilled:
+                raise
             except:
                 self.msg_target.exception('Closing pool because the timer expired failed')
                 self.failed()
@@ -749,6 +765,8 @@ class IncidentPoolEventCheckpoint(EventAnalyzerCheckpoint):
         else: 
             try:
                 self.pool_rec_id = long(json.loads(self.data)[1])
+            except ThreadKilled:
+                raise
             except:
                 self.msg_target.warning('Checkpoint data invalid')
                 self.pool_rec_id = self.start_rec_id

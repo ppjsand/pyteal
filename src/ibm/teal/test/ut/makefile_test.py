@@ -13,9 +13,9 @@
 
 import unittest
 from ibm.teal.registry import get_logger, TEAL_ROOT_DIR
-from ibm.teal import teal
 import os
 from string import replace
+from ibm.teal.test.teal_unittest import TealTestCase
 
 def check_makefile(tup, path, filenames):
     failures, files_to_exclude = tup
@@ -49,31 +49,31 @@ def check_makefile(tup, path, filenames):
         if line[:7] == 'SCRIPTS':
             script_files = line.split()[2:] # drop SCRIPTS =
             # now compare script_files to chk_files
-            for file in script_files:
-                if file in chk_files:
-                    chk_files_left.remove(file)
+            for tmp_file in script_files:
+                if tmp_file in chk_files:
+                    chk_files_left.remove(tmp_file)
                 else:
-                    tmp_file = replace(str(path)+'/'+str(file), '\\', '/')
+                    tmp_file = replace(str(path)+'/'+str(tmp_file), '\\', '/')
                     if tmp_file in files_to_exclude:
                         continue
-                    print 'FAILURE ... extra file in ' + str(path) + '/Makefile -> ' + str(file)
-                    failures.append(file)
+                    print 'FAILURE ... extra file in ' + str(path) + '/Makefile -> ' + str(tmp_file)
+                    failures.append(tmp_file)
             if len(chk_files_left) != 0:
-                for file in chk_files_left:
-                    print 'FAILURE ... file not in ' + str(path) + '/Makefile -> ' + str(file)
-                    failures.append(str(path) + '/' + str(file))
+                for tmp_file in chk_files_left:
+                    print 'FAILURE ... file not in ' + str(path) + '/Makefile -> ' + str(tmp_file)
+                    failures.append(str(path) + '/' + str(tmp_file))
         elif line[:7] == 'SUBDIRS':
             script_dirs = line.split()[2:] # drop SUBDIRS
-            for dir in script_dirs:
-                if dir in chk_dirs:
-                    chk_dirs_left.remove(dir)
+            for tmp_dir in script_dirs:
+                if tmp_dir in chk_dirs:
+                    chk_dirs_left.remove(tmp_dir)
                 else:
-                    print 'FAILURE ... extra dir in ' + str(path) + '/Makefile -> ' + str(dir)
-                    failures.append(str(path) + '/' + str(dir))
+                    print 'FAILURE ... extra dir in ' + str(path) + '/Makefile -> ' + str(tmp_dir)
+                    failures.append(str(path) + '/' + str(tmp_dir))
             if len(chk_dirs_left) != 0:
-                for dir in chk_dirs_left:
-                    print 'FAILURE ... directory not in ' + str(path) + '/Makefile -> ' + str(dir)
-                    failures.append(str(path) + '/' + str(dir))
+                for tmp_dir in chk_dirs_left:
+                    print 'FAILURE ... directory not in ' + str(path) + '/Makefile -> ' + str(tmp_dir)
+                    failures.append(str(path) + '/' + str(tmp_dir))
         elif line[:4] == 'IDIR':
             idir = line.split()[2:]
             if len(path) > 8:
@@ -82,8 +82,8 @@ def check_makefile(tup, path, filenames):
                 ckpath = '/opt/teal/ibm/'
             if idir[0] != ckpath:
                 print 'FAILURE ... IDIR is not correct in ' + str(path) + '/Makefile -> found ' + str(idir[0]) + '   expected ' + str(ckpath) 
+                failures.append(str(path) + '/Makefile')
     f_make.close()
-    return
 
 def walk_path(base_dir, files_to_exclude):
     ''' If this is omitted the messages from check_makefile get eaten '''
@@ -91,15 +91,13 @@ def walk_path(base_dir, files_to_exclude):
     os.path.walk(base_dir, check_makefile, (failures, files_to_exclude))
     return failures
 
-
-class TestMakefiles(unittest.TestCase):
-
+class TestMakefiles(TealTestCase):
 
     def testMakefiles(self):
 
         # Make sure logging is setup
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        self.create_temp_logger('info')
+        
         # Check if TEAL_ROOT_DIR is set ... if it is not, do not run the test
         if TEAL_ROOT_DIR not in os.environ:
             get_logger().info('Make file test not run because using default install directory')
@@ -112,8 +110,6 @@ class TestMakefiles(unittest.TestCase):
                             '../../../teal/monitor/teal_semaphore.so']
         failures = walk_path(base_dir, files_to_exclude)
         self.assertEquals(str(failures), '[]')
-        return
-
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testMakeFiles']

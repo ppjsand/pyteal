@@ -455,7 +455,7 @@ void DbDaInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* temp, vo
 
    *tmp->change = anyChange?CHANGE_MODIFIED:CHANGE_NONE;
    //if da_need_service == yes, it's unhealthy
-   *tmp->health = strcmp(tmp->da_need_service,"yes")?HEALTHY:UNHEALTHY;
+   *tmp->health = strstr(tmp->da_need_service,"yes")?UNHEALTHY:HEALTHY;
    updateTable(sqlStmt,table,tmp);
 
 }

@@ -1,5 +1,5 @@
-<gear_ruleset version_id="2011103a" schema_version="1.0">
-  <!-- Source: errList.20110913.v2.csv -->
+<gear_ruleset version_id="2012036a" schema_version="1.0">
+  <!-- Source: errList.20120227.v1.csv -->
   <gear_control>
     <default_event_comp value="CNM"/>
     <default_create_alert_init_class class="ibm.isnm.cnm_gear.CnmInitAlert"/>
@@ -74,6 +74,8 @@
     <event id="BD40001F" name="HFI_OUTPA_UE"
          min_time_in_pool="30" pool_extension_time="0"/>
     <event id="BD400020" name="HFI_SENDER_HANG"
+         min_time_in_pool="30" pool_extension_time="0"/>
+    <event id="BD400021" name="HFI_HWCHK"
          min_time_in_pool="30" pool_extension_time="0"/>
     <event id="BD700021" name="DLNK_READY"
          min_time_in_pool="30" pool_extension_time="0"/>
@@ -303,8 +305,6 @@
          min_time_in_pool="30" pool_extension_time="0"/>
     <event id="BDFF0062" name="SUSPECT_FRAME"
          min_time_in_pool="30" pool_extension_time="0"/>
-    <event id="BDFF0070" name="NETWORKFAULT"
-         min_time_in_pool="30" pool_extension_time="0"/>
     <event id="BDFF0080" name="BOUNCINGDLNK"
          min_time_in_pool="30" pool_extension_time="0"/>
     <event id="BDFF0082" name="BOUNCINGLRLNK"
@@ -367,9 +367,9 @@
     <constant name="GCID" type="event_id"
     	value="BD304002"/>
     <constant name="HFI_RAMPEVENTS" type="set_of_event_ids"
-    	value="BD40000E, BD40000F, BD400010, BD400011, BD400012, BD400013, BD400014, BD400015, BD400016, BD400017, BD400018, BD400019, BD40001A, BD40001B, BD40001C, BD40001D, BD40001E, BD40001F, BD400020"/>
+    	value="BD40000E, BD40000F, BD400010, BD400011, BD400012, BD400013, BD400014, BD400015, BD400016, BD400017, BD400018, BD400019, BD40001A, BD40001B, BD40001C, BD40001D, BD40001E, BD40001F, BD400020, BD400021"/>
     <constant name="HFI_RAMPEVENTS_NOHANG" type="set_of_event_ids"
-    	value="BD40000E, BD40000F, BD400010, BD400011, BD400012, BD400013, BD400014, BD400015, BD400016, BD400017, BD400018, BD400019, BD40001A, BD40001B, BD40001C, BD40001D, BD40001E, BD40001F"/>
+    	value="BD40000E, BD40000F, BD400010, BD400011, BD400012, BD400013, BD400014, BD400015, BD400016, BD400017, BD400018, BD400019, BD40001A, BD40001B, BD40001C, BD40001D, BD40001E, BD40001F, BD400021"/>
     <constant name="LLEXTIN" type="set_of_event_ids"
     	value="BD500031, BD500032"/>
     <constant name="LLEXTOUT" type="set_of_event_ids"
@@ -623,8 +623,11 @@
     <rule name="Rule_analyze: MC_PTO">
       <description>Rule_analyze: Multicast Packet Timeout Error; BD20000C:MC_PTO;</description>
       <condition>
-        <description>Condition_analyze: equals BD20000C:MC_PTO </description>
-        <event_equals id="BD20000C"/>
+        <description>Condition_analyze: compound conditions to recognize BD20000C:MC_PTO </description>
+          <any_events num="22" ids="BD20000C" unique_id="false"
+                      scope="H:hub" location_match="identical" 
+                      instance_scope="H:hub" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD20000C:MC_PTO</description>
@@ -645,7 +648,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_RRFIFOLS_UE">
       <description>Rule_analyze: HFI Ramp Route Request FIFO Uncorrectable Error; left side; BD40000E:HFI_RRFIFOLS_UE;</description>
       <condition>
@@ -658,7 +661,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_RRFIFORS_UE">
       <description>Rule_analyze: HFI Ramp Route Request FIFO Uncorrectable Error; right side; BD40000F:HFI_RRFIFORS_UE;</description>
       <condition>
@@ -671,7 +674,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_SRT2_UE">
       <description>Rule_analyze: HFI Ramp SRT2 Hub Route Table Uncorrectable Error; BD400010:HFI_SRT2_UE;</description>
       <condition>
@@ -684,7 +687,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_SRT1SN_UE">
       <description>Rule_analyze: HFI Ramp SRT1 Supernode Route Table Uncorrectable Error; BD400011:HFI_SRT1SN_UE;</description>
       <condition>
@@ -697,7 +700,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_SRT1IRVLS_UE">
       <description>Rule_analyze: HFI Ramp SRT1 Indirect Route Validity Table UE; left side; BD400012:HFI_SRT1IRVLS_UE;</description>
       <condition>
@@ -710,7 +713,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_SRT1IRVRS_UE">
       <description>Rule_analyze: HFI Ramp SRT1 Indirect Route Validity Table UE; right side; BD400013:HFI_SRT1IRVRS_UE;</description>
       <condition>
@@ -723,7 +726,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_SRTA_CE">
       <description>Rule_analyze: HFI Ramp SRT Array Correctable Error; BD400014:HFI_SRTA_CE;</description>
       <condition>
@@ -736,7 +739,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_SRT_HWERR">
       <description>Rule_analyze: HFI Ramp SRT Hardware Internal Error; BD400015:HFI_SRT_HWERR;</description>
       <condition>
@@ -749,7 +752,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_DOWN">
       <description>Rule_analyze: HFI Down; BD400016:HFI_DOWN;</description>
       <condition>
@@ -762,7 +765,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_INLL_PE">
       <description>Rule_analyze: HFI Ramp Input Port Linked List Parity Error; BD400017:HFI_INLL_PE;</description>
       <condition>
@@ -775,7 +778,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD40001D (HFI_INPAIFA_UE) -->
+    <!-- Suppressed by: BD40001D (HFI_INPAIFA_UE); BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_INPAIFA_CE">
       <description>Rule_analyze: HFI Ramp Input Port Async IF Array Correctable Error; BD400018:HFI_INPAIFA_CE;</description>
       <condition>
@@ -788,7 +791,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD40001A (HFI_INPAIFA_UE) -->
+    <!-- Suppressed by: BD40001A (HFI_INPAIFA_UE); BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_INPA_CE">
       <description>Rule_analyze: HFI Ramp Input Port Array Correctable Error; BD400019:HFI_INPA_CE;</description>
       <condition>
@@ -801,7 +804,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_INPAIFA_UE">
       <description>Rule_analyze: HFI Ramp Input Port Array Uncorrectable Error; BD40001A:HFI_INPAIFA_UE;</description>
       <condition>
@@ -815,7 +818,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD40001C (HFI_OUTPAIFA_UE) -->
+    <!-- Suppressed by: BD40001C (HFI_OUTPAIFA_UE); BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_OUTPAIFA_CE">
       <description>Rule_analyze: HFI Ramp Output Port Async IF Array Correctable Error; BD40001B:HFI_OUTPAIFA_CE;</description>
       <condition>
@@ -828,7 +831,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_OUTPAIFA_UE">
       <description>Rule_analyze: HFI Ramp Output Port Async IF Array Uncorrectable Error; BD40001C:HFI_OUTPAIFA_UE;</description>
       <condition>
@@ -842,7 +845,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_INPAIFA_UE">
       <description>Rule_analyze: HFI Ramp Input Port Async IF Array Uncorrectable Error; BD40001D:HFI_INPAIFA_UE;</description>
       <condition>
@@ -856,7 +859,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD40001F (HFI_OUTPA_UE) -->
+    <!-- Suppressed by: BD40001F (HFI_OUTPA_UE); BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_OUTPA_CE">
       <description>Rule_analyze: HFI Ramp Output Port Array Correctable Error; BD40001E:HFI_OUTPA_CE;</description>
       <condition>
@@ -869,7 +872,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_OUTPA_UE">
       <description>Rule_analyze: HFI Ramp Output Port Array Uncorrectable Error; BD40001F:HFI_OUTPA_UE;</description>
       <condition>
@@ -883,16 +886,34 @@
       </action>
     </rule>
 
-    <!-- Suppressed by:  Nothing -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
     <rule name="Rule_analyze: HFI_SENDER_HANG">
       <description>Rule_analyze: HFI Ramp Output Port Sender Hang; BD400020:HFI_SENDER_HANG;</description>
       <condition>
-        <description>Condition_analyze: equals BD400020:HFI_SENDER_HANG </description>
-        <event_equals id="BD400020"/>
+        <description>Condition_analyze: compound conditions to recognize BD400020:HFI_SENDER_HANG </description>
+          <any_events num="10" ids="BD400020" unique_id="false"
+                      scope="H:hub" location_match="identical" 
+                      instance_scope="H:hub" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD400020:HFI_SENDER_HANG</description>
         <create_alert id="BD400020" priority="15"/>
+      </action>
+    </rule>
+
+    <!-- Suppressed by: BD400021 (HFI_HWCHK) -->
+    <rule name="Rule_analyze: HFI_HWCHK">
+      <description>Rule_analyze: HFI Ramp Hardware Check Failure; BD400021:HFI_HWCHK;</description>
+      <condition>
+        <description>Condition_analyze: equals BD400021:HFI_HWCHK </description>
+        <event_equals id="BD400021"/>
+      </condition>
+      <action>
+        <description>Action_analyze: BD400021:HFI_HWCHK</description>
+        <suppress_events ids="HFI_RAMPEVENTS" scope="H:ramp"/>
+        <suppress_events ids="DLNK_DROPFLIT, LRLNK_DROPFLIT, LLNK_IPUNEX_FLIT, DLNK_PUNEX_FLIT, LRLNK_PUNEX_FLIT, LLNK_OUTPSENDER_HANG, LRLNK_SENDER_HANG, DLNK_SENDER_HANG, HFI_SENDER_HANG" ignore_loc="true"/>
+        <create_alert id="BD400021" priority="15"/>
       </action>
     </rule>
 
@@ -962,8 +983,10 @@
     <rule name="Rule_analyze: DLNK_DOWN">
       <description>Rule_analyze: D Link Port Down; BD700025:DLNK_DOWN;</description>
       <condition>
-        <description>Condition_analyze: equals BD700025:DLNK_DOWN </description>
-        <event_equals id="BD700025"/>
+        <description>Condition_analyze: compound conditions to recognize BD700025:DLNK_DOWN </description>
+        <evaluate name="find_pairs" ext_class="ibm.isnm.cnm_gear.IdentifyFailedLink"> 
+             <parm name="ids" value="BD700025"/> 
+        </evaluate>
       </condition>
       <action>
         <description>Action_analyze: BD700025:DLNK_DOWN</description>
@@ -978,8 +1001,10 @@
     <rule name="Rule_analyze: LRLNK_DOWN">
       <description>Rule_analyze: LR Link Port Down; BD700026:LRLNK_DOWN;</description>
       <condition>
-        <description>Condition_analyze: equals BD700026:LRLNK_DOWN </description>
-        <event_equals id="BD700026"/>
+        <description>Condition_analyze: compound conditions to recognize BD700026:LRLNK_DOWN </description>
+         <evaluate name="find_pairs" ext_class="ibm.isnm.cnm_gear.IdentifyFailedLink"> 
+           <parm name="ids" value="BD700026"/>
+        </evaluate>
       </condition>
       <action>
         <description>Action_analyze: BD700026:LRLNK_DOWN</description>
@@ -994,8 +1019,10 @@
     <rule name="Rule_analyze: LLLNK_DOWN">
       <description>Rule_analyze: Llocal Link Port Down; BD700027:LLLNK_DOWN;</description>
       <condition>
-        <description>Condition_analyze: equals BD700027:LLLNK_DOWN </description>
-        <event_equals id="BD700027"/>
+        <description>Condition_analyze: compound conditions to recognize BD700027:LLLNK_DOWN </description>
+         <evaluate name="find_pairs" ext_class="ibm.isnm.cnm_gear.IdentifyFailedLink"> 
+             <parm name="ids" value="BD700027"/>
+       </evaluate>
       </condition>
       <action>
         <description>Action_analyze: BD700027:LLLNK_DOWN</description>
@@ -1128,7 +1155,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD700027 (LLLNK_DOWN); BD500034 (LLNK_OUTPSENDER_HANG); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD700027 (LLLNK_DOWN); BD500034 (LLNK_OUTPSENDER_HANG); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: LLNK_IPUNEX_FLIT">
       <description>Rule_analyze: Llocal Input Port Unexpected Flit Type; BD500031:LLNK_IPUNEX_FLIT;</description>
       <condition>
@@ -1145,8 +1172,11 @@
     <rule name="Rule_analyze: LLNK_IPVC_DEADLOCK">
       <description>Rule_analyze: Llocal Input Port VC Deadlock Case; BD500032:LLNK_IPVC_DEADLOCK;</description>
       <condition>
-        <description>Condition_analyze: equals BD500032:LLNK_IPVC_DEADLOCK </description>
-        <event_equals id="BD500032"/>
+        <description>Condition_analyze: compound conditions to recognize BD500032:LLNK_IPVC_DEADLOCK </description>
+          <any_events num="10" ids="BD500032" unique_id="false"
+                      scope="H:localPort" location_match="identical" 
+                      instance_scope="H:localPort" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD500032:LLNK_IPVC_DEADLOCK</description>
@@ -1170,12 +1200,15 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: LLNK_OUTPSENDER_HANG">
       <description>Rule_analyze: Llocal Port Output Port Sender Hang; BD500034:LLNK_OUTPSENDER_HANG;</description>
       <condition>
-        <description>Condition_analyze: equals BD500034:LLNK_OUTPSENDER_HANG </description>
-        <event_equals id="BD500034"/>
+        <description>Condition_analyze: compound conditions to recognize BD500034:LLNK_OUTPSENDER_HANG </description>
+          <any_events num="10" ids="BD500034" unique_id="false"
+                      scope="H:localPort" location_match="identical" 
+                      instance_scope="H:localPort" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD500034:LLNK_OUTPSENDER_HANG</description>
@@ -1215,7 +1248,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD700025 (DLNK_DOWN); BD7000A0 (DLNK_WDITH9); BD7000A1 (DLNK_WIDTH8); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD700025 (DLNK_DOWN); BD7000A0 (DLNK_WDITH9); BD7000A1 (DLNK_WIDTH8); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: DLNK_DROPFLIT">
       <description>Rule_analyze: D Link Port Dropped Flit Threshold Exceeded; BD700037:DLNK_DROPFLIT;</description>
       <condition>
@@ -1313,8 +1346,11 @@
     <rule name="Rule_analyze: DLNK_PVC_DEADLOCK">
       <description>Rule_analyze: D Link Port VC Deadlock Case; BD70003E:DLNK_PVC_DEADLOCK;</description>
       <condition>
-        <description>Condition_analyze: equals BD70003E:DLNK_PVC_DEADLOCK </description>
-        <event_equals id="BD70003E"/>
+        <description>Condition_analyze: compound conditions to recognize BD70003E:DLNK_PVC_DEADLOCK </description>
+          <any_events num="10" ids="BD70003E" unique_id="false"
+                      scope="H:nodePort" location_match="identical" 
+                      instance_scope="H:nodePort" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD70003E:DLNK_PVC_DEADLOCK</description>
@@ -1322,7 +1358,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD700025 (DLNK_DOWN); BD700040 (DLNK_SENDER_HANG); BD7000A0 (DLNK_WDITH9); BD7000A1 (DLNK_WIDTH8); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD700025 (DLNK_DOWN); BD700040 (DLNK_SENDER_HANG); BD7000A0 (DLNK_WDITH9); BD7000A1 (DLNK_WIDTH8); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: DLNK_PUNEX_FLIT">
       <description>Rule_analyze: D Link Port Unexpected Flit Type; BD70003F:DLNK_PUNEX_FLIT;</description>
       <condition>
@@ -1335,12 +1371,15 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: DLNK_SENDER_HANG">
       <description>Rule_analyze: D Link Port Sender Hang; BD700040:DLNK_SENDER_HANG;</description>
       <condition>
-        <description>Condition_analyze: equals BD700040:DLNK_SENDER_HANG </description>
-        <event_equals id="BD700040"/>
+        <description>Condition_analyze: compound conditions to recognize BD700040:DLNK_SENDER_HANG </description>
+          <any_events num="10" ids="BD700040" unique_id="false"
+                      scope="H:nodePort" location_match="identical" 
+                      instance_scope="H:nodePort" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD700040:DLNK_SENDER_HANG</description>
@@ -1531,7 +1570,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD700026 (LRLNK_DOWN); BD7000A8 (LRLNK_WIDTH5); BD7000A9 (LRLNK_WIDTH4); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD700026 (LRLNK_DOWN); BD7000A8 (LRLNK_WIDTH5); BD7000A9 (LRLNK_WIDTH4); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: LRLNK_DROPFLIT">
       <description>Rule_analyze: LR Link Port Dropped Flit Threshold Exceeded; BD70004E:LRLNK_DROPFLIT;</description>
       <condition>
@@ -1629,8 +1668,11 @@
     <rule name="Rule_analyze: LRLNK_PVC_DEADLOCK">
       <description>Rule_analyze: LR Link Port VC Deadlock Case; BD700055:LRLNK_PVC_DEADLOCK;</description>
       <condition>
-        <description>Condition_analyze: equals BD700055:LRLNK_PVC_DEADLOCK </description>
-        <event_equals id="BD700055"/>
+        <description>Condition_analyze: compound conditions to recognize BD700055:LRLNK_PVC_DEADLOCK </description>
+          <any_events num="10" ids="BD700055" unique_id="false"
+                      scope="H:nodePort" location_match="identical" 
+                      instance_scope="H:nodePort" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD700055:LRLNK_PVC_DEADLOCK</description>
@@ -1638,7 +1680,7 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD700026 (LRLNK_DOWN); BD700057 (LRLNK_SENDER_HANG); BD7000A8 (LRLNK_WIDTH5); BD7000A9 (LRLNK_WIDTH4); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD700026 (LRLNK_DOWN); BD700057 (LRLNK_SENDER_HANG); BD7000A8 (LRLNK_WIDTH5); BD7000A9 (LRLNK_WIDTH4); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: LRLNK_PUNEX_FLIT">
       <description>Rule_analyze: LR Link Port Unexpected Flit Type; BD700056:LRLNK_PUNEX_FLIT;</description>
       <condition>
@@ -1651,12 +1693,15 @@
       </action>
     </rule>
 
-    <!-- Suppressed by: BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
+    <!-- Suppressed by: BD400021 (HFI_HWCHK); BD880180 (OMTX_LOS); BD880181 (OMTX_FAULT); BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: LRLNK_SENDER_HANG">
       <description>Rule_analyze: LR Link Port Sender Hang; BD700057:LRLNK_SENDER_HANG;</description>
       <condition>
-        <description>Condition_analyze: equals BD700057:LRLNK_SENDER_HANG </description>
-        <event_equals id="BD700057"/>
+        <description>Condition_analyze: compound conditions to recognize BD700057:LRLNK_SENDER_HANG </description>
+          <any_events num="10" ids="BD700057" unique_id="false"
+                      scope="H:remotePort" location_match="identical" 
+                      instance_scope="H:remotePort" unique_instance="true"
+                      locations="GEAR[cur_event.src_loc]"/> 
       </condition>
       <action>
         <description>Action_analyze: BD700057:LRLNK_SENDER_HANG</description>
@@ -1902,8 +1947,6 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_TEMPHIGH">
       <description>Rule_analyze: TX optical module Temp High; BD880074:OMTX_TEMPHIGH;</description>
       <condition>
@@ -1912,14 +1955,11 @@
       </condition>
       <action>
         <description>Action_analyze: BD880074:OMTX_TEMPHIGH</description>
+        <create_alert id="BD880074" priority="15"/>
       </action>
     </rule>
 
-    -->
-
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_TEMPLOW">
       <description>Rule_analyze: TX optical module Temp Low; BD880075:OMTX_TEMPLOW;</description>
       <condition>
@@ -1928,10 +1968,9 @@
       </condition>
       <action>
         <description>Action_analyze: BD880075:OMTX_TEMPLOW</description>
+        <create_alert id="BD880075" priority="15"/>
       </action>
     </rule>
-
-    -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: OMTX_33LOW">
@@ -1998,8 +2037,6 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMRX_TEMPHIGH">
       <description>Rule_analyze: RX optical module Temp High; BD88007A:OMRX_TEMPHIGH;</description>
       <condition>
@@ -2008,14 +2045,11 @@
       </condition>
       <action>
         <description>Action_analyze: BD88007A:OMRX_TEMPHIGH</description>
+        <create_alert id="BD88007A" priority="15"/>
       </action>
     </rule>
 
-    -->
-
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMRX_TEMPLOW">
       <description>Rule_analyze: RX optical module Temp Low; BD88007B:OMRX_TEMPLOW;</description>
       <condition>
@@ -2024,10 +2058,9 @@
       </condition>
       <action>
         <description>Action_analyze: BD88007B:OMRX_TEMPLOW</description>
+        <create_alert id="BD88007B" priority="15"/>
       </action>
     </rule>
-
-    -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: OMRX_33LOW">
@@ -2126,8 +2159,6 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_BCHIGH">
       <description>Rule_analyze: TX Bias Current High; BD880182:OMTX_BCHIGH;</description>
       <condition>
@@ -2148,11 +2179,7 @@
       </action>
     </rule>
 
-    -->
-
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_LOPLOW">
       <description>Rule_analyze: TX Light Output Power Low; BD880183:OMTX_LOPLOW;</description>
       <condition>
@@ -2173,11 +2200,7 @@
       </action>
     </rule>
 
-    -->
-
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_BCLOW">
       <description>Rule_analyze: TX Bias Current Low; BD880184:OMTX_BCLOW;</description>
       <condition>
@@ -2186,14 +2209,11 @@
       </condition>
       <action>
         <description>Action_analyze: BD880184:OMTX_BCLOW</description>
+        <create_alert id="BD880184" priority="15"/>
       </action>
     </rule>
 
-    -->
-
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMTX_LOPHIGH">
       <description>Rule_analyze: TX Light Output Power High; BD880185:OMTX_LOPHIGH;</description>
       <condition>
@@ -2202,10 +2222,9 @@
       </condition>
       <action>
         <description>Action_analyze: BD880185:OMTX_LOPHIGH</description>
+        <create_alert id="BD880185" priority="15"/>
       </action>
     </rule>
-
-    -->
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
     <rule name="Rule_analyze: OMRX_LOS">
@@ -2250,8 +2269,6 @@
     </rule>
 
     <!-- Suppressed by: BD0204F0 (OV_OCTANT); BD0204FF (OV_CEC); BD0203F0 (OC_OCTANT); BD0203FF (OC_CEC); BD022C51 (DCCA1); BD022C52 (DCCA2); BD022069 (DCA_NOAIR); BD020085 (DCA_OT); BD010001 (TORRENT_POWERON); BD010011 (TORRENT_POWEROFF) -->
-
-    <!-- 8/17/2011 don't report
     <rule name="Rule_analyze: OMRX_LIPHIGH">
       <description>Rule_analyze: RX Light Input Power High; BD880188:OMRX_LIPHIGH;</description>
       <condition>
@@ -2260,10 +2277,9 @@
       </condition>
       <action>
         <description>Action_analyze: BD880188:OMRX_LIPHIGH</description>
+        <create_alert id="BD880188" priority="15"/>
       </action>
     </rule>
-
-    -->
 
     <!-- Suppressed by:  Nothing -->
     <rule name="Rule_analyze: OV_OCTANT">
@@ -2452,7 +2468,7 @@
       </condition>
       <action>
         <description>Action_analyze: BDFF0040:FAULTY_OPTICAL_MODULE</description>
-        <create_alert id="BDFF0040" priority="9"/>
+        <create_alert id="BDFF0040" priority="13"/>
       </action>
     </rule>
 
@@ -2468,7 +2484,7 @@
       </condition>
       <action>
         <description>Action_analyze: BDFF004A:FAULTY_HFIRAMPS</description>
-        <create_alert id="BDFF004A" priority="9"/>
+        <create_alert id="BDFF004A" priority="13"/>
       </action>
     </rule>
 
@@ -2495,7 +2511,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF0050:FAULTY_HUB</description>
-        <create_alert id="BDFF0050" priority="8"/>
+        <create_alert id="BDFF0050" priority="12"/>
       </action>
     </rule>
 
@@ -2513,7 +2529,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF0055:FAULTY_LRCABASSY_PARTIAL</description>
-        <create_alert id="BDFF0055" priority="7"/>
+        <create_alert id="BDFF0055" priority="10"/>
       </action>
     </rule>
 
@@ -2531,7 +2547,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF0056:FAULTY_LRCABASSY</description>
-        <create_alert id="BDFF0056" priority="4"/>
+        <create_alert id="BDFF0056" priority="7"/>
       </action>
     </rule>
 
@@ -2549,7 +2565,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF0057:FAULTY_LRCABASSY2</description>
-        <create_alert id="BDFF0057" priority="6"/>
+        <create_alert id="BDFF0057" priority="9"/>
       </action>
     </rule>
 
@@ -2567,7 +2583,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF0058:FAULTY_LRCABASSY3</description>
-        <create_alert id="BDFF0058" priority="5"/>
+        <create_alert id="BDFF0058" priority="8"/>
       </action>
     </rule>
 
@@ -2608,7 +2624,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF0060:SUSPECT_DRAWER</description>
-        <create_alert id="BDFF0060" priority="3"/>
+        <create_alert id="BDFF0060" priority="5"/>
       </action>
     </rule>
 
@@ -2653,7 +2669,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF0061:SUSPECT_SUPERNODE</description>
-        <create_alert id="BDFF0061" priority="2"/>
+        <create_alert id="BDFF0061" priority="3"/>
       </action>
     </rule>
 
@@ -2696,19 +2712,6 @@ location_match="identical"
       <action>
         <description>Action_analyze: BDFF0062:SUSPECT_FRAME</description>
         <create_alert id="BDFF0062" priority="1"/>
-      </action>
-    </rule>
-
-    <!-- Suppressed by:  Nothing -->
-    <rule name="Rule_analyze: NETWORKFAULT">
-      <description>Rule_analyze: Network Fault; BDFF0070:NETWORKFAULT;</description>
-      <condition>
-        <description>Condition_analyze: compound conditions to recognize BDFF0070:NETWORKFAULT </description>
-        <any_events num="2" ids="DLNK_HANG, LRLNK_HANG, LLLNK_HANG, HFI_SENDER_HANG" location_match="unique"/>
-      </condition>
-      <action>
-        <description>Action_analyze: BDFF0070:NETWORKFAULT</description>
-        <create_alert id="BDFF0070" priority="1"/>
       </action>
     </rule>
 
@@ -2763,7 +2766,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00A0:RANDOM_DLNK_FRAME</description>
-        <create_alert id="BDFF00A0" priority="10"/>
+        <create_alert id="BDFF00A0" priority="2"/>
       </action>
     </rule>
 
@@ -2792,7 +2795,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00A1:RANDOM_LRNK_FRAME</description>
-        <create_alert id="BDFF00A1" priority="10"/>
+        <create_alert id="BDFF00A1" priority="2"/>
       </action>
     </rule>
 
@@ -2821,7 +2824,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00A2:RANDOM_OM_FRAME</description>
-        <create_alert id="BDFF00A2" priority="10"/>
+        <create_alert id="BDFF00A2" priority="2"/>
       </action>
     </rule>
 
@@ -2850,7 +2853,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00A5:RANDOM_DLNK_SUPERNODE</description>
-        <create_alert id="BDFF00A5" priority="11"/>
+        <create_alert id="BDFF00A5" priority="4"/>
       </action>
     </rule>
 
@@ -2879,7 +2882,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00A6:RANDOM_LRNK_SUPERNODE</description>
-        <create_alert id="BDFF00A6" priority="11"/>
+        <create_alert id="BDFF00A6" priority="4"/>
       </action>
     </rule>
 
@@ -2908,7 +2911,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00A7:RANDOM_OM_SUPERNODE</description>
-        <create_alert id="BDFF00A7" priority="11"/>
+        <create_alert id="BDFF00A7" priority="4"/>
       </action>
     </rule>
 
@@ -2937,7 +2940,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00AA:RANDOM_DLNK_DRWR</description>
-        <create_alert id="BDFF00AA" priority="12"/>
+        <create_alert id="BDFF00AA" priority="6"/>
       </action>
     </rule>
 
@@ -2957,7 +2960,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00AB:RANDOM_LRNK_DRWR</description>
-        <create_alert id="BDFF00AB" priority="12"/>
+        <create_alert id="BDFF00AB" priority="11"/>
       </action>
     </rule>
 
@@ -2977,7 +2980,7 @@ location_match="identical"
       </condition>
       <action>
         <description>Action_analyze: BDFF00AC:RANDOM_OM_DRWR</description>
-        <create_alert id="BDFF00AC" priority="12"/>
+        <create_alert id="BDFF00AC" priority="6"/>
       </action>
     </rule>
   </analyze>

@@ -51,39 +51,41 @@ TLGPFS_ERR_T GPFSMiscEventLogging::action(GPFSEvent* evt)
     if(behavior > 1)
         log_debug("Need to log this event!");
     
-    std::string srcloc(GPFSEventHandler::getEventHandler()->getCluster()); //srcloc  == clustername 
+    std::string srcloc("C:"); //srcloc  == C:
+    srcloc += GPFSEventHandler::getEventHandler()->getCluster(); //srcloc  == C:clustername 
     std::string rptloc(GPFSEventHandler::getEventHandler()->getHostName());  //rptloc == nodename
     struct timeval creation_time = evt->getEvent()->getCreationTime();
     
     tlgpfs_misc_event_t *gpfsMiscEvent = new tlgpfs_misc_event_t();
     
-    teal_cbe_t *cbe          = new teal_cbe_t();    
-    char time[30]            = {0};
-    char pidC[10]            = {0};
-    unsigned int pid         = (unsigned int)getpid();    
+    teal_cbe_t *cbe            = new teal_cbe_t();    
+    char time[30]              = {0};
+    char node[MAX_EVENT_FIELD] = {0}; // the size complies with the size defined in api_event.h
+    char pidC[10]              = {0};
+    unsigned int pid           = (unsigned int)getpid();    
 
     Utils::get_time_stamp(&creation_time,time);
-    cbe->time_occurred       = time;
-    cbe->src_comp            = "GPFS";
-    cbe->src_loc_type        = "G";
-    cbe->rpt_comp            = "TEAL";
-    cbe->rpt_loc_type        = "A";    
+    cbe->time_occurred         = time;
+    cbe->src_comp              = "GPFS";
+    cbe->src_loc_type          = "G";
+    cbe->rpt_comp              = "TEAL";
+    cbe->rpt_loc_type          = "A";    
 
-    srcloc                  += ":"; //srcloc == clustername:
-    rptloc                  += "##"; //rptloc == nodename##
-    rptloc                  += GPFSEventHandler::getEventHandler()->getProcName(); //rptloc == nodename##tlgpfsmon
-    rptloc                  += "##";// rptloc == nodename##tlgpfsmon##
-    rptloc                  += Utils::int_to_char(pidC,10,&pid);// rptloc == nodename##tlgpfsmon##pid
-    cbe->rpt_loc             = (char*)rptloc.c_str();
+    srcloc                    += "|N:"; //srcloc == C:clustername|N:
+    rptloc                    += "##"; //rptloc == nodename##
+    rptloc                    += GPFSEventHandler::getEventHandler()->getProcName(); //rptloc == nodename##tlgpfsmon
+    rptloc                    += "##";// rptloc == nodename##tlgpfsmon##
+    rptloc                    += Utils::int_to_char(pidC,10,&pid);// rptloc == nodename##tlgpfsmon##pid
+    cbe->rpt_loc               = (char*)rptloc.c_str();
 
-    gpfsMiscEvent->severity  = evt->getEvent()->getSeverity();
+    gpfsMiscEvent->severity    = evt->getEvent()->getSeverity();
     long waitTime;
     int  msgLevel;
     if(type == NODE_FAILURE )
     {
         NodeStatusEvent* event       = (NodeStatusEvent*)evt->getEvent();    
         cbe->event_id                = "GP000007";        
-        srcloc                      += event->getNodeIpAddr(); //srcloc == clustername:nodeip
+        srcloc                      += Utils::get_hostname_by_ip(node, MAX_EVENT_FIELD, event->getNodeIpAddr()); //srcloc == C:clustername|N:nodename
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsMiscEvent->msg_text      = NULL;
         gpfsMiscEvent->diagnosis     = NULL;
@@ -94,7 +96,7 @@ TLGPFS_ERR_T GPFSMiscEventLogging::action(GPFSEvent* evt)
     {
         NodeStatusEvent* event       = (NodeStatusEvent*)evt->getEvent();    
         cbe->event_id                = "GP000008";
-        srcloc                      += event->getNodeIpAddr();  //srcloc == clustername:nodeip
+        srcloc                      += Utils::get_hostname_by_ip(node, MAX_EVENT_FIELD, event->getNodeIpAddr()); //srcloc == C:clustername|N:nodename
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsMiscEvent->msg_text      = NULL;
         gpfsMiscEvent->diagnosis     = NULL;
@@ -105,7 +107,7 @@ TLGPFS_ERR_T GPFSMiscEventLogging::action(GPFSEvent* evt)
     {
         NodeStatusEvent* event       = (NodeStatusEvent*)evt->getEvent();    
         cbe->event_id                = "GP00000D";        
-        srcloc                      += event->getNodeIpAddr(); //srcloc == clustername:nodeip
+        srcloc                      += Utils::get_hostname_by_ip(node, MAX_EVENT_FIELD, event->getNodeIpAddr()); //srcloc == C:clustername|N:nodename
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsMiscEvent->msg_text      = NULL;
         gpfsMiscEvent->diagnosis     = NULL;
@@ -116,7 +118,7 @@ TLGPFS_ERR_T GPFSMiscEventLogging::action(GPFSEvent* evt)
     {
         HungThreadEvent* event       = (HungThreadEvent*)evt->getEvent();    
         cbe->event_id                = "GP00000F";        
-        srcloc                      += event->getNodeIpAddr(); //srcloc == clustername:nodeip
+        srcloc                      += Utils::get_hostname_by_ip(node, MAX_EVENT_FIELD, event->getNodeIpAddr()); //srcloc == C:clustername|N:nodename
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsMiscEvent->msg_text      = NULL;
         gpfsMiscEvent->diagnosis     = event->getDiagnosis();
@@ -128,7 +130,7 @@ TLGPFS_ERR_T GPFSMiscEventLogging::action(GPFSEvent* evt)
     {
         ConsoleLogEvent* event       = (ConsoleLogEvent*)evt->getEvent();    
         cbe->event_id                = "GP000014";        
-        srcloc                      += event->getNodeName(); //srcloc == clustername:nodename
+        srcloc                      += event->getNodeName(); //srcloc == C:clustername|N:nodename
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsMiscEvent->msg_text      = event->getMsgTxt();
         gpfsMiscEvent->diagnosis     = NULL;

@@ -406,10 +406,10 @@ void DbPdiskInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* temp,
    //"gpfsPdiskState": "ok" "formatting" "systemDrain" "adminDrain" "noData" "noVCD" "noRGD" "replace" "diagnosing" "init" "dead"
    //"missing" "suspended" "noPath" "abandoned" "readonly" "failing" "PTOW"
    //only when "gpfsPdiskState" == "systemDrain", "adminDrain", "readonly", "missing", "noPath", "PTOW", "diagnosing", "replace", "dead" or "failing", it's unhealthy
-   if(!strcmp(tmp->pdisk_state, "systemDrain") || !strcmp(tmp->pdisk_state, "adminDrain") 
-   || !strcmp(tmp->pdisk_state, "readonly") || !strcmp(tmp->pdisk_state, "missing")
-   || !strcmp(tmp->pdisk_state, "noPath") || !strcmp(tmp->pdisk_state, "PTOW") || !strcmp(tmp->pdisk_state, "diagnosing")
-   || !strcmp(tmp->pdisk_state, "replace") || !strcmp(tmp->pdisk_state, "dead") || !strcmp(tmp->pdisk_state, "failing"))
+   if(strstr(tmp->pdisk_state, "systemDrain") || strstr(tmp->pdisk_state, "adminDrain") 
+   || strstr(tmp->pdisk_state, "readonly") || strstr(tmp->pdisk_state, "missing")
+   || strstr(tmp->pdisk_state, "noPath") || strstr(tmp->pdisk_state, "PTOW") || strstr(tmp->pdisk_state, "diagnosing")
+   || strstr(tmp->pdisk_state, "replace") || strstr(tmp->pdisk_state, "dead") || strstr(tmp->pdisk_state, "failing"))
        *tmp->health = UNHEALTHY;
    else
        *tmp->health = HEALTHY;

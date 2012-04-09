@@ -35,7 +35,7 @@ TLGPFS_ERR_T GPFSRefreshProcessor::action(GPFSEvent* evt)
     string msg = "It's event: ";
     msg += name.c_str();
     msg += " that requesting refresh configuration!";
-    log_debug(msg);
+    log_info(msg);
     if(!Configuration::getInstance().isPoll())
     {
         log_warn("Polling not enabled, can't refresh configuration, skipping....");

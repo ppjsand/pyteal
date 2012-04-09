@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -29,7 +29,7 @@ from ibm.teal.test.teal_unittest import TealTestCase
 class EventTest(TealTestCase):
     
     def setUp(self):
-        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
           
     def tearDown(self):
         '''Nothing to do ... yet
@@ -39,7 +39,7 @@ class EventTest(TealTestCase):
     def testCreateRecIdOnly(self):
         '''Test basic event creation
         '''
-        te1 = teal.Event(1)
+        te1 = Event.fromDict({EVENT_ATTR_REC_ID:1})
         self.assertEquals(te1.get_rec_id(), 1)
         # Can't use any other get methods, since they will try to
         #  load the Event from the DB is they are not set
@@ -76,7 +76,7 @@ class EventTest(TealTestCase):
         crt_dict[EVENT_ATTR_ELAPSED_TIME] = 4
         crt_dict[EVENT_ATTR_RAW_DATA_FMT] = long('0x5445535400000001',16)
         crt_dict[EVENT_ATTR_RAW_DATA] = 'When in the course'
-        te1 = teal.Event(in_dict=crt_dict)
+        te1 = Event.fromDict(crt_dict)
         self.assertEquals(te1.get_rec_id(), 2)
         # Can't use any other get methods, since they will try to
         #  load the Event from the DB is they are not set
@@ -93,13 +93,11 @@ class EventTest(TealTestCase):
         self.assertEquals(te1.elapsed_time, crt_dict[EVENT_ATTR_ELAPSED_TIME])
         self.assertEquals(te1.raw_data[EXT_DATA_RAW_DATA], crt_dict[EVENT_ATTR_RAW_DATA])
         # No associations
-        # Not valid because has all required fields
+        # Valid because has all required fields
         self.assertTrue(te1.is_valid())
-        # specify a different rec id than in dict
-        self.assertRaises(ValueError, Event, 5, crt_dict)
-        del crt_dict[EVENT_ATTR_REC_ID]
         # Reuse local
-        te1 = Event(5, crt_dict)
+        crt_dict[EVENT_ATTR_REC_ID] = 5
+        te1 = Event.fromDict(crt_dict)
         self.assertEquals(te1.get_rec_id(), 5)
         # Can't use any other get methods, since they will try to
         #  load the Event from the DB is they are not set
@@ -118,8 +116,192 @@ class EventTest(TealTestCase):
         # No associations
         # Not valid because has all required fields
         self.assertTrue(te1.is_valid())
-        # Don't specific a rec id
-        self.assertRaises(ValueError, Event, in_dict=crt_dict)
+        return
+    
+    def testCreateTuple1(self):
+        '''Create from a tuple'''
+        right_now = datetime.now()
+        crt_dict = {}
+        crt_dict[EVENT_ATTR_REC_ID] = 2
+        crt_dict[EVENT_ATTR_EVENT_ID] = 'Event2'
+        crt_dict[EVENT_ATTR_TIME_OCCURRED] = right_now
+        crt_dict[EVENT_ATTR_TIME_LOGGED] = right_now + timedelta(seconds=1)
+        crt_dict[EVENT_ATTR_SRC_COMP] = 'SC'
+        crt_dict[EVENT_ATTR_SRC_LOC] = 'SCL'
+        crt_dict[EVENT_ATTR_SRC_LOC_TYPE] = 'S'
+        crt_dict[EVENT_ATTR_RPT_COMP] = 'RC'
+        crt_dict[EVENT_ATTR_RPT_LOC] = 'RL'
+        crt_dict[EVENT_ATTR_RPT_LOC_TYPE] = 'S'
+        crt_dict[EVENT_ATTR_EVENT_CNT] = None
+        crt_dict[EVENT_ATTR_ELAPSED_TIME] = None
+        crt_dict[EVENT_ATTR_RAW_DATA_FMT] = long('0x5445535400000001',16)
+        crt_dict[EVENT_ATTR_RAW_DATA] = 'When in the course'
+        in_tuple = ( 
+            crt_dict[EVENT_ATTR_REC_ID], 
+            crt_dict[EVENT_ATTR_EVENT_ID], 
+            crt_dict[EVENT_ATTR_TIME_OCCURRED],
+            crt_dict[EVENT_ATTR_TIME_LOGGED], 
+            crt_dict[EVENT_ATTR_SRC_COMP], 
+            crt_dict[EVENT_ATTR_SRC_LOC],
+            crt_dict[EVENT_ATTR_SRC_LOC_TYPE], 
+            crt_dict[EVENT_ATTR_RPT_COMP], 
+            crt_dict[EVENT_ATTR_RPT_LOC],
+            crt_dict[EVENT_ATTR_RPT_LOC_TYPE], 
+            crt_dict[EVENT_ATTR_EVENT_CNT], 
+            crt_dict[EVENT_ATTR_ELAPSED_TIME],
+            crt_dict[EVENT_ATTR_RAW_DATA_FMT], 
+        crt_dict[EVENT_ATTR_RAW_DATA])
+        
+        te1 = Event.fromDB(in_tuple)
+        self.assertEquals(te1.get_rec_id(), 2)
+        # Can't use any other get methods, since they will try to
+        #  load the Event from the DB is they are not set
+        self.assertEquals(te1.event_id, crt_dict[EVENT_ATTR_EVENT_ID])
+        self.assertEquals(te1.time_occurred, crt_dict[EVENT_ATTR_TIME_OCCURRED])
+        self.assertEquals(te1.time_logged, crt_dict[EVENT_ATTR_TIME_LOGGED])
+        self.assertEquals(te1.src_comp, crt_dict[EVENT_ATTR_SRC_COMP])
+        self.assertEquals(te1.src_loc.get_location(), crt_dict[EVENT_ATTR_SRC_LOC])
+        self.assertEquals(te1.src_loc.get_id(), crt_dict[EVENT_ATTR_SRC_LOC_TYPE])
+        self.assertEquals(te1.rpt_comp, crt_dict[EVENT_ATTR_RPT_COMP])
+        self.assertEquals(te1.rpt_loc.get_location(), crt_dict[EVENT_ATTR_RPT_LOC])
+        self.assertEquals(te1.rpt_loc.get_id(), crt_dict[EVENT_ATTR_RPT_LOC_TYPE])
+        self.assertEquals(te1.event_cnt, crt_dict[EVENT_ATTR_EVENT_CNT])
+        self.assertEquals(te1.elapsed_time, crt_dict[EVENT_ATTR_ELAPSED_TIME])
+        self.assertEquals(te1.raw_data[EXT_DATA_RAW_DATA], crt_dict[EVENT_ATTR_RAW_DATA])
+        # No associations
+        # Valid because has all required fields
+        self.assertTrue(te1.is_valid())
+        # Reuse local
+        crt_dict[EVENT_ATTR_REC_ID] = 5
+        te1 = Event.fromDict(crt_dict)
+        self.assertEquals(te1.get_rec_id(), 5)
+        # Can't use any other get methods, since they will try to
+        #  load the Event from the DB is they are not set
+        self.assertEquals(te1.event_id, crt_dict[EVENT_ATTR_EVENT_ID])
+        self.assertEquals(te1.time_occurred, crt_dict[EVENT_ATTR_TIME_OCCURRED])
+        self.assertEquals(te1.time_logged, crt_dict[EVENT_ATTR_TIME_LOGGED])
+        self.assertEquals(te1.src_comp, crt_dict[EVENT_ATTR_SRC_COMP])
+        self.assertEquals(te1.src_loc.get_location(), crt_dict[EVENT_ATTR_SRC_LOC])
+        self.assertEquals(te1.src_loc.get_id(), crt_dict[EVENT_ATTR_SRC_LOC_TYPE])
+        self.assertEquals(te1.rpt_comp, crt_dict[EVENT_ATTR_RPT_COMP])
+        self.assertEquals(te1.rpt_loc.get_location(), crt_dict[EVENT_ATTR_RPT_LOC])
+        self.assertEquals(te1.rpt_loc.get_id(), crt_dict[EVENT_ATTR_RPT_LOC_TYPE])
+        self.assertEquals(te1.event_cnt, crt_dict[EVENT_ATTR_EVENT_CNT])
+        self.assertEquals(te1.elapsed_time, crt_dict[EVENT_ATTR_ELAPSED_TIME])
+        self.assertEquals(te1.raw_data[EXT_DATA_RAW_DATA], crt_dict[EVENT_ATTR_RAW_DATA])
+        # No associations
+        # Not valid because has all required fields
+        self.assertTrue(te1.is_valid())
+        return
+    
+    
+    def testCreateTuple2(self):
+        '''Create from a tuple'''
+        right_now = datetime.now()
+        crt_dict = {}
+        crt_dict[EVENT_ATTR_REC_ID] = 2
+        crt_dict[EVENT_ATTR_EVENT_ID] = 'Event2'
+        crt_dict[EVENT_ATTR_TIME_OCCURRED] = right_now
+        crt_dict[EVENT_ATTR_TIME_LOGGED] = right_now + timedelta(seconds=1)
+        crt_dict[EVENT_ATTR_SRC_COMP] = 'SC'
+        crt_dict[EVENT_ATTR_SRC_LOC] = 'SCL'
+        crt_dict[EVENT_ATTR_SRC_LOC_TYPE] = 'S'
+        crt_dict[EVENT_ATTR_RPT_COMP] = 'RC'
+        crt_dict[EVENT_ATTR_RPT_LOC] = None
+        crt_dict[EVENT_ATTR_RPT_LOC_TYPE] = 'S'
+        crt_dict[EVENT_ATTR_EVENT_CNT] = None
+        crt_dict[EVENT_ATTR_ELAPSED_TIME] = None
+        crt_dict[EVENT_ATTR_RAW_DATA_FMT] = long('0x5445535400000001',16)
+        crt_dict[EVENT_ATTR_RAW_DATA] = 'When in the course'
+        in_tuple = ( 
+            crt_dict[EVENT_ATTR_REC_ID], 
+            crt_dict[EVENT_ATTR_EVENT_ID], 
+            crt_dict[EVENT_ATTR_TIME_OCCURRED],
+            crt_dict[EVENT_ATTR_TIME_LOGGED], 
+            crt_dict[EVENT_ATTR_SRC_COMP], 
+            crt_dict[EVENT_ATTR_SRC_LOC],
+            crt_dict[EVENT_ATTR_SRC_LOC_TYPE], 
+            crt_dict[EVENT_ATTR_RPT_COMP], 
+            crt_dict[EVENT_ATTR_RPT_LOC],
+            crt_dict[EVENT_ATTR_RPT_LOC_TYPE], 
+            crt_dict[EVENT_ATTR_EVENT_CNT], 
+            crt_dict[EVENT_ATTR_ELAPSED_TIME],
+            crt_dict[EVENT_ATTR_RAW_DATA_FMT], 
+        crt_dict[EVENT_ATTR_RAW_DATA])
+        
+        te1 = Event.fromDB(in_tuple)
+        self.assertEquals(te1.get_rec_id(), 2)
+        # Can't use any other get methods, since they will try to
+        #  load the Event from the DB is they are not set
+        self.assertEquals(te1.event_id, crt_dict[EVENT_ATTR_EVENT_ID])
+        self.assertEquals(te1.time_occurred, crt_dict[EVENT_ATTR_TIME_OCCURRED])
+        self.assertEquals(te1.time_logged, crt_dict[EVENT_ATTR_TIME_LOGGED])
+        self.assertEquals(te1.src_comp, crt_dict[EVENT_ATTR_SRC_COMP])
+        self.assertEquals(te1.src_loc.get_location(), crt_dict[EVENT_ATTR_SRC_LOC])
+        self.assertEquals(te1.src_loc.get_id(), crt_dict[EVENT_ATTR_SRC_LOC_TYPE])
+        self.assertEquals(te1.rpt_comp, crt_dict[EVENT_ATTR_RPT_COMP])
+        self.assertEquals(te1.rpt_loc, None)
+        self.assertEquals(te1.event_cnt, crt_dict[EVENT_ATTR_EVENT_CNT])
+        self.assertEquals(te1.elapsed_time, crt_dict[EVENT_ATTR_ELAPSED_TIME])
+        self.assertEquals(te1.raw_data[EXT_DATA_RAW_DATA], crt_dict[EVENT_ATTR_RAW_DATA])
+        # No associations
+        # Valid because has all required fields
+        self.assertFalse(te1.is_valid())
+        return
+    
+    
+    def testCreateTuple3(self):
+        '''Create from a tuple'''
+        right_now = datetime.now()
+        crt_dict = {}
+        crt_dict[EVENT_ATTR_REC_ID] = 2
+        crt_dict[EVENT_ATTR_EVENT_ID] = 'Event2'
+        crt_dict[EVENT_ATTR_TIME_OCCURRED] = right_now
+        crt_dict[EVENT_ATTR_TIME_LOGGED] = right_now + timedelta(seconds=1)
+        crt_dict[EVENT_ATTR_SRC_COMP] = 'SC'
+        crt_dict[EVENT_ATTR_SRC_LOC] = 'SCL'
+        crt_dict[EVENT_ATTR_SRC_LOC_TYPE] = 'S'
+        crt_dict[EVENT_ATTR_RPT_COMP] = 'RC'
+        crt_dict[EVENT_ATTR_RPT_LOC] = 'RL'
+        crt_dict[EVENT_ATTR_RPT_LOC_TYPE] = None
+        crt_dict[EVENT_ATTR_EVENT_CNT] = None
+        crt_dict[EVENT_ATTR_ELAPSED_TIME] = None
+        crt_dict[EVENT_ATTR_RAW_DATA_FMT] = long('0x5445535400000001',16)
+        crt_dict[EVENT_ATTR_RAW_DATA] = 'When in the course'
+        in_tuple = ( 
+            crt_dict[EVENT_ATTR_REC_ID], 
+            crt_dict[EVENT_ATTR_EVENT_ID], 
+            crt_dict[EVENT_ATTR_TIME_OCCURRED],
+            crt_dict[EVENT_ATTR_TIME_LOGGED], 
+            crt_dict[EVENT_ATTR_SRC_COMP], 
+            crt_dict[EVENT_ATTR_SRC_LOC],
+            crt_dict[EVENT_ATTR_SRC_LOC_TYPE], 
+            crt_dict[EVENT_ATTR_RPT_COMP], 
+            crt_dict[EVENT_ATTR_RPT_LOC],
+            crt_dict[EVENT_ATTR_RPT_LOC_TYPE], 
+            crt_dict[EVENT_ATTR_EVENT_CNT], 
+            crt_dict[EVENT_ATTR_ELAPSED_TIME],
+            crt_dict[EVENT_ATTR_RAW_DATA_FMT], 
+        crt_dict[EVENT_ATTR_RAW_DATA])
+        
+        te1 = Event.fromDB(in_tuple)
+        self.assertEquals(te1.get_rec_id(), 2)
+        # Can't use any other get methods, since they will try to
+        #  load the Event from the DB is they are not set
+        self.assertEquals(te1.event_id, crt_dict[EVENT_ATTR_EVENT_ID])
+        self.assertEquals(te1.time_occurred, crt_dict[EVENT_ATTR_TIME_OCCURRED])
+        self.assertEquals(te1.time_logged, crt_dict[EVENT_ATTR_TIME_LOGGED])
+        self.assertEquals(te1.src_comp, crt_dict[EVENT_ATTR_SRC_COMP])
+        self.assertEquals(te1.src_loc.get_location(), crt_dict[EVENT_ATTR_SRC_LOC])
+        self.assertEquals(te1.src_loc.get_id(), crt_dict[EVENT_ATTR_SRC_LOC_TYPE])
+        self.assertEquals(te1.rpt_comp, crt_dict[EVENT_ATTR_RPT_COMP])
+        self.assertEquals(te1.rpt_loc, None) # Couldn't create 
+        self.assertEquals(te1.event_cnt, crt_dict[EVENT_ATTR_EVENT_CNT])
+        self.assertEquals(te1.elapsed_time, crt_dict[EVENT_ATTR_ELAPSED_TIME])
+        self.assertEquals(te1.raw_data[EXT_DATA_RAW_DATA], crt_dict[EVENT_ATTR_RAW_DATA])
+        # No associations
+        # Valid because has all required fields
+        self.assertFalse(te1.is_valid())
         return
     
     def testEventMatch(self):
@@ -141,7 +323,7 @@ class EventTest(TealTestCase):
         crt_dict[EVENT_ATTR_ELAPSED_TIME] = 4
         crt_dict[EVENT_ATTR_RAW_DATA_FMT] = long('0x5445535400000001',16)
         crt_dict[EVENT_ATTR_RAW_DATA] = 'When in the course'
-        te1 = teal.Event(in_dict=crt_dict)
+        te1 = teal.Event.fromDict(crt_dict)
         # match(event_id, src_comp, src_loc, rpt_loc, scope)
         # Always matches
         self.assertTrue(te1.match(None, None, None, None, None))
@@ -188,7 +370,7 @@ class EventTest(TealTestCase):
         # Test with no rpt loc
         del crt_dict[EVENT_ATTR_RPT_COMP]
         del crt_dict[EVENT_ATTR_RPT_LOC]
-        te2 = teal.Event(in_dict=crt_dict)
+        te2 = Event.fromDict(crt_dict)
         self.assertFalse(te2.match('Event2', 'SC', chk_loc1, chk_loc1r, 'node')) 
         self.assertTrue(te2.match('Event2', 'SC', chk_loc1, None, 'node')) 
         return
@@ -212,7 +394,7 @@ class EventTest(TealTestCase):
         crt_dict[EVENT_ATTR_ELAPSED_TIME] = 4
         crt_dict[EVENT_ATTR_RAW_DATA_FMT] = long('0x5445535400000001',16)
         crt_dict[EVENT_ATTR_RAW_DATA] = 'When in the course'
-        te1 = teal.Event(in_dict=crt_dict)
+        te1 = Event.fromDict(crt_dict)
         self.assertEquals(te1.get_rec_id(), 72)
         # Can't use any other get methods, since they will try to
         #  load the Event from the DB is they are not set

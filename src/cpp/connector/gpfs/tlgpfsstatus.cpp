@@ -23,6 +23,7 @@
 #include "DbRgInfo.h"
 #include <iostream>
 #include <iomanip>
+#include <sstream>
 
 using namespace std;
 
@@ -41,7 +42,10 @@ void usage(const string &processName)
   cerr<<"    -a                       - print status of all declustered arrays"          <<endl;
   cerr<<"    -p                       - print status of all pdisks"                      <<endl;
   cerr<<"    -v                       - print status of all vdisks"                      <<endl;
-  cerr<<"    -e \"colName=colValue\"  - expression to filter query result"               <<endl;
+  cerr<<"    -e \"colName=colValue\"    - expression to filter query result"             <<endl;
+  cerr<<"                               all healthy entities: -e \"health=healthy\""     <<endl;
+  cerr<<"                               all unhealthy entities: -e \"health=unhealthy\"" <<endl;
+  cerr<<"                               unknown status entities: -e \"health=unknown\""  <<endl;
   cerr<<"    -l                       - print detailed status of a entity"               <<endl;
   cerr<<"    -h                       - print this message"                              <<endl;
 
@@ -193,16 +197,6 @@ int main(int argc, char *argv[])
                 break;
 
             case 'e':
-                if(is_all)
-                {
-                    cerr<<"Option -e can't coexist with -g options!"<<endl;
-                    exit(1);
-                }
-                if(!is_entity)
-                {
-                    cerr<<"Need to be specified with an entity option!"<<endl;
-                    exit(1);
-                }
                 expression = optarg;
                 if(expression == "" || expression.find('=') == string::npos)
                 {
@@ -217,6 +211,19 @@ int main(int argc, char *argv[])
                 colName.erase(colName.begin() + colName.find_last_not_of(' ') + 1, colName.end());
                 colValue.erase(colValue.begin(),colValue.begin() + colValue.find_first_of('=') + 1);
                 colValue.erase(colValue.begin(),colValue.begin() + colValue.find_first_not_of(' '));
+                // Replace string in "health" field with its real integer value in DB table
+                if(!strcmp(colName.c_str(),"health")) 
+                {                                    
+                    ostringstream stat;
+                    if(!strcmp(colValue.c_str(),"healthy"))
+                        stat << TEAL::HEALTHY;
+                    if(!strcmp(colValue.c_str(),"unknown")) 
+                        stat << TEAL::UNKNOWN;
+                    if(!strcmp(colValue.c_str(),"unhealthy")) 
+                        stat << TEAL::UNHEALTHY;
+                    colValue = stat.str();
+                }                                    
+                colValue.erase(colValue.begin(),colValue.begin() + colValue.find_first_not_of(' '));
                 is_expression = true;
                 break;
 
@@ -230,6 +237,21 @@ int main(int argc, char *argv[])
         }
     }
 
+    if(is_all && is_expression)
+    {
+        cerr<<"Option -e can't coexist with -g options!"<<endl;
+        exit(1);
+    }
+    if(!is_entity && is_detailed)
+    {
+        cerr<<"Option -l should be specified with an entity option!"<<endl;
+        exit(1);
+    }
+    if(!is_entity && is_expression)
+    {
+        cerr<<"Option -e should be specified with an entity option!"<<endl;
+        exit(1);
+    }
   
     vector<tlgpfs_cluster_info_t*>* clusters = NULL;
     vector<tlgpfs_node_info_t*>*       nodes = NULL; 

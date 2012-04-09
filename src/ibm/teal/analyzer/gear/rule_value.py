@@ -20,6 +20,7 @@ from ibm.teal.analyzer.gear.control import GCTL_DEFAULT_EVENT_COMP
 from ibm.teal.registry import get_logger
 from ibm.teal.teal_error import XMLParsingError
 import re
+from ibm.teal.util.teal_thread import ThreadKilled
 
 GRVA_TYPE_AS_STRING = ['event_id', 'alert_id', 'comp', 'scope', 'loc', 'ext_dict', 
                        'event', 'set_of_events', 'set_of_event_ids', 'mode', 
@@ -115,6 +116,8 @@ def dump_rule_values(owner, value_defs):
             attr = getattr(owner, name)
             if attr.is_set():
                 outstr += ' {0}="{1}"'.format(name, attr.in_str)
+        except ThreadKilled:
+            raise
         except:
             pass
     return outstr
@@ -251,6 +254,8 @@ class RuleValueStatic(RuleValue):
         elif self.usage_type == GRVA_TYPE_NONZERO_UINT or self.usage_type == GRVA_TYPE_DURATION:
             try:
                 self.value = int(self.in_str)
+            except ThreadKilled:
+                raise
             except:
                 raise XMLParsingError('numeric value string \'{0}\' cannot be converted'.format(self.in_str))
             if self.value == 0:
@@ -332,6 +337,8 @@ class RuleValueDynamic(RuleValue):
         elif self.names[1] == 'ext':
             try:
                 result = event.raw_data[self.names[2]]
+            except ThreadKilled:
+                raise
             except:
                 get_logger().exception('Unable to get {0} for event {1}'.format(self.in_str, event.brief_str()))
                 result = None
@@ -661,6 +668,8 @@ class RuleParms(object):
         for key in self.parm_dict:
             try:
                 out_dict[key] = self.parm_dict[key].get_value()
+            except ThreadKilled:
+                raise
             except:
                 out_dict[key] = None
         return out_dict

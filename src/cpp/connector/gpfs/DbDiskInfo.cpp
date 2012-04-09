@@ -483,10 +483,12 @@ void DbDiskInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* temp, 
    //"status": "Unchanged" "Uninitialized" "NotInUse" "InUse" "Suspended" "BeingFormatted" "BeingAdded" "BeingEmptied" "BeingDeleted" "BeingDeleted-p" "ReferencesBeingRemoved" "BeingReplaced" "Replacement" "Unknown DiskConfigStatus"
    //"availability": "Unchanged" "OK" "Unavailable" "Recovering" "Unknown DiskAvailability"
    //only when "availability"=="OK" and "status" == "InUse", it's healthy
-   if(!strcmp(tmp->availability,"OK") && !strcmp(tmp->status,"InUse"))
+   if(strstr(tmp->availability,"OK") && strstr(tmp->status,"InUse"))
    {
        *tmp->health = HEALTHY;
    }
+   else if(strstr(tmp->status,"unknown")) // free disk's status is unknown
+       *tmp->health = UNKNOWN;
    else
        *tmp->health = UNHEALTHY;
    updateTable(sqlStmt,table,tmp);

@@ -15,6 +15,7 @@ from threading import Timer
 from datetime import datetime
 
 from ibm.teal.registry import get_logger
+from ibm.teal.util.teal_thread import ThreadKilled
 
 
 class ExtendableTimer(object):
@@ -80,6 +81,7 @@ class ExtendableTimer(object):
         get_logger().debug('Canceling timer')
         if self.my_timer is not None:
             self.my_timer.cancel()
+        self.callback = None 
         return
              
     def internal_timeout(self):
@@ -93,7 +95,13 @@ class ExtendableTimer(object):
             self.my_timer.start()
         else:
             self.timeout_end = datetime.now()
-            get_logger().debug('Completed timer {0}'.format(self.timeout_end))
-            self.callback()
+            try:
+                get_logger().debug('Completed timer {0}'.format(self.timeout_end))
+            except ThreadKilled:
+                raise
+            except:
+                pass
+            if self.callback is not None: 
+                self.callback()
         return
         

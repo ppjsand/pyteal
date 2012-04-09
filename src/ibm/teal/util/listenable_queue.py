@@ -12,11 +12,14 @@
 # end_generated_IBM_copyright_prolog
 
 
-from threading import Thread, Event
+from threading import Event
 from Queue import Queue, Empty
 from abc import ABCMeta, abstractmethod
-from ibm.teal.registry import get_logger
+from ibm.teal.registry import get_logger, SHUTDOWN_MODE_DEFERRED,\
+    SERVICE_SHUTDOWN_MODE
 from ibm.teal.control_msg import ControlMsg, CONTROL_MSG_TYPE_END_OF_DATA
+from ibm.teal import registry
+from ibm.teal.util.teal_thread import TealThread
 
 class QueueListener(object):
     '''The QueueListener class is the base class for modules that
@@ -36,13 +39,19 @@ class QueueListener(object):
         
         returns boolean to indicate if listener will process'''
         return False
+    
+    def shutdown_immediate(self):
+        ''' Shutdown immediately 
+            Note: non-immediate shutdown is done by calling notify with an End of Data control message
+        ''' 
+        return
 
 
 class ListenableQueue(Queue):
     '''This class is a Listenable queue.  QueueListeners can be registered
     and will be notified for each item added to the queue
     '''
-
+    
     def __init__(self, name, no_process_callback=None):
         '''Constructor
         
@@ -118,7 +127,7 @@ class ListenableQueue(Queue):
         return
     
     def notify_listeners_SHUTDOWN(self, item):
-        ''' Once shutdown nothing to do '''
+        ''' Once shutdown no longer notify '''
         get_logger().info('{0} received the following item after shutdown: {1}'.format(self.name, str(item)))
         return
     
@@ -130,56 +139,69 @@ class ListenableQueue(Queue):
         get_logger().debug('{0}: Stopping ListenableQueue Watcher'.format(self.name))
         self.watcher.stop()
         
-        get_logger().debug('{0}: Joining ListenableQueue Watcher'.format(self.name))
-        self.watcher.join()
-        
-        get_logger().debug('{0}: Waiting for all listeners to leave'.format(self.name))
-        while(not self.no_listeners_event.is_set()):
-            self.no_listeners_event.wait()
+        if registry.get_service(SERVICE_SHUTDOWN_MODE) == SHUTDOWN_MODE_DEFERRED:   
+            get_logger().debug('{0}: Joining ListenableQueue Watcher'.format(self.name))
+            self.watcher.join()
+            
+            get_logger().debug('{0}: Waiting for all listeners to leave'.format(self.name))
+            while(not self.no_listeners_event.is_set()):
+                self.no_listeners_event.wait()
             
         self.notify_listeners = self.notify_listeners_SHUTDOWN
         get_logger().debug('{0}: Shutdown complete'.format(self.name))
         return
         
-class ListenableQueueWatcher(Thread):
+class ListenableQueueWatcher(TealThread):
     ''' Class to watch the queue and call back when an item is added'''
     
     def __init__(self, queue_to_watch):
         '''Constructor
-         
-           queue to keep an eye on
         '''
         self.queue_to_watch = queue_to_watch
         self.running = True
-        Thread.__init__(self)
+        TealThread.__init__(self)
         return
     
     def run(self):
-        '''Wait for something to come into queue and then call the
-        queue to notify the listeners
+        '''Wait for something to come into queue and then call the queue to notify the listeners
         '''
-        msg = None
-        while self.running:
-            msg = self.queue_to_watch.get()
-            self.queue_to_watch.notify_listeners(msg)
-        
-        # Continue processing messages until indication is received that
-        # no more events will be coming
-        while(True):
-            if (isinstance(msg, ControlMsg) and 
-                msg.msg_type == CONTROL_MSG_TYPE_END_OF_DATA):
-                break
-            try:
-                msg = self.queue_to_watch.get(True,1)
-                self.queue_to_watch.notify_listeners(msg)                
-            except Empty:
-                pass    
+        try:
+            msg = None
+            while self.running:
+                msg = self.queue_to_watch.get()
+                self.queue_to_watch.notify_listeners(msg)
+            
+            # If deferred shutdown, continue processing messages until indication is received that
+            # no more events will be coming
+            if registry.get_service(SERVICE_SHUTDOWN_MODE) == SHUTDOWN_MODE_DEFERRED:
+                while(True):
+                    if (isinstance(msg, ControlMsg) and 
+                        msg.msg_type == CONTROL_MSG_TYPE_END_OF_DATA):
+                        break
+                    try:
+                        msg = self.queue_to_watch.get(True,1)
+                        self.queue_to_watch.notify_listeners(msg)                
+                    except Empty:   # Race condition: running could go false before the EOD msg is put 
+                        pass   
+            # else:  Told to shutdown_immediately by the stop method
+        except:
+            get_logger().exception('Exception in run method')
+        get_logger().debug('End of run method')
         return
     
     def stop(self):
         ''' Prepare to stop watching for events '''
         self.running = False
-        self.queue_to_watch.put(ControlMsg(CONTROL_MSG_TYPE_END_OF_DATA))
+        
+        if registry.get_service(SERVICE_SHUTDOWN_MODE) == SHUTDOWN_MODE_DEFERRED:
+            # put EOD message on the end of the queue 
+            self.queue_to_watch.put(ControlMsg(CONTROL_MSG_TYPE_END_OF_DATA))
+        else: 
+            # Tell listeners to shutdown immediately
+            for listener_method in self.queue_to_watch.listener_methods[:]:
+                listener_method.__self__.shutdown_immediate()
+            # TODO: Workaround until Python 3.x
+            self.kill_thread_using_exception()
         return
             
     

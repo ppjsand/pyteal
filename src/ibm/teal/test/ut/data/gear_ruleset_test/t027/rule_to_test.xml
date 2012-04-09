@@ -1,57 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
+<!-- Convert events straight into alerts -->
 <gear_ruleset>
+<pool_control>
+   <arrival_rate_extension window_min="5" window_max="5" arrival_rate="1" extension="2"/>
+</pool_control>
+<gear_control>
+  <default_event_comp value="CNM"/>
+</gear_control>
 <events>
-   <event id="Event 01" name="ME1" comp="CNM"/>
-   <event id="Event 02" comp="CNM"/>
-   <event id="Event 03" pool_extension_time="3" min_time_in_pool="5" comp="CNM"/>   
-   <event id="Event 04" comp="CNM"/>
-   <event id="Event 05" min_time_in_pool="10" comp="CNM"/>
+   <event id="E0000001" name="E1"/>
+   <event id="E0000002" name="E2"/>
+   <event id="E0000003" name="E3"/>
+   <event id="E0000004" name="E4"/>
+   <event id="E0000005" name="E5"/>
+   <event id="E0000006" name="E6"/>
+   <event id="E0000007" name="E7"/>
+   <event id="E0000008" name="E8"/>
+   <event id="E0000009" name="E9"/>
+   <event id="E0000010" name="E10"/>
+   <event id="E0000011" name="E11"/>
+   <event id="E0000012" name="E12"/>
 </events>
-<constants>
-   <constant name="ME1and3" type="set_of_event_ids" value="ME1,Event 03"/>
-   <constant name="ME5" type="event_id" value="Event 05"/>
+<!--   <constants>
+   <constant name="all_events" value="E1,E2,E3,E4,E5,E6,E7,E8,E9,E10,E11,E12"/> 
 </constants>
+-->
 <analyze>
-   <rule name="Sample Rule alert creation">
-      <description>If Event 01 or 03 create Alert 01</description>
+   <on_error type="location" alert_id='BD00FFF0' event_loc="A:sys##prog##pid#test025"/>
+   <!-- Start base setup  -->
+   <rule name="E2">
       <condition>
-         <or>
-            <any_events num="1" ids="ME1" scope="C:pciSlot" locations="C:MB-SL1" comp="CNM"/>
-            <any_events num="1" ids="Event 03" comp="CNM" ignore_loc="true"/>
-         </or>
+         <event_equals id="E2"/>
       </condition>
       <action>
-        <description>Create alert (and suppress Event 01 and Event 03)</description>
-        <suppress_events ids="ME1and3" comp="CNM" ignore_loc="true"/>
-        <create_alert id="Alert 01"/>
-      </action>
-   </rule>
-   <rule name="Sample Rule alert creation 2">
-      <description>If Event 01 create Alert 01</description>
-      <condition>
-         <or>
-            <any_events num="1" ids="Event 01" comp="CNM" ignore_loc="true"/>
-            <any_events num="1" ids="ME5" comp="CNM" ignore_loc="true"/>
-         </or>
-      </condition>
-      <action>
-        <description>Create alert (and suppress Event 01 and Event 03)</description>
-        <suppress_events events="GEAR[condition_events]"/>
-        <create_alert id="Alert 02"/>
+         <create_alert id="E0000001"/>
       </action>
    </rule>
 </analyze>
-<pool_closure>
-    <rule name="Make everything an alert">
-        <condition>
-           <true/>
-        </condition>
-        <action>
-           <suppress_events events="GEAR[condition_events]"/>
-           <create_alert id="Alert US"/>
-        </action>
-    </rule>
-</pool_closure>
 </gear_ruleset>

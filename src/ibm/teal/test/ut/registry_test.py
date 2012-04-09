@@ -16,14 +16,15 @@ import unittest
 from ibm.teal import Teal
 from ibm.teal import registry
 from ibm.teal.registry import DuplicateKeyError, SERVICE_SHUTDOWN
+from ibm.teal.test.teal_unittest import TealTestCase
 
 SERVICE_REGISTRY_TEST ='registry_test'
 
-class RegistryTest(unittest.TestCase):
+class RegistryTest(TealTestCase):
     
         
     def setUp(self):
-        Teal('data/common/configurationtest.conf', 'stderr' , msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
+        Teal('data/common/configurationtest.conf', 'stderr' , msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
     
     def tearDown(self):
         registry.get_service(SERVICE_SHUTDOWN).shutdown()

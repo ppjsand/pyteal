@@ -51,7 +51,8 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     if(behavior > 1)
         log_debug("Need to log this event!");
 
-    std::string srcloc(GPFSEventHandler::getEventHandler()->getCluster()); //srcloc  == clustername 
+    std::string srcloc("C:"); //srcloc  == C:
+    srcloc += GPFSEventHandler::getEventHandler()->getCluster(); //srcloc  == C:clustername 
     std::string rptloc(GPFSEventHandler::getEventHandler()->getHostName());  //rptloc == nodename
     struct timeval creation_time = evt->getEvent()->getCreationTime();
     
@@ -69,7 +70,7 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     cbe->rpt_comp             = "TEAL";
     cbe->rpt_loc_type         = "A";    
 
-    srcloc                   += ":"; //srcloc == clustername:
+    srcloc                   += "|RG:"; //srcloc == C:clustername|RG:
     rptloc                   += "##"; //rptloc == nodename##
     rptloc                   += GPFSEventHandler::getEventHandler()->getProcName(); //rptloc == nodename##tlgpfsmon
     rptloc                   += "##";// rptloc == nodename##tlgpfsmon##
@@ -84,7 +85,7 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         RgTakeoverEvent* event       = (RgTakeoverEvent*)evt->getEvent();    
         cbe->event_id                = "GP000016";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = NULL;
@@ -103,7 +104,7 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         RgRelinquishEvent* event     = (RgRelinquishEvent*)evt->getEvent();    
         cbe->event_id                = "GP000017";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = NULL;
@@ -122,7 +123,7 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         RgOpenFailedEvent* event     = (RgOpenFailedEvent*)evt->getEvent();    
         cbe->event_id                = "GP000018";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = NULL;
@@ -140,7 +141,7 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         RgPanicEvent* event          = (RgPanicEvent*)evt->getEvent();    
         cbe->event_id                = "GP000019";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = NULL;
@@ -159,11 +160,11 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         PdFailedEvent* event         = (PdFailedEvent*)evt->getEvent();    
         cbe->event_id                = "GP000020";
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
-        srcloc                      += ":";  //srcloc == clustername:rgname:
-        srcloc                      += event->getDaName();  //srcloc == clustername:rgname:daname
-        srcloc                      += ":";  //srcloc == clustername:rgname:daname:
-        srcloc                      += event->getPdName();  //srcloc == clustername:rgname:daname:pdiskname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
+        srcloc                      += "|DA:";  //srcloc == C:clustername|RG:rgname|DA:
+        srcloc                      += event->getDaName();  //srcloc == C:clustername|RG:rgname|DA:daname
+        srcloc                      += "|PD:";  //srcloc == C:clustername|RG:rgname|DA:daname|PD:
+        srcloc                      += event->getPdName();  //srcloc == C:clustername|RG:rgname|DA:daname|PD:pdiskname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = event->getLocation();
@@ -180,11 +181,11 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         PdRecoveredEvent* event      = (PdRecoveredEvent*)evt->getEvent();    
         cbe->event_id                = "GP000021";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
-        srcloc                      += ":";  //srcloc == clustername:rgname:
-        srcloc                      += event->getDaName();  //srcloc == clustername:rgname:daname
-        srcloc                      += ":";  //srcloc == clustername:rgname:daname:
-        srcloc                      += event->getPdName();  //srcloc == clustername:rgname:daname:pdiskname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
+        srcloc                      += "|DA:";  //srcloc == C:clustername|RG:rgname|DA:
+        srcloc                      += event->getDaName();  //srcloc == C:clustername|RG:rgname|DA:daname
+        srcloc                      += "|PD:";  //srcloc == C:clustername|RG:rgname|DA:daname|PD:
+        srcloc                      += event->getPdName();  //srcloc == C:clustername|RG:rgname|DA:daname|PD:pdiskname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = event->getLocation();
@@ -202,11 +203,11 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         PdReplacePdiskEvent* event   = (PdReplacePdiskEvent*)evt->getEvent();    
         cbe->event_id                = "GP000022";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
-        srcloc                      += ":";  //srcloc == clustername:rgname:
-        srcloc                      += event->getDaName();  //srcloc == clustername:rgname:daname
-        srcloc                      += ":";  //srcloc == clustername:rgname:daname:
-        srcloc                      += event->getPdName();  //srcloc == clustername:rgname:daname:pdiskname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
+        srcloc                      += "|DA:";  //srcloc == C:clustername|RG:rgname|DA:
+        srcloc                      += event->getDaName();  //srcloc == C:clustername|RG:rgname|DA:daname
+        srcloc                      += "|PD:";  //srcloc == C:clustername|RG:rgname|DA:daname|PD:
+        srcloc                      += event->getPdName();  //srcloc == C:clustername|RG:rgname|DA:daname|PD:pdiskname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = event->getLocation();
@@ -224,11 +225,11 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         PdPathFailedEvent* event     = (PdPathFailedEvent*)evt->getEvent();    
         cbe->event_id                = "GP000023";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
-        srcloc                      += ":";  //srcloc == clustername:rgname:
-        srcloc                      += event->getDaName();  //srcloc == clustername:rgname:daname
-        srcloc                      += ":";  //srcloc == clustername:rgname:daname:
-        srcloc                      += event->getPdName();  //srcloc == clustername:rgname:daname:pdiskname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
+        srcloc                      += "|DA:";  //srcloc == C:clustername|RG:rgname|DA:
+        srcloc                      += event->getDaName();  //srcloc == C:clustername|RG:rgname|DA:daname
+        srcloc                      += "|PD:";  //srcloc == C:clustername|RG:rgname|DA:daname|PD:
+        srcloc                      += event->getPdName();  //srcloc == C:clustername|RG:rgname|DA:daname|PD:pdiskname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = event->getLocation();
@@ -245,9 +246,9 @@ TLGPFS_ERR_T GPFSPerseusEventLogging::action(GPFSEvent* evt)
     {
         DaRebuildFailedEvent* event  = (DaRebuildFailedEvent*)evt->getEvent();    
         cbe->event_id                = "GP000024";        
-        srcloc                      += event->getRgName();  //srcloc == clustername:rgname
-        srcloc                      += ":";  //srcloc == clustername:rgname:
-        srcloc                      += event->getDaName();  //srcloc == clustername:rgname:daname
+        srcloc                      += event->getRgName();  //srcloc == C:clustername|RG:rgname
+        srcloc                      += "|DA:";  //srcloc == C:clustername|RG:rgname|DA:
+        srcloc                      += event->getDaName();  //srcloc == C:clustername|RG:rgname|DA:daname
         cbe->src_loc                 = (char*)srcloc.c_str();
         gpfsPerseusEvent->node_name  = event->getNodeName();
         gpfsPerseusEvent->location   = NULL;

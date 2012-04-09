@@ -87,18 +87,18 @@ void Thread::schedule(void (*task)(void),int interval)
     
         if (retval = pthread_mutex_lock(&mutex))
         {
-            log_info("pthread_mutex_lock failed!");
+            log_debug("pthread_mutex_lock failed!");
     
         }
         if (retval = pthread_cond_timedwait(&cond, &mutex, &to))
         {
-            log_info("Polling interval time out, scheduled polling!");
+            log_debug("Polling interval time out, scheduled polling!");
             
         }
         else
         {
             to.tv_sec -= interval;
-            log_info("On demand polling!");
+            log_debug("On demand polling!");
         }        
         task();
         if (retval = pthread_mutex_unlock(&mutex))

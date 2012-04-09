@@ -40,8 +40,8 @@ enum RgInfoColumnSizes
 {
     CLUSTER_ID_SIZE      = 128,
     RG_NAME_SIZE         = 64,
-    RG_ACT_SVR_SIZE      = 32,
-    RG_SVRS_SIZE         = 64,
+    RG_ACT_SVR_SIZE      = 64,
+    RG_SVRS_SIZE         = 128,
     RG_ID_SIZE           = 20,
     RG_DAS_SIZE          = 4,
     RG_VDISKS_SIZE       = 4,

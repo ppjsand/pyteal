@@ -25,12 +25,14 @@ public:
     static void get_time_stamp(struct timeval* in,char* out);
     static void timeval_to_char(struct timeval* in,char* out);
     static char* int_to_char(char* out, int size, unsigned int* in);
+    static char* get_hostname_by_ip(char* hostname, int size, char* ip);
 private:
     static TLGPFS_ERR_T Daemonize();
     static void ProcessSig();
     static void sig_term(int);
     static TLGPFS_ERR_T checkMultiInstance();
     static TLGPFS_ERR_T checkRoot();
+    static void setEnvForLargeCluster();
     static TLGPFS_ERR_T checkGpfsDaemon();
     
 };

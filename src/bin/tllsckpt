@@ -25,6 +25,7 @@ _ = t.lgettext
 
 import sys
 import csv
+import optparse
 
 from ibm.teal import Teal
 from ibm.teal import registry
@@ -92,7 +93,7 @@ if __name__ == '__main__':
     t = Teal(None, logFile='$TEAL_LOG_DIR/tllsckpt.log', msgLevel='warning', data_only=True)
 
     # Parse the command line        
-    parser = command.TealOptionParser('usage: %prog [options]')
+    parser = optparse.OptionParser()
     parser.add_option('-n', '--name',
                         type='string',
                         action='store',

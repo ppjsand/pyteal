@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -19,7 +19,7 @@ class EventMonitorNoop(EventMonitor):
     This monitor is used for TEAL framework testing
     '''
     
-    def __init__(self,restart,config_dict):
+    def __init__(self,config_dict):
         '''
         Constructor
         '''

@@ -135,6 +135,22 @@ class NoiseAlertFilterTest(TealTestCase):
         
         t.shutdown()
         
+    def testNegativeAlertIdMatch(self):
+        ''' Runs a noise filter with all but one kind of alert id (negative match of alert id)'''
+        self.prepare_db()
+        t = teal.Teal('data/alert_filter_test/test_12.conf',msgLevel=self.msglevel,logFile='stderr')
+        
+        j = Journal('AlertAnalyzer', 'data/alert_filter_test/inject_DQ_alerts.json')
+        j.inject_queue(registry.get_service(SERVICE_ALERT_DELIVERY_Q))
+    
+        alj = find_listener()
+        alj.journal.wait_for_entries(3)
+        
+        out_j = Journal('AlertListener', 'data/alert_filter_test/negative_alerts.json')
+        self.assertTrue(alj.journal.deep_match(out_j, ignore_times=True))
+        
+        t.shutdown()
+        
 class AnalyzerNameFilterTest(TealTestCase):
     def testEmptyConfig(self):
         ''' Configure AnalyzerNameFilter without any parms '''
@@ -184,7 +200,7 @@ class AnalyzerNameFilterTest(TealTestCase):
     def testAnalyzers(self):
         ''' Validate functionality of both analyzer types '''
         self.prepare_db()
-        t = teal.Teal('data/alert_filter_test/test_11.conf',msgLevel='info',logFile='stderr')
+        t = teal.Teal('data/alert_filter_test/test_11.conf',msgLevel=self.msglevel,logFile='stderr')
         j = Journal('AlertAnalyzer', 'data/alert_filter_test/inject_DQ_alerts.json')
         j.inject_queue(registry.get_service(SERVICE_ALERT_DELIVERY_Q))
     

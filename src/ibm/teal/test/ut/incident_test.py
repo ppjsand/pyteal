@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -17,6 +17,7 @@ from datetime import datetime
 from ibm import teal
 from ibm.teal.registry import get_logger
 from ibm.teal.incident import Incident
+from ibm.teal.test.teal_unittest import TealTestCase
 
 
 class SampleIncident1(Incident):
@@ -75,12 +76,13 @@ class SampleIncident1(Incident):
         return
 
     
-class TestIncidentsBasic(unittest.TestCase):
+class TestIncidentsBasic(TealTestCase):
     
     def setUp(self):
-        if get_logger() is None: 
-            teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
-        return
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, data_only=True, commit_alerts=False, commit_checkpoints=False)
+    
+    def tearDown(self):
+        self.teal.shutdown()
     
     def testCreate1(self):
         '''Test that basic creation works

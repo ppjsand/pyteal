@@ -5,59 +5,66 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
 #
 # end_generated_IBM_copyright_prolog
 
-# locale setup
-import os
+import errno
 import gettext
+import glob
+import logging
+import optparse
+import os
+import signal
+import stat
+import string
+import sys
+import time
+from datetime import datetime
+#from logging.handlers import RotatingFileHandler
+from logging import handlers              # Do not remove
+from stat import S_IWUSR
+
+from ibm.teal import registry
+from ibm.teal.alert import create_teal_alert, TEAL_ALERT_ID_TEAL_STARTED
+from ibm.teal.alert_delivery import AlertDelivery
+from ibm.teal.alert_mgr import AlertMgr
 from ibm.teal.checkpoint_mgr import CheckpointMgr
+from ibm.teal.configuration import CONFIG_EVENT_ANALYZERS, CONFIG_ALERT_ANALYZERS, CONFIG_ALERT_FILTERS,CONFIG_ALERT_LISTENERS, CONFIG_DB_INTERFACE,CONFIG_EVENT_MONITORS,CONFIG_LOCATION, CONFIG_PACKAGE
+from ibm.teal.configuration import Configuration , CONFIG_ENVIRONMENT
 from ibm.teal.event import Event
+from ibm.teal.location import LocationService
+from ibm.teal.metadata import Metadata, META_TYPE_EVENT, META_TYPE_ALERT
+from ibm.teal.registry import SERVICE_EVENT_MONITOR, SERVICE_DB_INTERFACE, SERVICE_LOCATION, SERVICE_SHUTDOWN, SERVICE_HISTORIC_QUERY,\
+    SHUTDOWN_MODE_DEFERRED, SHUTDOWN_MODE_IMMEDIATE, SERVICE_SHUTDOWN_MODE
+from ibm.teal.registry import SERVICE_EVENT_Q, SERVICE_ALERT_ANALYZER_Q, SERVICE_ALERT_DELIVERY_Q, SERVICE_ALERT_DELIVERY, SERVICE_CONFIGURATION, SERVICE_ALERT_METADATA 
+from ibm.teal.registry import TEAL_LOG_DIR, TEAL_CONF_DIR, TEAL_ROOT_DIR, TEAL_DATA_DIR  
+from ibm.teal.registry import get_logger, SERVICE_LOGGER, SERVICE_LOG_FILE, SERVICE_MSG_LEVEL,\
+    SERVICE_EVENT_METADATA, SERVICE_RUN_MODE, RUN_MODE_REALTIME,\
+    RUN_MODE_HISTORIC, SERVICE_ALERT_MGR, SERVICE_CHECKPOINT_MGR,\
+    SERVICE_TIME_MODE
+from ibm.teal.shutdown import Shutdown
+from ibm.teal.teal_error import TealError, ConfigurationError
+from ibm.teal.util import command
+from ibm.teal.util.listenable_queue import ListenableQueue
+
+# locale setup
 curdir = os.path.abspath(os.path.dirname(__file__))
 localedir = os.path.join(curdir, '..', 'locale')
 t = gettext.translation('messages', localedir, fallback=True)
 _ = t.lgettext
 
-import logging
-#from logging.handlers import RotatingFileHandler
-import sys
-import stat
-import errno
-import signal
-import glob
-import string
-import time
-from datetime import datetime
-from stat import S_IWUSR
-
-from ibm.teal.alert import create_teal_alert, TEAL_ALERT_ID_TEAL_STARTED
-from ibm.teal import registry
-from ibm.teal.teal_error import TealError, ConfigurationError
-from ibm.teal.registry import get_logger, SERVICE_LOGGER, SERVICE_LOG_FILE, SERVICE_MSG_LEVEL,\
-    SERVICE_EVENT_METADATA, SERVICE_RUN_MODE, RUN_MODE_REALTIME,\
-    RUN_MODE_HISTORIC, SERVICE_ALERT_MGR, SERVICE_CHECKPOINT_MGR,\
-    SERVICE_TIME_MODE
-from ibm.teal.registry import SERVICE_EVENT_Q, SERVICE_ALERT_ANALYZER_Q, SERVICE_ALERT_DELIVERY_Q, SERVICE_ALERT_DELIVERY, SERVICE_CONFIGURATION, SERVICE_ALERT_METADATA 
-from ibm.teal.registry import SERVICE_EVENT_MONITOR, SERVICE_DB_INTERFACE, SERVICE_LOCATION, SERVICE_SHUTDOWN, SERVICE_HISTORIC_QUERY
-from ibm.teal.registry import TEAL_LOG_DIR, TEAL_CONF_DIR, TEAL_ROOT_DIR, TEAL_DATA_DIR  
-from ibm.teal.util.listenable_queue import ListenableQueue
-from ibm.teal.configuration import Configuration 
-from ibm.teal.configuration import CONFIG_EVENT_ANALYZERS, CONFIG_ALERT_ANALYZERS, CONFIG_ALERT_FILTERS,CONFIG_ALERT_LISTENERS, CONFIG_DB_INTERFACE,CONFIG_EVENT_MONITORS,CONFIG_LOCATION, CONFIG_PACKAGE
-from ibm.teal.alert_delivery import AlertDelivery
-from ibm.teal.location import LocationService
-from ibm.teal.metadata import Metadata, META_TYPE_EVENT, META_TYPE_ALERT
-from ibm.teal.shutdown import Shutdown
-from ibm.teal.alert_mgr import AlertMgr
-from ibm.teal.util import command
-
+# Constants
 TEAL_CONF_FILE = 'teal.conf'
 TEAL_LOG_FILE = 'teal.log'
 TEAL_RUN_MODE_REALTIME = 'realtime'
 TEAL_RUN_MODE_HISTORIC = 'historic'
+
+TEAL_EVENT_Q_NOT_ANALYZED_LOG_LEVEL = 'TEAL_EVENT_Q_NOT_ANALYZED_LOG_LEVEL'
+TEAL_SHUTDOWN_MODE = 'TEAL_SHUTDOWN_MODE'
 
 # Query fields, operations and list information for command line parser
 qry_info = [('rec_id',command.EQUALITY_OPS,True,command.FIELD_TYPE_INT),
@@ -72,6 +79,7 @@ qry_info = [('rec_id',command.EQUALITY_OPS,True,command.FIELD_TYPE_INT),
         ('rpt_scope',['='],False,command.FIELD_TYPE_STRING),
        ]
     
+    
 class TealLogger(logging.Logger):
     ''' Simple logger class so that we only register one handler at a time.
     
@@ -85,7 +93,7 @@ class TealLogger(logging.Logger):
     
     def addHandler(self, hdlr):
         ''' Remove the current handler and replace with the requested handler '''
-        if (self.handler is not None):
+        if self.handler is not None:
             logging.Logger.removeHandler(self, self.handler)
 
         self.handler = hdlr
@@ -131,99 +139,112 @@ class Teal:
         @param use_time_occurred: Use time occurred instead of time logged for analysis 
         
         """
-        
+        os.umask(0o002) # Set the umask for files created so group users can access too
         log_str_list = []
-
-        self.data_only = data_only
-        self.daemon_mode = daemon_mode
+        
+        self.data_only = data_only  # Needed for shutdown
         
         # Initialize the registry. This will be used by subsequent initialization
         self.init_reg_service()
-
+            
         # Register a shutdown service for users
+        registry.register_service(SERVICE_SHUTDOWN_MODE, SHUTDOWN_MODE_DEFERRED)
         registry.register_service(SERVICE_SHUTDOWN, Shutdown(self.shutdown))
-
-        # Initialize the TEAL directories and environment
-        self.init_environment()
         
-        # Initialize the logging for the environment
+        # Setup logging with temporary handler
+        #   Determine if prefix should be used and if so, which one 
         if run_mode == TEAL_RUN_MODE_HISTORIC:
             if commit_alerts == True:
                 extra_log_id = 'C' + extra_log_id
             else:
                 extra_log_id = 'H' + extra_log_id
-        self.init_log_service(logFile, msgLevel, extra_log_id)
+        self.init_temp_log_service(msgLevel, extra_log_id)
+        
         get_logger().info("******* TEAL({0}) Startup initiated on {1}".format(id(self), datetime.now()))
         log_str_list.append('\tMessage level: {0}'.format(repr(registry.get_service(SERVICE_MSG_LEVEL))))
-        log_str_list.append('\tLog file: {0}'.format(repr(registry.get_service(SERVICE_LOG_FILE))))
+        get_logger().info(log_str_list[-1])
         
         try:
             # Initialize the mode
-            self.init_run_mode(run_mode, historic_qry)
+            self.init_run_mode(run_mode)
             log_str_list.append('\tRun mode: {0}'.format(registry.get_service(SERVICE_RUN_MODE)))
-            if historic_qry is not None and len(historic_qry) > 0:
-                log_str_list.append('\t   Query: {0}'.format(historic_qry))
-                
-            if use_time_occurred == True:
-                registry.register_service(SERVICE_TIME_MODE, 'time_occurred')
-                log_str_list.append('\t   Time mode = time occurred')
-            else:
-                registry.register_service(SERVICE_TIME_MODE, 'time_logged')
+            get_logger().info(log_str_list[-1])
+    
+            # Initialize the TEAL environment that can't be changed in the configuration file 
+            self.init_non_configurable_environment()
             
             # Read in the configuration files and prepare it for use
             config_str = self.init_cfg_service(configFile)
             log_str_list.append('\tConfiguration: {0}'.format(config_str))
-    
+            get_logger().info(log_str_list[-1])
+
+            # Initialize the rest of the TEAL environment which can be changed in the configuration file 
+            self.init_configurable_environment(run_mode)
+            
+            # Setup logging to the actual log
+            self.init_actual_log_service(logFile)
+            log_str_list.append('\tLog file: {0}'.format(repr(registry.get_service(SERVICE_LOG_FILE))))
+            get_logger().info(log_str_list[-1])
+        
+            if historic_qry is not None and len(historic_qry) > 0:
+                log_str_list.append('\t   Query: {0}'.format(historic_qry))
+                get_logger().info(log_str_list[-1])
+                
+            if use_time_occurred == True:
+                registry.register_service(SERVICE_TIME_MODE, 'time_occurred')
+                log_str_list.append('\t   Time mode = time occurred')
+                get_logger().info(log_str_list[-1])
+            else:
+                registry.register_service(SERVICE_TIME_MODE, 'time_logged')
+            
             # Create the location code service
-            self.init_location_service()
+            self.init_location_service(run_mode)
                 
             # Load the metadata
-            self.init_metadata_service()
+            self.init_metadata_service(run_mode)
             
             # Initialize the DB interface so persistence and monitor can use
-            self.init_db_interface()
+            self.init_db_interface(daemon_mode, run_mode)
             
             # Initialize the persistence services
             self.init_persistence_services(commit_alerts)
     
+            # Validate the historic query string
+            registry.register_service(SERVICE_HISTORIC_QUERY, command.validate_qry_str(qry_info, historic_qry))
+            
             if (not data_only):
                 # Initialize Checkpointing service
                 self.init_checkpoint_service(commit_checkpoints, restart)
                 
                 # Build the TEAL event/alert processing pipeline
-                pipe_str_list = self.init_processing_pipe()
+                pipe_str_list = self.init_processing_pipe(run_mode)
                 if len(pipe_str_list) > 0:
                     log_str_list.append('\tPipeline plug-ins: {0}'.format(', '.join(pipe_str_list)))
+                    get_logger().info(log_str_list[-1])
                 else:
                     log_str_list.append('\tPipeline plug-ins: --None--')
+                    get_logger().info(log_str_list[-1])
                 
             # Record startup information
             #   Note before monitor because monitor may start processing immediately 
-            # Record in log 
-            for log_str in log_str_list:
-                get_logger().info(log_str)
-
             if ((daemon_mode == True) and not data_only) or (commit_alerts == True and run_mode == TEAL_RUN_MODE_HISTORIC):
                 # Create TEAL started alert
                 create_teal_alert(TEAL_ALERT_ID_TEAL_STARTED, 'TEAL started', '; '.join(log_str_list), recommendation='None')
 
             if (not data_only):
                 # Start the monitor.
-                self.init_monitor(restart)
+                self.init_monitor(run_mode)
                 
             get_logger().info('TEAL startup complete')
             
         except:
             get_logger().exception('TEAL startup failed')
             raise 
-        
-        return
     
     def init_reg_service(self):
         """ Initialize the registry service
         """
         registry.clear()
-        return
 
     def test_dir(self, aDir, perm=stat.S_IRUSR):
         mode = os.stat(aDir).st_mode
@@ -235,46 +256,117 @@ class Teal:
         else:
             raise IOError, (errno.ENOTDIR,"Not directory: {0}".format(aDir))
             
-        
-    def init_environment(self):
-        ''' Initialize the directory paths used within TEAL'''
-        # Get any overrides from the environment first
-        root_dir = os.environ.get(TEAL_ROOT_DIR, os.path.join(os.sep,'opt','teal'))
-        abs_root_dir = os.path.abspath(root_dir)
-        self.test_dir(abs_root_dir)
-               
+    def init_non_configurable_environment(self):
+        ''' Set the environment variables that cannot be changed as part of the configuration files '''
+        # Currently only the location of the configuration file can't be set
         conf_dir = os.environ.get(TEAL_CONF_DIR, os.path.join(os.sep,'etc'))
         abs_conf_dir = os.path.abspath(conf_dir)
         self.test_dir(abs_conf_dir)
-    
-        data_dir = os.environ.get(TEAL_DATA_DIR, os.path.join(root_dir,'data'))
+        registry.register_service(TEAL_CONF_DIR, abs_conf_dir)
+        
+    def init_configurable_environment(self, run_mode):
+        ''' Initialize the configurable environment (including directory paths other than config) used within TEAL
+        
+        Order of priority:
+         * Environment variable
+         * Configuration File
+         * Default value 
+         
+        Directory paths are set into special registry entries.   Other environment settings will be pushed out 
+        environment.
+        '''
+        # set default values
+        teal_root_dir = os.path.join(os.sep,'opt','teal')
+        teal_data_dir = None
+        teal_log_dir = os.path.join(os.sep,'var','log','teal')
+        
+        self.event_not_analyzed_log_method = get_logger().warning
+        tmp_event_q_not_analyzed_log_level = 'warning'
+        tmp_shutdown_mode = SHUTDOWN_MODE_DEFERRED
+
+        # Get configuration environment stanza options and process
+        cf_reg = registry.get_service(SERVICE_CONFIGURATION)
+        entries = cf_reg.get_active_sections(CONFIG_ENVIRONMENT, run_mode, name_required=False, singleton=True)
+        if len(entries) != 0:
+            section = entries[0][0]
+
+            # iterate through the options
+            for opt_name, opt_value in cf_reg.items(section):
+                if opt_name == TEAL_ROOT_DIR:
+                    teal_root_dir = opt_value
+                elif opt_name == TEAL_DATA_DIR:
+                    teal_data_dir = opt_value
+                elif opt_name == TEAL_LOG_DIR:
+                    teal_log_dir = opt_value
+                elif opt_name == TEAL_CONF_DIR:
+                    raise ConfigurationError('Option \'{0}\' is not allowed in the \'{1}\' stanza'.format(TEAL_CONF_DIR, CONFIG_ENVIRONMENT))
+                elif opt_name == TEAL_EVENT_Q_NOT_ANALYZED_LOG_LEVEL:
+                    tmp_event_q_not_analyzed_log_level = opt_value
+                elif opt_name == TEAL_SHUTDOWN_MODE:
+                    tmp_shutdown_mode = opt_value
+                else:
+                    # see if already set
+                    if os.environ.get(opt_name, None) is None:
+                        # Set it in the python environment
+                        os.environ[opt_name] = opt_value
+                
+        # Now see if the dirs are overridden in the environment 
+        root_dir = os.environ.get(TEAL_ROOT_DIR, teal_root_dir)
+        abs_root_dir = os.path.abspath(root_dir)
+        self.test_dir(abs_root_dir)
+        
+        # Default data dir is relative to the root dir
+        if teal_data_dir is None:
+            teal_data_dir = os.path.join(root_dir,'data')
+               
+        data_dir = os.environ.get(TEAL_DATA_DIR, teal_data_dir)
         abs_data_dir = os.path.abspath(data_dir)
         self.test_dir(abs_data_dir)
         
-        log_dir =  os.environ.get(TEAL_LOG_DIR,  os.path.join(os.sep,'var','log','teal'))
+        log_dir =  os.environ.get(TEAL_LOG_DIR, teal_log_dir)
         abs_log_dir = os.path.abspath(log_dir)
         self.test_dir(abs_log_dir, stat.S_IRUSR|S_IWUSR)
         
         # Log them in the registry for usage throughout the framework
         registry.register_service(TEAL_ROOT_DIR, abs_root_dir)
-        registry.register_service(TEAL_CONF_DIR, abs_conf_dir)
+        os.environ[TEAL_ROOT_DIR] = abs_root_dir
         registry.register_service(TEAL_DATA_DIR, abs_data_dir)
+        os.environ[TEAL_DATA_DIR] = abs_data_dir
         registry.register_service(TEAL_LOG_DIR, abs_log_dir)
-        return 
+        os.environ[TEAL_LOG_DIR] = abs_log_dir
+        
+        # See if the Event Q not analyzed log level overridden
+        tmp_event_q_not_analyzed_log_level = os.environ.get(TEAL_EVENT_Q_NOT_ANALYZED_LOG_LEVEL, tmp_event_q_not_analyzed_log_level)
+        if tmp_event_q_not_analyzed_log_level == 'debug':
+            self.event_not_analyzed_log_method = get_logger().debug
+        elif tmp_event_q_not_analyzed_log_level == 'info':
+            self.event_not_analyzed_log_method = get_logger().info
+        elif tmp_event_q_not_analyzed_log_level == 'warning':
+            self.event_not_analyzed_log_method = get_logger().warning
+        elif tmp_event_q_not_analyzed_log_level == 'error':
+            self.event_not_analyzed_log_method = get_logger().error
+        elif tmp_event_q_not_analyzed_log_level == 'critical':
+            self.event_not_analyzed_log_method = get_logger().critical
+        else:
+            raise ConfigurationError('A value of \'{0}\' is not supported for option \'{1}\' in the \'{2}\'stanza'.format(tmp_event_q_not_analyzed_log_level, TEAL_EVENT_Q_NOT_ANALYZED_LOG_LEVEL, CONFIG_ENVIRONMENT))
 
-    def init_run_mode(self, run_mode, qry):
-        # Validate the run mode
+        # Shutdown mode processing
+        if run_mode == RUN_MODE_HISTORIC:
+            tmp_shutdown_mode = SHUTDOWN_MODE_DEFERRED
+        else:
+            tmp_shutdown_mode = os.environ.get(TEAL_SHUTDOWN_MODE, tmp_shutdown_mode)
+            if tmp_shutdown_mode != SHUTDOWN_MODE_DEFERRED and tmp_shutdown_mode != SHUTDOWN_MODE_IMMEDIATE:
+                raise ConfigurationError('A value of \'{0}\' is not supported for environment variable \'{1}\''.format(tmp_shutdown_mode, TEAL_SHUTDOWN_MODE))
+        registry.unregister_service(SERVICE_SHUTDOWN_MODE)          
+        registry.register_service(SERVICE_SHUTDOWN_MODE, tmp_shutdown_mode)          
+
+    def init_run_mode(self, run_mode):
+        ''' Validate the run mode
+        '''
         if run_mode != RUN_MODE_REALTIME and run_mode != RUN_MODE_HISTORIC:
             raise ConfigurationError('Unrecognized run mode specified: {0}'.format(run_mode))
-        
         # Save in registry
         registry.register_service(SERVICE_RUN_MODE, run_mode)
-        
-        # Configure any additional mode data
-        if run_mode == RUN_MODE_HISTORIC:
-            registry.register_service(SERVICE_HISTORIC_QUERY, qry)
-        return
-
                 
     def init_cfg_service(self, config_file):
         """ Initialize the configuration service
@@ -298,37 +390,21 @@ class Teal:
             conf_files = []    
  
         if not conf_files:
-            print 'Configuration file(s) not found ' + config_file
-            raise ValueError, 'Configuration file(s) not found: {0}'.format(config_file)
+            raise ConfigurationError('Configuration file/directory specification of \'{0}\' resulted in no configuration files'.format(config_file))
                 
         registry.register_service(SERVICE_CONFIGURATION, Configuration(conf_files))
         return conf_str
     
-    def init_log_service(self, log_file, msg_level, extra_log_id):
-        """ Initialize the logging service.
-        """
+    def init_temp_log_service(self, msg_level, extra_log_id):
+        """ Initialize the temporary logging service to record logs until know where to log to
         
+            This is done by using a Memory handler temporarily
+        """
         # Create and register the logger
         logging.setLoggerClass(TealLogger)
         logger = logging.getLogger('tealLogger')
         
-        # If log file is not specified, set to default path/file
-        if log_file is None:
-            log_dir = registry.get_service(TEAL_LOG_DIR)
-            log_file = os.path.join(log_dir,TEAL_LOG_FILE)
-            # TODO: python bug 4749 in RotatingFileHandler
-            #hdlr = RotatingFileHandler(log_file, maxBytes=1*1024*1024, backupCount=5)
-            hdlr = logging.FileHandler(log_file)
-        elif log_file == 'stderr':
-            hdlr = logging.StreamHandler(sys.stderr)
-        elif log_file == 'stdout':
-            hdlr = logging.StreamHandler(sys.stdout)
-        else:
-            # Allow the user to symbolically specify the TEAL_LOG_DIR in their file name
-            template_file = string.Template(log_file)
-            log_dir = registry.get_service(TEAL_LOG_DIR)
-            full_filename = template_file.substitute({TEAL_LOG_DIR:log_dir})
-            hdlr = logging.FileHandler(full_filename)
+        hdlr = logging.handlers.MemoryHandler(100, logging.NOTSET, target=None)
 
         # Set the logging format for this logger
         use_eli = extra_log_id
@@ -336,13 +412,11 @@ class Teal:
             use_eli = extra_log_id[:4]
             use_eli = use_eli.strip()
             use_eli = use_eli + ':'
-            
+                    
         log_format =  "%(asctime)-15s [%(process)d:%(thread)d] {0}%(module)s - %(levelname)s: %(message)s".format(use_eli)
         formatter = logging.Formatter(log_format)
         hdlr.setFormatter(formatter)
         logger.addHandler(hdlr)
-        
-        
         # Define the string levels and set them in the logger
         levels = {'debug': logging.DEBUG,
                   'info': logging.INFO,
@@ -353,24 +427,59 @@ class Teal:
         # Set the lowest level of message to log
         level = levels.get(msg_level, logging.NOTSET)
         logger.setLevel(level)
+        
         registry.register_service(SERVICE_LOGGER, logger)
         registry.register_service(SERVICE_MSG_LEVEL, msg_level)
+        
+    def init_actual_log_service(self, log_file):
+        """ Initialize the actual logging service and roll in the entries in the temporary log 
+        """
+        # Get the current logger (which has the temporary handler)
+        logger = registry.get_service(SERVICE_LOGGER)
+        
+        # Create the actual handler 
+        # If log file is not specified, set to default path/file
+        if log_file is None:
+            log_dir = registry.get_service(TEAL_LOG_DIR)
+            log_file = os.path.join(log_dir,TEAL_LOG_FILE)
+            # TODO: python bug 4749 in RotatingFileHandler
+            #actual_hdlr = RotatingFileHandler(log_file, maxBytes=1*1024*1024, backupCount=5)
+            actual_hdlr = logging.FileHandler(log_file)
+        elif log_file == 'stderr':
+            actual_hdlr = logging.StreamHandler(sys.stderr)
+        elif log_file == 'stdout':
+            actual_hdlr = logging.StreamHandler(sys.stdout)
+        else:
+            # Allow the user to symbolically specify the TEAL_LOG_DIR in their file name
+            template_file = string.Template(log_file)
+            log_dir = registry.get_service(TEAL_LOG_DIR)
+            full_filename = template_file.substitute({TEAL_LOG_DIR:log_dir})
+            actual_hdlr = logging.FileHandler(full_filename)
+            
+        # Set formatter from the formatter already being used
+        actual_hdlr.setFormatter(logger.handler.formatter)
+
+        # Get logs out of temporary handler in to actual handler 
+        logger.handler.setTarget(actual_hdlr)
+        logger.handler.flush()
+        
+        # Now replace the temporary handler
+        logger.addHandler(actual_hdlr)
+        
         registry.register_service(SERVICE_LOG_FILE, log_file)
-                
-        return logger
     
-    def init_location_service(self):
+    def init_location_service(self, run_mode):
         ''' Load the Location Service based on the XML configuration in the configuration file
         '''
         cfg_reg = registry.get_service(SERVICE_CONFIGURATION)
-        for (section,name) in cfg_reg.get_entries(CONFIG_LOCATION):
-            location_file = cfg_reg.get(section,'config')
+        for result in cfg_reg.get_active_sections(CONFIG_LOCATION, run_mode, name_required=False, singleton=True):
+            # result is (section, name), but name not used
+            location_file = cfg_reg.get(result[0],'config')
             data_dir = registry.get_service(TEAL_DATA_DIR)
             teal_loc_file_path = os.path.join(data_dir,location_file)
             registry.register_service(SERVICE_LOCATION,LocationService(teal_loc_file_path))
-        return
             
-    def init_metadata_service(self):
+    def init_metadata_service(self, run_mode):
         ''' Load the Location Service based on the XML configuration in the configuration file
         '''
         event_metadata = Metadata(META_TYPE_EVENT, [])
@@ -379,7 +488,7 @@ class Teal:
         registry.register_service(SERVICE_ALERT_METADATA, alert_metadata)
         cfg_reg = registry.get_service(SERVICE_CONFIGURATION)
         # Get the package entries
-        for (section, name) in cfg_reg.get_entries(CONFIG_PACKAGE):
+        for (section, name) in cfg_reg.get_active_sections(CONFIG_PACKAGE, run_mode, name_required=True, singleton=False):
             get_logger().debug('Loading metadata from config package entry %s' % name)
             for option in cfg_reg.options(section):
                 if option == 'alert_metadata':
@@ -393,14 +502,12 @@ class Teal:
                 else:
                     # Only those two options right now
                     pass
-        return
     
     def init_persistence_services(self, commit_alerts):
         ''' Initialize the services to persist and work with Events and Alerts
         '''
         alert_mgr = AlertMgr(commit_alerts)
         registry.register_service(SERVICE_ALERT_MGR, alert_mgr)
-        return
           
     def init_checkpoint_service(self, commit_checkpoints, restart):
         ''' Initialize the checkpoint service 
@@ -412,9 +519,8 @@ class Teal:
             
         checkpoint_mgr = CheckpointMgr(use_db=use_db, restart_mode=restart)  
         registry.register_service(SERVICE_CHECKPOINT_MGR, checkpoint_mgr)
-        return 
 
-    def load_plugins(self,plugins):
+    def load_plugins(self, plugins, run_mode, singleton=False):
         ''' Load the class from the module as defined in the configuration file
         
         This function will yield after each class is loaded to allow the calling
@@ -424,19 +530,7 @@ class Teal:
         constructor configuration information
         '''
         cf_reg = registry.get_service(SERVICE_CONFIGURATION)
-        for (section, name) in cf_reg.get_entries(plugins):
-            enabled_val = cf_reg.get(section, 'enabled')
-            if  enabled_val == 'false':
-                continue
-            elif enabled_val == 'realtime':
-                if registry.get_service(SERVICE_RUN_MODE) != RUN_MODE_REALTIME:
-                    continue
-            elif enabled_val == 'historic':
-                if registry.get_service(SERVICE_RUN_MODE) != RUN_MODE_HISTORIC:
-                    continue
-            elif enabled_val != 'all':
-                raise ConfigurationError('Unrecognized value for enabled keyword: {0}'.format(enabled_val))
-
+        for (section, name) in cf_reg.get_active_sections(plugins, run_mode, name_required=True, singleton=singleton):
             try:
                 module_name, class_name = cf_reg.get(section,'class').rsplit('.', 1)
                 module = __import__(module_name, globals(), locals(), [class_name])
@@ -445,9 +539,8 @@ class Teal:
                 raise # throw the ImportError up the chain
             plugin_class = getattr(module, class_name)
             yield (plugin_class, name, section)
-
     
-    def init_processing_pipe(self):
+    def init_processing_pipe(self, run_mode):
         '''Setup the pipe to process the events through the analyzers,
         Filters and Listeners
         '''
@@ -470,7 +563,7 @@ class Teal:
         #   create using inQ as event_q and outQ as alert_analyzer_q
         count = 0
         analyzer_names = [] # All (event and alert)
-        for (analyzer, analyzer_name, section) in self.load_plugins(CONFIG_EVENT_ANALYZERS):
+        for (analyzer, analyzer_name, section) in self.load_plugins(CONFIG_EVENT_ANALYZERS, run_mode):
             count += 1
             pipe_str_list.append('EA:{0}'.format(analyzer_name))
             get_logger().debug('adding event analyzer: {0}'.format(analyzer_name))
@@ -480,7 +573,7 @@ class Teal:
         # For each configured alert analyzer
         #   create using inQ as event_q, alert_analyzer_q and outQ as alert_filter_q
         count = 0
-        for (analyzer, analyzer_name, section) in self.load_plugins(CONFIG_ALERT_ANALYZERS):
+        for (analyzer, analyzer_name, section) in self.load_plugins(CONFIG_ALERT_ANALYZERS, run_mode):
             count += 1
             pipe_str_list.append('AA:{0}'.format(analyzer_name))
             get_logger().debug('adding alert analyzer: {0}'.format(analyzer_name))
@@ -491,13 +584,13 @@ class Teal:
         registry.register_service(SERVICE_ALERT_DELIVERY, alert_delivery)
 
         # Add Filters
-        for (aFilter, filter_name, section) in self.load_plugins(CONFIG_ALERT_FILTERS):
+        for (aFilter, filter_name, section) in self.load_plugins(CONFIG_ALERT_FILTERS, run_mode):
             pipe_str_list.append('F:{0}'.format(filter_name))
             get_logger().debug('adding filter: {0}'.format(filter_name))
             alert_delivery.add_filter(aFilter(filter_name, dict(cf_reg.items(section))))
             
         # Add Listeners
-        for (listener, listener_name, section) in self.load_plugins(CONFIG_ALERT_LISTENERS):
+        for (listener, listener_name, section) in self.load_plugins(CONFIG_ALERT_LISTENERS, run_mode):
             pipe_str_list.append('L:{0}'.format(listener_name))
             get_logger().debug('adding listener: {0}'.format(listener_name))
             alert_delivery.add_listener(listener(listener_name, dict(cf_reg.items(section))))
@@ -509,19 +602,14 @@ class Teal:
         get_logger().debug('Completed loading of pipeline')
         return pipe_str_list
     
-    def init_db_interface(self):
+    def init_db_interface(self, daemon_mode, run_mode):
         ''' Setup the underlying data store connection '''
         cf_reg = registry.get_service(SERVICE_CONFIGURATION)
 
-        singleton_created = False
-        for data_store in self.load_plugins(CONFIG_DB_INTERFACE):
-            if (not singleton_created):
-                registry.register_service(SERVICE_DB_INTERFACE, data_store[0](dict(cf_reg.items(data_store[2]))))
-                singleton_created = True
-            else:
-                raise TealError('Multiple data stores configured - only one allowed')
+        for data_store in self.load_plugins(CONFIG_DB_INTERFACE, run_mode, singleton=True):
+            registry.register_service(SERVICE_DB_INTERFACE, data_store[0](dict(cf_reg.items(data_store[2]))))
             
-        if self.daemon_mode:
+        if daemon_mode:
             # Make sure the DB is up and running before we continue, since this might be 
             # being invoked during IPL and order of startup is not guaranteed
             timeout = 180
@@ -539,11 +627,8 @@ class Teal:
                     
             if timeout <= 0:
                 raise TealError("Cannot connect to database: {0}".format(db_exception))
-                    
-                    
-        return
     
-    def init_monitor(self,restart):
+    def init_monitor(self, run_mode):
         ''' Setup the event monitor. 
         
             There must only be one monitor configured and must be called 
@@ -554,40 +639,35 @@ class Teal:
         '''
         cf_reg = registry.get_service(SERVICE_CONFIGURATION)
 
-        singleton_created = False
-        for monitor in self.load_plugins(CONFIG_EVENT_MONITORS):
-            if (not singleton_created):
-                tmp_mon_class = monitor[0]
-                tmp_conf_dict = dict(cf_reg.items(monitor[2]))
-                singleton_created = True
-            else:
-                raise TealError('Multiple monitors configured - only one allowed')
+        for monitor in self.load_plugins(CONFIG_EVENT_MONITORS, run_mode, singleton=True):
+            tmp_mon_class = monitor[0]
+            tmp_conf_dict = dict(cf_reg.items(monitor[2]))
             
-        if singleton_created:
-            registry.register_service(SERVICE_EVENT_MONITOR, tmp_mon_class(restart, tmp_conf_dict))
-        else:
+            registry.register_service(SERVICE_EVENT_MONITOR, tmp_mon_class(tmp_conf_dict))
+            
+        if registry.get_service(SERVICE_EVENT_MONITOR) is None: 
             raise TealError('No monitor configured - must have one monitor configured and enabled')
-        return
 
     def event_not_analyzed_callback(self, event):
         '''When the event is not handled by any analyzer this will be called'''
         if isinstance(event, Event):
-            get_logger().warning('Event {0} was not analyzed in Event Queue'.format(event.brief_str()))
+            self.event_not_analyzed_log_method('Event {0} was not analyzed in Event Queue'.format(event.brief_str()))
         else:
             get_logger().debug('Command {0} was not analyzed in Event Queue'.format(event.brief_str()))
-        return
     
     def alert_not_analyzed_callback(self, alert):
         ''' When an alert is not handled in the alert analyzer queue pass it to the filter queue'''
         get_logger().debug('Alert not handled by alert analyzer, move to filter q')
         registry.get_service(SERVICE_ALERT_DELIVERY_Q).put_nowait(alert)
-        return
     
     def shutdown(self):
         logger = get_logger()
         logger.info('TEAL({0}) shutting down'.format(id(self)))
         
         if (not self.data_only):
+            if registry.get_service(SERVICE_SHUTDOWN_MODE) == SHUTDOWN_MODE_IMMEDIATE:
+                get_logger().info('Immediate shutdown initiated.  Exceptions from threads that could not be quickly shutdown may occur')
+            
             # Cleanup the monitor which will start the rest of the pipeline to shutdown
             monitor = registry.get_service(SERVICE_EVENT_MONITOR)
             if monitor is not None:
@@ -633,8 +713,13 @@ class Teal:
         # NOTE: out-of-order from construction so final goodbye can be logged
         logger.info('TEAL({0}) shutdown complete'.format(id(self)))        
 
+# Information to determine if process should end successfully or with error
+app_termination_signal = signal.SIG_DFL
+
 def app_terminate(sig,stack_frame):
     ''' Initiate application termination on signal from the user '''
+    global app_termination_signal
+    app_termination_signal = sig
     shutdown = registry.get_service(SERVICE_SHUTDOWN)
     if (shutdown is not None):
         shutdown.notify()
@@ -642,7 +727,7 @@ def app_terminate(sig,stack_frame):
 def main():
     """ Main function entry point for application
     """
-    parser = command.TealOptionParser(qry_info,epilog='')
+    parser = optparse.OptionParser()
     
     # Common options
     parser.add_option('-c', '--configfile', help=_('fully qualified TEAL config file/directory - optional'), dest='config_file', default=None)
@@ -666,8 +751,7 @@ def main():
     parser.add_option('', '--historic', help=_('Run TEAL in historic mode'), action='store_true', dest='historic', default=False)
     parser.add_option('-q', '--query',
                       type='string',
-                      action='callback',
-                      callback=parser.query_str_check,
+                      action='store',
                       dest='query',
                       default='',
                       help=_('Query parameters used to limit the range of events.'))
@@ -713,29 +797,38 @@ def main():
         # Do the necessary processing to spin off as a daemon
         command.daemonize('teal')
     else:
+        if options.realtime:
+            # Make sure there is no other instances
+            command.single_instance('teal')
+
         # Allow the user to CTRL-C application and shutdown cleanly        
         signal.signal(signal.SIGINT, app_terminate)    # CTRL-C
             
     # Allow termination to shutdown cleanly        
     signal.signal(signal.SIGTERM, app_terminate)   # Process Termination
 
-    # Create the TEAL object - it will start running autonomously                        
-    Teal(options.config_file,
-         logFile=options.log_file, 
-         msgLevel=options.msg_level, 
-         restart=options.restart, 
-         run_mode=mode, 
-         historic_qry=options.query,
-         commit_alerts=options.commit,
-         daemon_mode=options.daemon,
-         use_time_occurred=options.occurred)
+    try:
+        # Create the TEAL object - it will start running autonomously                        
+        Teal(options.config_file,
+             logFile=options.log_file, 
+             msgLevel=options.msg_level, 
+             restart=options.restart, 
+             run_mode=mode, 
+             historic_qry=options.query,
+             commit_alerts=options.commit,
+             daemon_mode=options.daemon,
+             use_time_occurred=options.occurred)
     
-    # Wait for Teal to shutdown before exiting
-    shutdown = registry.get_service(SERVICE_SHUTDOWN)
-    shutdown.wait()
+        # Wait for Teal to shutdown before exiting
+        shutdown = registry.get_service(SERVICE_SHUTDOWN)
+        shutdown.wait()
 
-    return
+    except optparse.OptionValueError, ove:
+        parser.error(ove)
 
 if __name__ == '__main__':   
     main()
     
+    # Return with a failure if application was prematurely ended because of a signal
+    if app_termination_signal:
+        sys.exit(app_termination_signal)

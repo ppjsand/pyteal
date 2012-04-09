@@ -22,6 +22,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <iostream>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "Log.h"
 #include "commandlistener.h"
 #include "configuration.h"
@@ -47,6 +51,55 @@ TLGPFS_ERR_T Utils::checkRoot()
     }
     return TL_SUCCESS;
 }
+
+void Utils::setEnvForLargeCluster()
+{
+    struct rlimit *rlim = (struct rlimit*)calloc(1,sizeof(rlimit));
+    rlim->rlim_cur = RLIM_INFINITY;
+    rlim->rlim_max = RLIM_INFINITY;
+    //ulimit -u unlimited
+    if(setrlimit(RLIMIT_RSS,rlim) < 0)
+        log_warn("process resident size set failed, may cause DB memory issue in large cluster!");
+
+    //ulimit -d unlimited
+    rlim->rlim_cur = RLIM_INFINITY;
+    rlim->rlim_max = RLIM_INFINITY;
+    if(setrlimit(RLIMIT_DATA,rlim) < 0)
+        log_warn("data size set failed, may cause DB memory issue in large cluster!");
+
+    //ulimit -f unlimited
+    rlim->rlim_cur = RLIM_INFINITY;
+    rlim->rlim_max = RLIM_INFINITY;
+    if(setrlimit(RLIMIT_FSIZE,rlim) < 0)
+        log_warn("file size set failed, may cause DB memory issue in large cluster!");
+
+    //ulimit -s unlimited
+    rlim->rlim_cur = RLIM_INFINITY;
+    rlim->rlim_max = RLIM_INFINITY;
+    if(setrlimit(RLIMIT_STACK,rlim) < 0)
+        log_warn("stack size set failed, may cause DB memory issue in large cluster!");
+
+    //ulimit -t unlimited
+    rlim->rlim_cur = RLIM_INFINITY;
+    rlim->rlim_max = RLIM_INFINITY;
+    if(setrlimit(RLIMIT_CPU,rlim) < 0)
+        log_warn("cpu time set failed, may cause DB memory issue in large cluster!");
+
+    //ulimit -u unlimited
+    rlim->rlim_cur = RLIM_INFINITY;
+    rlim->rlim_max = RLIM_INFINITY;
+    if(setrlimit(RLIMIT_NPROC,rlim) < 0)
+        log_warn("process number set failed, may cause DB memory issue in large cluster!");
+
+    rlim->rlim_cur = 102400;
+    rlim->rlim_max = 102400;
+    //ulimit -n 102400
+    if(setrlimit(RLIMIT_NOFILE,rlim) < 0)
+        log_warn("opened file number set failed, may cause DB memory issue in large cluster!");
+    if(rlim)
+        free(rlim);
+}
+
 TLGPFS_ERR_T Utils::checkGpfsDaemon()
 {
     if(access(GPFS_DAEMON_FILE,0)!=0)
@@ -152,6 +205,7 @@ TLGPFS_ERR_T Utils::Daemonize()
 
 TLGPFS_ERR_T Utils::init()
 {
+    setEnvForLargeCluster();
     TLGPFS_ERR_T ret = TL_SUCCESS;
 
     if((ret = checkRoot()) != TL_SUCCESS)
@@ -198,10 +252,21 @@ void Utils::timeval_to_char(struct timeval* in,char* out)
 
 char* Utils::int_to_char(char* out, int size, unsigned int* in)
 {
-    if(out == NULL)
+    if(out == NULL || in == NULL)
         return NULL;
     memset(out,0,size);
     sprintf(out,"%d",*in);
     return out;
 }
 
+char* Utils::get_hostname_by_ip(char* hostname, int size, char* ip)
+{
+    if(hostname == NULL || ip == NULL)
+        return NULL;
+    memset(hostname,0,size);
+    struct hostent* tmp = (struct hostent*)calloc(1,sizeof(struct hostent));
+    in_addr_t ipaddr = inet_addr(ip);
+    tmp = gethostbyaddr(&ipaddr, sizeof(in_addr_t), AF_INET);
+    strcpy(hostname, tmp->h_name);
+    return hostname;
+}

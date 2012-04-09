@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -15,12 +15,11 @@ import os
 import inspect
 import unittest
 
-from ibm import teal
-from ibm.teal.registry import get_logger
 from ibm.teal.test.teal_unittest import truncate_all_teal_tables
 
 def get_suites(tup, path, filenames):
     suites = tup[1]
+    filenames.sort()
     for filename in filenames:
         base, ext = os.path.splitext(filename)
         if ext == '':
@@ -30,6 +29,8 @@ def get_suites(tup, path, filenames):
         if base == 'all_unit_tests':
             continue
         if base == '__init__':            
+            continue
+        if base == 'cnm_gear':            
             continue
         # TODO: Really need to not process 'test\ut\data and subdirs.
         if base == 'test_class' or base == 'G1_test_class':
@@ -48,10 +49,6 @@ def walk_path(path):
 
 
 if __name__ == '__main__':
-    # Make sure logging is setup
-    if get_logger() is None: 
-        teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
-    #
     # inspect is used so that code coverage can work. Code coverage changes
     # the file name to a file in the coverage plugin and screws up the
     # path information for the unit test directory

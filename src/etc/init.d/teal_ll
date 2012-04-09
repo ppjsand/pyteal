@@ -31,6 +31,7 @@ start() {
 	echo -n "Starting teal_ll: "
 	daemon --pidfile $PIDFILE $teal_ll --daemon
 	RC=$?
+	echo
 	[ $RC -eq 0 ] && touch /var/lock/subsys/teal_ll
 	return $RC
 }	
@@ -39,6 +40,7 @@ stop() {
 	echo -n "Shutting down teal_ll: "
 	killproc -p $PIDFILE $TEAL
 	RC=$?
+	echo
 	[ $RC -eq 0 ] && rm -f /var/lock/subsys/teal_ll
 	return $RC
 }
@@ -54,7 +56,7 @@ case "$1" in
 	status -p $PIDFILE $teal_ll
 	;;
     restart|reload)
-    	stop
+    stop
 	start
 	;;
     condrestart)

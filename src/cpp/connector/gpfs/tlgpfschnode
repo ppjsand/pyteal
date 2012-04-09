@@ -5,7 +5,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2011     
+# (C) Copyright IBM Corp.  2011
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -22,6 +22,8 @@ LAUNCH_FAILED=7
 PROGRAM_NAME=`basename $0`
 # is_enable's value: 1 for enable, 2 for disable
 is_enable=0
+# is_verbose's value: 0 for disable, 1 for enable
+is_verbose=0
 # condition name to update
 GPFS_MON_COND=GPFSConnectorMonitor
 
@@ -32,11 +34,12 @@ usage()
 {
    echo "Change or launch teal agent on a node in a specified cluster."
    echo "One should invoke this command like:"
-   echo "	$PROGRAM_NAME -C <cluster>  -N <node> -e"
-   echo "	$PROGRAM_NAME -C <cluster>  -N <node> -d"
-   echo "	$PROGRAM_NAME -h"
+   echo "       $PROGRAM_NAME -C <cluster>  -N <node> -e {-v}"
+   echo "       $PROGRAM_NAME -C <cluster>  -N <node> -d {-v}"
+   echo "       $PROGRAM_NAME -h"
    echo "cluster should be a invalid GPFS cluster name under management while node should be one of the node in it."
    echo "Option -d stands for disable teal agent and -e is to enable it."
+   echo "Option -v will print out verbose messages if there is any."
    if [ $1 -ne $SUCCESS ]; then
       echo "Invalid usage, failed with $1"
    fi
@@ -44,7 +47,7 @@ usage()
 }
 
 #---------------------------------------------------------------------
-# parameter 1: input, node to run teal agent 
+# parameter 1: input, node to run teal agent
 # parameter 2: input, 1 for start monitor and other for stop monitor
 
 updateGPFSMonCond()
@@ -52,7 +55,7 @@ updateGPFSMonCond()
    condition=`/usr/bin/lscondition $GPFS_MON_COND 2>/dev/null`
    if [ $? -ne 0 ]; then
       echo "No such condition $GPFS_MON_COND found on this node, please double check!"
-      return $CONFIG_FAULT 
+      return $CONFIG_FAULT
    fi
    # save original selection string
    condition=`echo "$condition" |grep SelectionString | awk -F "\""  '{i=2;while(i<NF) {printf $i;i++}}'`
@@ -80,7 +83,7 @@ updateGPFSMonCond()
    # remove $1 from node list
    nodelist=`echo "$nodelist" | sed "s/'$1',//g" | sed "s/,'$1'//g" | sed "s/'$1'//g" 2>/dev/null`
    if [ $2 -eq 1 ]; then
-      if [[ -z $nodelist ]]; then 
+      if [[ -z $nodelist ]]; then
          `/usr/bin/chcondition -s "ProgramName==\"tlgpfsmon\" && NodeNameList |< {'$1'}" $GPFS_MON_COND >/dev/null 2>&1`
       else
          `/usr/bin/chcondition -s "ProgramName==\"tlgpfsmon\" && NodeNameList |< {$nodelist,'$1'}" $GPFS_MON_COND >/dev/null 2>&1`
@@ -89,10 +92,10 @@ updateGPFSMonCond()
          echo "Update condition $GPFS_MON_COND to start monitor failed for node $1!"
          # recover to the original one
          `/usr/bin/chcondition -s "$condition" $GPFS_MON_COND >/dev/null 2>&1`
-         return $CONFIG_FAULT 
+         return $CONFIG_FAULT
       fi
    else
-      if [[ -z $nodelist ]]; then 
+      if [[ -z $nodelist ]]; then
          `/usr/bin/chcondition -s "ProgramName==\"tlgpfsmon\"" $GPFS_MON_COND >/dev/null 2>&1`
       else
          `/usr/bin/chcondition -s "ProgramName==\"tlgpfsmon\" && NodeNameList |< {$nodelist}" $GPFS_MON_COND >/dev/null     2>&1`
@@ -101,7 +104,7 @@ updateGPFSMonCond()
          echo "Update condition $GPFS_MON_COND to stop monitor failed for node $1!"
          # recover to the original one
          `/usr/bin/chcondition -s "$condition" $GPFS_MON_COND >/dev/null 2>&1`
-         return $CONFIG_FAULT 
+         return $CONFIG_FAULT
       fi
    fi
    return $SUCCESS
@@ -109,7 +112,7 @@ updateGPFSMonCond()
 
 #---------------------------------------------------------------------
 # parameter 1: input, node to run xdsh(MN facing name)
-# parameter 2: input, node to run teal agent(GPFS facing name) 
+# parameter 2: input, node to run teal agent(GPFS facing name)
 
 launchCollector()
 {
@@ -118,7 +121,20 @@ launchCollector()
    if [ $? -ne 0 ]; then
       return $CONFIG_FAULT
    fi
-   `/opt/xcat/bin/xdsh $1 "export TEAL_LOG_DIR=$TEAL_LOG_DIR; export TLGPFS_CONF=$TLGPFS_CONF; export POLLING_INTERVAL=$POLLING_INTERVAL; /usr/lpp/mmfs/bin/mmchnode --teal-agent -N $2 >/dev/null 2>&1" > /dev/null 2>&1`
+   if [ $is_verbose -eq 1 ]; then
+      msg=`/opt/xcat/bin/xdsh $1 "export TEAL_CONN_LOG_LEVEL=$TEAL_CONN_LOG_LEVEL; export TEAL_LOG_DIR=$TEAL_LOG_DIR; export TLGPFS_CONF=$TLGPFS_CONF; export POLLING_INTERVAL=$POLLING_INTERVAL; /usr/lpp/mmfs/bin/mmchnode --teal-agent -N $2; echo rc=$?"`
+      echo "#######Verbose mode, messages on sevice node $2 are as below######"
+      echo "$msg"
+      echo "###########################End of messages########################"
+   else
+      msg=`/opt/xcat/bin/xdsh $1 "export TEAl_CONN_LOG_LEVEL=$TEAL_CONN_LOG_LEVEL; export TEAL_LOG_DIR=$TEAL_LOG_DIR; export TLGPFS_CONF=$TLGPFS_CONF; export POLLING_INTERVAL=$POLLING_INTERVAL; /usr/lpp/mmfs/bin/mmchnode --teal-agent -N $2 >/dev/null 2>&1; echo rc=$?" 2>/dev/null`
+   fi
+
+   rec=`echo "$msg" | grep rc= | cut -d '=' -f2`
+   if [ $rec -ne 0 ]; then
+      echo "mmchnode failed to start teal agent on $2..."
+      return $LAUNCH_FAILED
+   fi
    isLaunched=`/opt/xcat/bin/xdsh $1 "ps -ef | grep tlgpfsmon | grep -v grep | grep -v ssh | grep -v bash | grep -v perl  2>/dev/null | wc -l"`
    isLaunched=`echo "$isLaunched" | head -1 |  tr -d ' ' | cut -d':' -f2`
    if [ $isLaunched -ne 0 ]; then
@@ -135,7 +151,19 @@ launchCollector()
 
 stopCollector()
 {
-   `/opt/xcat/bin/xdsh $1 "/usr/lpp/mmfs/bin/mmchnode --noteal-agent -N $2 >/dev/null 2>&1" > /dev/null 2>&1` 
+   if [ $is_verbose -eq 1 ]; then
+      msg=`/opt/xcat/bin/xdsh $1 "/usr/lpp/mmfs/bin/mmchnode --noteal-agent -N $2; echo rc=$?"`
+      echo "#######Verbose mode, messages on sevice node $2 are as below######"
+      echo "$msg"
+      echo "###########################End of messages########################"
+   else
+      msg=`/opt/xcat/bin/xdsh $1 "/usr/lpp/mmfs/bin/mmchnode --noteal-agent -N $2 >/dev/null 2>&1; echo rc=$?" 2>/dev/null`
+   fi
+   rec=`echo "$msg" | grep rc= | cut -d '=' -f2`
+   if [ $rec -ne 0 ]; then
+      echo "mmchnode failed to stop teal agent on $2..."
+      return $LAUNCH_FAILED
+   fi
    isStopped=`/opt/xcat/bin/xdsh $1 "ps -ef | grep tlgpfsmon | grep -v grep | grep -v bash | grep -v ssh | grep -v perl 2>/dev/null | wc -l"`
    isStopped=`echo "$isStopped" | head -1 | tr -d ' ' | cut -d':' -f2`
    if [ $isStopped -eq 0 ]; then
@@ -143,7 +171,7 @@ stopCollector()
       sleep 10
       updateGPFSMonCond $1 2
       echo "Stopped teal agent on $2 successfully."
-      return $SUCCESS 
+      return $SUCCESS
    fi
    echo "Stopping teal agent on $2 failed."
    return $STOP_FAILED
@@ -152,8 +180,8 @@ stopCollector()
 #---------------------------------------------------------------------
 # parameter 1: input, MN facing node name running teal agent currently
 # parameter 2: input, GPFS facing node name running teal agent currently
-# parameter 3: input, MN facing node name to switch to 
-# parameter 4: input, GPFS facing node name to switch to 
+# parameter 3: input, MN facing node name to switch to
+# parameter 4: input, GPFS facing node name to switch to
 
 switchCollector()
 {
@@ -168,17 +196,20 @@ switchCollector()
    return $SUCCESS
 }
 
-if [ $# -ne 5 ]; then
-   if [ $# -ne 1 ]; then
+####MAIN#####
+
+if [ $# -eq 0 ]; then
+   echo "Please specify at least one argument!"
    usage $INVALID_ARG
-   fi
 fi
-while getopts "hedC:N:" Option
+while getopts "hevdC:N:" Option
 do
    case $Option in
       C) cluster=$OPTARG
          ;;
       e) is_enable=1
+         ;;
+      v) is_verbose=1
          ;;
       d) is_enable=2
          ;;
@@ -205,15 +236,15 @@ if [ $is_enable -eq 0 ]; then
    usage $INVALID_ARG
 fi
 
-# check if node is in service node list 
-service_node=`/opt/xcat/bin/nodels $node servicenode.node 2>/dev/null | tr -d ' ' | cut -d: -f2` 
+# check if node is in service node list
+service_node=`/opt/xcat/bin/nodels $node servicenode.node 2>/dev/null | tr -d ' ' | cut -d: -f2`
 if [[ -z $service_node ]]; then
    echo "$node is not a valid service node or nodels is not correctly configured! $PROGRAM_NAME failed!"
    exit $INVALID_SN
 fi
 
-# double check if node is a service node 
-is_sn=`/opt/xcat/bin/xdsh $node "ls /etc/xCATSN > /dev/null 2>&1;echo $?" 2>/dev/null | head -1` 
+# double check if node is a service node
+is_sn=`/opt/xcat/bin/xdsh $node "ls /etc/xCATSN > /dev/null 2>&1;echo $?" 2>/dev/null | head -1`
 if [ $? -ne 0 ]; then
    echo "xdsh is not correctly configured or invalid node is specified! $PROGRAM_NAME failed!"
    exit $CONFIG_FAULT
@@ -238,7 +269,7 @@ if [ $clusterName != $cluster ]; then
    exit $NODE_NOT_IN_CLUSTER
 fi
 
-# get node name in GPFS cluster 
+# get node name in GPFS cluster
 gnode=`/opt/xcat/bin/xdsh $node "grep home /var/mmfs/gen/mmfsNodeData | cut -d: -f6" 2>/dev/null | head -1 | tr -d ' ' | cut -d: -f2`
 if [ $? -ne 0 ]; then
    echo "Neither xdsh nor GPFS is not correctly configured! $PROGRAM_NAME failed!"
@@ -257,7 +288,7 @@ if [ $? -ne 0 ]; then
    echo "No collector node is designated in $cluster"
    # check if to disable
    if [ $is_enable -eq 2 ];then
-      updateGPFSMonCond $node 2 
+      updateGPFSMonCond $node 2
       echo "Nothing to do, exit...."
       exit $SUCCESS
    fi
@@ -317,7 +348,7 @@ if [ $is_enable -eq 1 ]; then
    exit $SUCCESS
 fi
 echo "Disable teal agent on $node"
-stopCollector $node $gnode >/dev/null  
+stopCollector $node $gnode >/dev/null
 if [ $? -ne $SUCCESS ];then
    echo "Disable teal agent failed on $node"
    exit $STOP_FAILED

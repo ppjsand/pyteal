@@ -24,6 +24,7 @@ _ = t.lgettext
 import sys
 import json
 import csv
+import optparse
 
 from ibm.teal import Teal
 from ibm.teal import registry
@@ -33,7 +34,8 @@ from ibm.teal import metadata
 from ibm.teal.util import command
 from ibm.teal.database import db_interface
 
-query_text = _('''Valid query values and their operations and formats:
+query_text = _('''
+Valid query values and their operations and formats:
     
 rec_id        - =,<.>,>=,<= - A single id or a comma-separated list of ids (equals-only)
 
@@ -85,17 +87,16 @@ def build_query(query):
     return db.gen_select(event.EVENT_COLS,db_interface.TABLE_EVENT_LOG,where=where_str,where_fields=where_fields,order=event.EVENT_ATTR_REC_ID)
 
 if __name__ == '__main__':
-    # Start up teal in data-only mode since we don't need the pipeline set up
-    t = Teal(None, logFile='$TEAL_LOG_DIR/tllsevent.log', msgLevel='warning', data_only=True)
-
-    # Parse the command line        
-    parser = command.TealOptionParser(qry_info,epilog=query_text)
+    # Set up to have a nicer output of the query help text        
+    optparse.OptionParser.format_epilog = lambda self, formatter: self.epilog
+    
+    # Parse the command line    
+    parser = optparse.OptionParser(epilog=query_text)
     parser.add_option('-q','--query',
                         type='string',
-                        action='callback',
-                        callback=parser.query_str_check,
+                        action='store',
                         dest='query',
-                        default="",
+                        default=None,
                         help=_('Query parameters used to limit the range of events listed. See list of valid values below'))
     parser.add_option('-f','--format',
                         type='choice',
@@ -124,11 +125,20 @@ if __name__ == '__main__':
     if (options.output_format == 'brief') and options.xref:
         parser.error(_("Cannot use --xref option with 'brief' format"))
     
+    # Start up teal in data-only mode since we don't need the pipeline set up
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tllsevent.log', msgLevel='warning', data_only=True)
+
+    # Validate the query string
+    try:
+        qry = command.validate_qry_str(qry_info, options.query)
+    except optparse.OptionValueError, ove:
+        parser.error(ove)
+    
     # Prepare to use the database
     db = registry.get_service(registry.SERVICE_DB_INTERFACE)
     cnxn = db.get_connection()
     cursor = cnxn.cursor()
-    select = build_query(options.query)
+    select = build_query(qry)
     
     # Execute the query and display the information
     #print 'Query = ',select

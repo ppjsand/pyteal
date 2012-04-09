@@ -48,7 +48,7 @@ namespace TEAL {
      *
      * \retval A C-string representing the exception.
      */
-    virtual const char *what() throw() { return msg.c_str(); };
+    virtual const char *what() const throw() { return msg.c_str(); };
     /**
      * \brief TealException destructor.
      *

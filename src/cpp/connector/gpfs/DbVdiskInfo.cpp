@@ -388,7 +388,7 @@ void DbVdiskInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* temp,
    *tmp->change = anyChange?CHANGE_MODIFIED:CHANGE_NONE;
    //"gpfsVdiskState": "ok", "critical", "offline","%d/%d-degraded"
    //only when "gpfsVdiskState" == "ok", it's healthy
-   if(!strcmp(tmp->vdisk_state, "ok"))
+   if(strstr(tmp->vdisk_state, "ok"))
        *tmp->health = HEALTHY;
    else
        *tmp->health = UNHEALTHY;

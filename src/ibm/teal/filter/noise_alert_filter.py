@@ -65,7 +65,7 @@ class NoiseAlertFilter(alert_filter.AlertFilter):
         self.filters = {}
         for alert_field in NOISE_FILTERS:
             if alert_field in config_dict:
-                self.filters[alert_field] = re.compile('^'+config_dict[alert_field]+'$')
+                self.filters[alert_field] = re.compile(config_dict[alert_field])
 
         alert_filter.AlertFilter.__init__(self, name, config_dict)
 

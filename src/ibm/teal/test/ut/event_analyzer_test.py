@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -26,6 +26,9 @@ from ibm.teal.analyzer.pool.incident_pool import POOL_CLOSE_REASON_FLUSH, POOL_S
 from ibm.teal.control_msg import CONTROL_MSG_TYPE_FLUSH
 from ibm.teal.registry import get_logger
 from ibm.teal.util.listenable_queue import ListenableQueue, QueueListener
+from ibm.teal.event import EVENT_ATTR_REC_ID, EVENT_ATTR_TIME_OCCURRED,\
+    EVENT_ATTR_EVENT_ID
+from ibm.teal.test.teal_unittest import TealTestCase
 
 class SampleQueueListenerT(QueueListener):
     def __init__(self, name):
@@ -228,13 +231,12 @@ class SimpleEventAnalyzerWithPoolGEAR1(SimpleEventAnalyzerWithPool):
         return
 
 
-class AnalyzerBasicTest(unittest.TestCase):
+class AnalyzerBasicTest(TealTestCase):
 
     def setUp(self):
         '''Setup for logging, an event and an timer to use for testing
         '''
-        self.teal = teal.Teal('data/event_analyzer_test/load_config_01.conf', 'stderr', msgLevel='debug', commit_alerts=False, commit_checkpoints=False)
-        self.my_event = multiprocessing.Event()
+        self.teal = teal.Teal('data/event_analyzer_test/load_config_01.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         return
     
     def tearDown(self):
@@ -253,9 +255,7 @@ class AnalyzerBasicTest(unittest.TestCase):
         config_dict['asynch'] = False
         SimpleEventAnalyzerAllAlert('TestAnalyzer1', inQ1, outQ1, config_dict=config_dict, number=2)
         right_now = datetime.now()
-        te1 = teal.Event('1')
-        te1.event_id = 'E1'
-        te1.time_occurred = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, EVENT_ATTR_EVENT_ID:'E1', EVENT_ATTR_TIME_OCCURRED: right_now})
         inQ1.put_nowait(te1)
         time.sleep(2)
         self.assertEqual(len(outQL1.notifications), 1)
@@ -272,9 +272,7 @@ class AnalyzerBasicTest(unittest.TestCase):
         outQ1.register_listener(outQL1)
         SimpleEventAnalyzerAllAlert('TestAnalyzer1', inQ1, outQ1, number=3)
         right_now = datetime.now()
-        te1 = teal.Event('1')
-        te1.event_id = 'E1'
-        te1.time_occurred = right_now
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, EVENT_ATTR_EVENT_ID:'E1', EVENT_ATTR_TIME_OCCURRED: right_now})
         inQ1.put_nowait(te1)
         time.sleep(2)
         self.assertEqual(len(outQL1.notifications), 1)

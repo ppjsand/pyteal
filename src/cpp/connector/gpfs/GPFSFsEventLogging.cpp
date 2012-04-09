@@ -51,7 +51,8 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     if(behavior > 1)
         log_debug("Need to log this event!");
 
-    std::string srcloc(GPFSEventHandler::getEventHandler()->getCluster()); //srcloc  == clustername 
+    std::string srcloc("C:"); //srcloc  == C:
+    srcloc += GPFSEventHandler::getEventHandler()->getCluster(); //srcloc  == C:clustername 
     std::string rptloc(GPFSEventHandler::getEventHandler()->getHostName());  //rptloc == nodename
     struct timeval creation_time = evt->getEvent()->getCreationTime();
     
@@ -69,7 +70,7 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     cbe->rpt_comp         = "TEAL";
     cbe->rpt_loc_type     = "A";    
 
-    srcloc               += ":"; //srcloc == clustername:
+    srcloc               += "|FS:"; //srcloc  == C:clustername|FS: 
     rptloc               += "##"; //rptloc == nodename##
     rptloc               += GPFSEventHandler::getEventHandler()->getProcName(); //rptloc == nodename##tlgpfsmon
     rptloc               += "##";// rptloc == nodename##tlgpfsmon##
@@ -84,7 +85,7 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     {
         MountActionEvent* event        = (MountActionEvent*)evt->getEvent();    
         cbe->event_id                  = "GP000001";        
-        srcloc                        += event->getFsName(); //srcloc == clustername:fsname
+        srcloc                        += event->getFsName(); //srcloc == C:clustername|FS:fsname
         cbe->src_loc                   = (char*)srcloc.c_str();
         gpfsFsEvent->node_ip           = event->getNodeIpAddr();
         gpfsFsEvent->sgmgr_ip          = NULL;
@@ -103,7 +104,7 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     {
         MountActionEvent* event        = (MountActionEvent*)evt->getEvent();    
         cbe->event_id                  = "GP000002";        
-        srcloc                        += event->getFsName(); //srcloc == clustername:fsname
+        srcloc                        += event->getFsName(); //srcloc == C:clustername|FS:fsname
         cbe->src_loc                   = (char*)srcloc.c_str();
         gpfsFsEvent->node_ip           = event->getNodeIpAddr();
         gpfsFsEvent->sgmgr_ip          = NULL;
@@ -122,7 +123,7 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     {
         SgmgrTakeoverEvent* event      = (SgmgrTakeoverEvent*)evt->getEvent();    
         cbe->event_id                  = "GP000006";        
-        srcloc                        += event->getFsName(); //srcloc == clustername:fsname
+        srcloc                        += event->getFsName(); //srcloc == C:clustername|FS:fsname
         cbe->src_loc                   = (char*)srcloc.c_str();
         gpfsFsEvent->node_ip           = event->getPrevSgmgrIpAddr();
         gpfsFsEvent->sgmgr_ip          = event->getSgmgrIpAddr();
@@ -141,7 +142,7 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     {      
         FilesystemActionEvent* event   = (FilesystemActionEvent*)evt->getEvent();    
         cbe->event_id                  = "GP000009";
-        srcloc                        += event->getFsName();  //srcloc == clustername:fsname
+        srcloc                        += event->getFsName();  //srcloc == C:clustername|FS:fsname
         cbe->src_loc                   = (char*)srcloc.c_str();
         gpfsFsEvent->node_ip           = NULL;
         gpfsFsEvent->sgmgr_ip          = event->getSgmgrIpAddr();
@@ -159,9 +160,9 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     {
         StgPoolUtilizationEvent* event = (StgPoolUtilizationEvent*)evt->getEvent();    
         cbe->event_id                  = "GP000010";        
-        srcloc                        += event->getFsName(); //srcloc == clustername:fsname
-        srcloc                        += ":";   //srcloc == clustername:fsname:
-        srcloc                        += event->getPoolName();  //srcloc == clustername:fsname:stgpoolname
+        srcloc                        += event->getFsName(); //srcloc == C:clustername|FS:fsname
+        srcloc                        += "|SP:";   //srcloc == C:clustername|FS:fsname|SP:
+        srcloc                        += event->getPoolName();  //srcloc == C:clustername|FS:fsname|SP:stgpoolname
         cbe->src_loc                   = (char*)srcloc.c_str();
         gpfsFsEvent->node_ip           = NULL;
         gpfsFsEvent->sgmgr_ip          = NULL;
@@ -181,7 +182,7 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     {      
         FilesystemActionEvent* event   = (FilesystemActionEvent*)evt->getEvent();    
         cbe->event_id                  = "GP00000A";
-        srcloc                        += event->getFsName();  //srcloc == clustername:fsname
+        srcloc                        += event->getFsName();  //srcloc == C:clustername|FS:fsname
         cbe->src_loc                   = (char*)srcloc.c_str();
         gpfsFsEvent->node_ip           = NULL;
         gpfsFsEvent->sgmgr_ip          = event->getSgmgrIpAddr();
@@ -199,7 +200,7 @@ TLGPFS_ERR_T GPFSFsEventLogging::action(GPFSEvent* evt)
     {      
         FilesystemStateChangeEvent* event = (FilesystemStateChangeEvent*)evt->getEvent();    
         cbe->event_id                     = "GP00000B";
-        srcloc                           += event->getFsName();  //srcloc == clustername:fsname
+        srcloc                           += event->getFsName();  //srcloc == C:clustername|FS:fsname
         cbe->src_loc                      = (char*)srcloc.c_str();
         gpfsFsEvent->node_ip              = NULL;
         gpfsFsEvent->sgmgr_ip             = NULL;

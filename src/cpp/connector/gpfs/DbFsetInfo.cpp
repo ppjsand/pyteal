@@ -451,7 +451,7 @@ void DbFsetInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* temp, 
    *tmp->change = anyChange?CHANGE_MODIFIED:CHANGE_NONE;
    //"status": "Unused" "Creating" "Linked" "Deleting" "Linking" "Unlinking" "Deleted" "Unlinked" "Invalid"
    //only when "status" == "Invalid", it's unhealthy
-   *tmp->health = strcmp(tmp->status, "Invalid")?HEALTHY:UNHEALTHY;
+   *tmp->health = strstr(tmp->status, "Invalid")?UNHEALTHY:HEALTHY;
    updateTable(sqlStmt,table,tmp);
 
 }

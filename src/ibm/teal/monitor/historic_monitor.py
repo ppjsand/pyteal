@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -31,7 +31,7 @@ class HistoricMonitor(EventMonitor):
     re-evaluation
     '''
 
-    def __init__(self, restart, config_dict):
+    def __init__(self, config_dict):
         '''
         Constructor
         '''
@@ -41,7 +41,7 @@ class HistoricMonitor(EventMonitor):
         
         self.query = self._build_query()
         self.running = True # Set here so we don't run into timing issues in shutdown
-        self.monitor_thread = Thread(group=None,target=self.start,name='event_monitor')
+        self.monitor_thread = Thread(group=None, target=self.start, name='event_monitor')
         self.monitor_thread.setDaemon(True)
         self.monitor_thread.start()
         pass
@@ -65,7 +65,7 @@ class HistoricMonitor(EventMonitor):
         else:
             order_str = EVENT_ATTR_REC_ID
         
-        return db.gen_select(EVENT_COLS,TABLE_EVENT_LOG,where=where_str,where_fields=where_fields,order=order_str)
+        return db.gen_select(EVENT_COLS, TABLE_EVENT_LOG, where=where_str, where_fields=where_fields, order=order_str)
 
     def start(self):
         '''Start the historic monitor. Make one large query and iterate through each event that is returned
@@ -74,9 +74,8 @@ class HistoricMonitor(EventMonitor):
         '''
         
         event_q = registry.get_service(SERVICE_EVENT_Q)
-        
-        db = registry.get_service(SERVICE_DB_INTERFACE)
-        cursor = db.get_connection().cursor()
+        dbi = registry.get_service(SERVICE_DB_INTERFACE)
+        cursor = dbi.get_connection().cursor()
         
         disp_delta = timedelta(seconds=3) 
         disp_time = datetime.now() + disp_delta
@@ -85,12 +84,12 @@ class HistoricMonitor(EventMonitor):
 
         for row in cursor.execute(self.query):
             # Create the event from the database and post it to the event queue
-            my_dict = dict(zip(EVENT_COLS,row));
-            e = Event(in_dict=my_dict)
+            e = Event.fromDB(row)
             event_q.put(e)
                 
             # Quit executing the loop if we are supposed to shut down
             if self.running == False:
+                get_logger().info('Monitor event injection thread interrupted.  last recid = {0}'.format(row[0]))
                 break
                 
             # Display progress to the user

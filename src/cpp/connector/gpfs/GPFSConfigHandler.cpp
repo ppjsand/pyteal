@@ -570,16 +570,19 @@ void GPFSConfigHandler::task()
     DiskInfo* diskInfo           = NULL;
     FileSet* fsetInfo            = NULL;
     FileSet* fileSetList         = NULL;
-	
+
     MErrno err = M_OK;
-    log_info("########################Launch GPFSConfigHandler#########################################");    
+    log_info("########################Start refreshing all entities#########################################");    
     err = GPFSHandler::getPollHandler()->getDaemonState();
     if(err != M_OK)
     {
         msg = "daemon is down on local node ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }
 
     err = GPFSHandler::getPollHandler()->refreshClusterRecipe();
@@ -587,8 +590,11 @@ void GPFSConfigHandler::task()
     {
         msg = "refresh cluster failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }
     ClusterInfo* clusterInfo = new ClusterInfo(&err);
     //update cluster info
@@ -597,8 +603,11 @@ void GPFSConfigHandler::task()
     {
         msg = "update cluster info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     } 
     
     //update all nodes info
@@ -607,105 +616,140 @@ void GPFSConfigHandler::task()
     {
         msg = "update node failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }        
     err = GPFSHandler::getPollHandler()->getClusterInfo(clusterInfo); //this maybe not needed
     if(err != M_OK)
     {
         msg = "get cluster info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }     
     err = GPFSHandler::getPollHandler()->updateDiskSDRInfo();
     if(err != M_OK)
-    {
+    {   /*TODO: This API invokes "mmsdrquery 30 3001:3004:3005:3006:3007:3008:3002:3003" under the cover. Need to check if it is a real error or an expected configuration to determin whether to ignore it or not.*/
         msg = "update disk SDR info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
-        log_error(msg);
-        return;
+        msg += ", ignore it...";
+        log_warn(msg);
+       // return; // simply ignore it since there a configuration of two clusters and NSD may not be seen from the FS cluster.
     }
     err = GPFSHandler::getPollHandler()->updateFilesystemInfo(clusterInfo, 1);// to get perfermance statics even if not used.
     if(err != M_OK)
     {
         msg = "update file system failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }    
 
     err = GPFSHandler::getPollHandler()->updateMountedNodeInfo(clusterInfo); // to get mounted node info
     if(err != M_OK)
-    {
+    {   /*TODO: This API invokes "mmlsmount all_local -Y" under the cover. Need to check if it is a real error or an expected configuration to determin whether to ignore it or not.*/
         msg = "update mounted node info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
-        log_error(msg);
-        return;
+        msg += ", ignore it...";
+        log_warn(msg);
+       // return; // simply ignore it since there maybe no local file system configured
     } 
     err = GPFSHandler::getPollHandler()->updateVfsStatsInfo(clusterInfo); // to get vfs info
     if(err != M_OK)
     {
         msg = "update vfs info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     } 
     err = GPFSHandler::getPollHandler()->updateThreadUtilInfo(clusterInfo); // to get thread util info
     if(err != M_OK)
     {
         msg = "update thread util info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }      
     err = GPFSHandler::getPollHandler()->updateIocStatsInfo(clusterInfo); // to get ioc statics info
     if(err != M_OK)
     {
         msg = "update ioc statics info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }      
     err = GPFSHandler::getPollHandler()->updateCacheStatsInfo(clusterInfo); // to get cache statics info
     if(err != M_OK)
     {
         msg = "update cache statics info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }  
-     err = GPFSHandler::getPollHandler()->updatePCacheStatsInfo(clusterInfo); // to get pcache statics info
+    err = GPFSHandler::getPollHandler()->updatePCacheStatsInfo(clusterInfo); // to get pcache statics info
     if(err != M_OK)
     {
         msg = "update pcache statics info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     } 
     err = GPFSHandler::getPollHandler()->updateFilesystemManagerInfo(clusterInfo);// update fs manager
     if(err != M_OK)
     {
         msg = "update file system manager failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }    
     err = GPFSHandler::getPollHandler()->updatePolicyInfo(clusterInfo); // to get policy info
     if(err != M_OK)
     {
         msg = "update policy info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     } 
     err = GPFSHandler::getPollHandler()->updateFilesystemConfigInfo(clusterInfo);// update fs config
     if(err != M_OK)
     {
         msg = "update file system config failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }   
    
     ClusterStatus* clusterStatus = new ClusterStatus();
@@ -714,21 +758,14 @@ void GPFSConfigHandler::task()
     {
         msg = "get cluster status failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
+        return;
+        */
     } 
     
     clusterName = clusterInfo->getName();
-    msg = "Refresh cluster: ";
-    msg += clusterName;
-    log_info(msg);
-
-    ret = refreshCluster(clusterInfo,clusterStatus);
-    if(ret != TEAL_SUCCESS)
-    {
-        msg = "Refresh cluster failed with ";
-        msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
-        log_error(msg);
-    }
     int i = 0;
     string clusterid = clusterInfo->getId();
     nFSs = clusterInfo->getNumFilesystems();
@@ -752,12 +789,12 @@ void GPFSConfigHandler::task()
             msg += fsName;
             msg += " failed with ";
             msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
-            log_error(msg);
+            log_warn(msg);
             continue;
         }  
         msg = "Refresh file system: ";
         msg += fsName;
-        log_info(msg);
+        log_debug(msg);
         ret = refreshFS(fsInfo, clusterid);
         if(ret != TEAL_SUCCESS)
         {
@@ -777,7 +814,7 @@ void GPFSConfigHandler::task()
             if(stgInfo == NULL)
             {
                 msg  = "ERR stgInfo for storage pool: ";
-                msg += Utils::int_to_char(tmp,10,(unsigned int*)&i);
+                msg += Utils::int_to_char(tmp,10,(unsigned int*)&j);
                 msg += " in (fs: ";
                 msg += fsName;
                 msg += ") is NULL";
@@ -794,7 +831,7 @@ void GPFSConfigHandler::task()
                 msg += stgName;
                 msg += ") failed with ";
                 msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
-                log_error(msg);
+                log_warn(msg);
                 continue;
             }  
             msg  = "Refresh storage pool: ";
@@ -802,7 +839,7 @@ void GPFSConfigHandler::task()
             msg += " in (fs: ";
             msg += fsName;
             msg += ")";
-            log_info(msg); 
+            log_debug(msg); 
             ret = refreshStgPool(stgInfo, clusterid, fsName);
             if(ret != TEAL_SUCCESS)
             {
@@ -824,7 +861,7 @@ void GPFSConfigHandler::task()
                 if(diskInfo == NULL)
                 {
                     msg  = "diskInfo for disk: ";
-                    msg += Utils::int_to_char(tmp,10,(unsigned int*)&i);
+                    msg += Utils::int_to_char(tmp,10,(unsigned int*)&k);
                     msg += " in (storage pool: ";
                     msg += stgName;
                     msg += ", fs: ";
@@ -841,7 +878,7 @@ void GPFSConfigHandler::task()
                 msg += ", fs: ";
                 msg += fsName;
                 msg += ")";
-                log_info(msg);
+                log_debug(msg);
                 ret = refreshDisk(diskInfo, clusterid);
                 if(ret != TEAL_SUCCESS)
                 {
@@ -855,30 +892,29 @@ void GPFSConfigHandler::task()
                     msg += Utils::int_to_char(tmp,10,(unsigned int*)&ret);
                     log_error(msg);
                 }   
-            }
-        }
-        
-        //err = GPFSHandler::getPollHandler()->getFileSets((char*)fsName.c_str(), &fileSetList); //core dump in GPFS 3.4, only effective in 3.5
+            }//end of refresh disks
+        }//end of refresh stgpool
+        /* core dump in GPFS 3.4, only effective in 3.5
+        err = GPFSHandler::getPollHandler()->getFileSets((char*)fsName.c_str(), &fileSetList);
+        if(err != M_OK)
+        {
+            msg  = "update fileset info in (fs: ";
+            msg += fsName;
+            msg += ") failed with ";
+            msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+            log_error(msg);
+            nFsets = 0;
+            fileSetList = NULL;
+            continue;  
+         } //at first time to get nFsets but will not return M_OK
+        */
         err = GPFSHandler::getPollHandler()->getFileSets1((char*)fsName.c_str(), fileSetList, &nFsets);
-/*
-              if(err != M_OK)
-              {
-                  msg  = "update fileset info in (fs: ";
-                  msg += fsName;
-                  msg += ") failed with ";
-                  msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
-                  log_error(msg);
-                  nFsets = 0;
-                  fileSetList = NULL;
-                  continue;  
-              } //at first time to get nFsets but will not return M_OK
-       */
         if(nFsets <= 0)
         {
             msg  = "no fileset found in (fs: ";
             msg += fsName;
             msg += ")";
-            log_error(msg);
+            log_warn(msg);
             nFsets = 0;
             fileSetList = NULL;
             continue;  
@@ -886,17 +922,17 @@ void GPFSConfigHandler::task()
         fileSetList = new FileSet[nFsets];
 
         err = GPFSHandler::getPollHandler()->getFileSets1((char*)fsName.c_str(), fileSetList, &nFsets);
-  	    if(err != M_OK)
-  	    {
-  		    msg  = "update fileset info in (fs: ";
-  		    msg += fsName;
-  		    msg += ") failed with ";
-  		    msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
-  		    log_error(msg);
-                    nFsets = 0;
-                    fileSetList = NULL;
-  		    continue;  
-  	    } 
+        if(err != M_OK)
+        {
+            msg  = "update fileset info in (fs: ";
+            msg += fsName;
+            msg += ") failed with ";
+            msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+            log_warn(msg);
+            nFsets = 0;
+            fileSetList = NULL;
+            continue;  
+        } 
 
         int l = 0;
         
@@ -920,7 +956,7 @@ void GPFSConfigHandler::task()
             msg += " in (fs: ";
             msg += fsName;
             msg += ")";
-            log_info(msg);
+            log_debug(msg);
             ret = refreshFset(fsetInfo, clusterid);
             if(ret != TEAL_SUCCESS)
             {
@@ -932,15 +968,15 @@ void GPFSConfigHandler::task()
                 msg += Utils::int_to_char(tmp,10,(unsigned int*)&ret);
                 log_error(msg);
             }  
-        }
-		if(fileSetList) 
-		{
-			delete []fileSetList;
-			fileSetList = NULL;
-			nFsets = 0;
-			fsetInfo = NULL;
-		}  
-    }    
+        }//end of refresh fset
+        if(fileSetList) 
+        {
+            delete []fileSetList;
+            fileSetList = NULL;
+            nFsets = 0;
+            fsetInfo = NULL;
+        }  
+    }//end of refresh fs    
     
     nNodes = clusterInfo->getNumNodes();
     // to get disk access info, place this here to update num_access_disk in nodeinfo and need to invoke updateStoragePool() prior to this API
@@ -949,8 +985,11 @@ void GPFSConfigHandler::task()
     {
         msg = "update disk access info failed with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_warn(msg);
+        /* Simply ignore this error to continue....
         log_error(msg);
         return;
+        */
     }
 
     NodeInfo* nodeInfo = NULL;
@@ -970,7 +1009,7 @@ void GPFSConfigHandler::task()
         nodeName = nodeInfo->getName();
         msg = "Refresh node: ";
         msg += nodeName;
-        log_info(msg);
+        log_debug(msg);
         ret = refreshNode(nodeInfo, clusterid);
         if(ret != TEAL_SUCCESS)
         {
@@ -981,11 +1020,61 @@ void GPFSConfigHandler::task()
             log_error(msg);
             continue;
         }         
+    }//end of refresh node
+    //refresh free disks here since free disk number/info can only be got after invoking updateDiskInfo() to all fs/stgpool
+    err = GPFSHandler::getPollHandler()->updateFreeDiskInfo(clusterInfo);
+    if(err != M_OK)
+    {   
+        msg = "update free disk info failed with ";
+        msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        msg += ", ignore it...";
+        log_warn(msg);
+    }
+    nDisks = clusterInfo->getNumFreeDisks();
+    int k = 0;
+    for(; k < nDisks ; k++ )
+    {
+        diskInfo = clusterInfo->getFreeDisk(k);
+        if(diskInfo == NULL)
+        {
+            msg  = "diskInfo for free disk: ";
+            msg += Utils::int_to_char(tmp,10,(unsigned int*)&i);
+            msg += " is NULL";
+            log_error(msg);
+            continue;
+        }
+        diskName = diskInfo->getName();
+        msg  = "Refresh free disk: ";
+        msg += "(";
+        msg += diskName;
+        msg += ")";
+        log_debug(msg);
+        ret = refreshDisk(diskInfo, clusterid);
+        if(ret != TEAL_SUCCESS)
+        {
+            msg  = "Refresh free disk: ";
+            msg += "(";
+            msg += diskName;
+            msg += ") failed with ";
+            msg += Utils::int_to_char(tmp,10,(unsigned int*)&ret);
+            log_error(msg);
+        }   
+    }//end of refresh free disks
+    //refresh cluster here since free disk number/info can only be got after invoking updateDiskInfo() to all fs/stgpool
+    msg = "Refresh cluster: ";
+    msg += clusterName;
+    log_debug(msg);
+    ret = refreshCluster(clusterInfo,clusterStatus);
+    if(ret != TEAL_SUCCESS)
+    {
+        msg = "Refresh cluster failed with ";
+        msg += Utils::int_to_char(tmp,10,(unsigned int*)&err);
+        log_error(msg);
     }
 
     log_info("##################Start to refresh perseus configuration###################");
 
-    int nRgAllocated = 1; /* number of rg slots allocated in the buffer */
+    int nRgAllocated = 6; /* number of rg slots allocated in the buffer in advance*/
     char *bufP       = NULL;
     int bufLen       = 0;
     int rc           = 0;
@@ -1011,7 +1100,19 @@ void GPFSConfigHandler::task()
 
     /* get initial info from SDR (all RG names) */
     rc = getNsdRAIDSdrInfo(rgSdrTableP, &nRg);
-    if (rc == 0)
+    //  retry if failed with ENOMEM
+    if(rc == ENOMEM)
+    {
+        log_debug("Not enough memory allocated, reallocate...");
+        nRgAllocated = nRg > nRgAllocated ? nRg : nRgAllocated;
+        delete[] rgSdrTableP;
+        rgSdrTableP = NULL;
+        rgSdrTableP = new gpfsRecoveryGroupSdrInfo[nRgAllocated];
+        nRg = nRgAllocated;
+        rc = getNsdRAIDSdrInfo(rgSdrTableP, &nRg);
+    }
+
+    if (rc == M_OK)
     {
         if (nRg >= 1)
         {
@@ -1047,7 +1148,7 @@ void GPFSConfigHandler::task()
                             if(daP == NULL)
                             {
                                 msg = "da: ";
-                                msg += Utils::int_to_char(tmp,10,(unsigned int*)&i);
+                                msg += Utils::int_to_char(tmp,10,(unsigned int*)&l);
                                 msg +=  "in (rg: ";
                                 msg += rgName;
                                 msg += ") is NULL";
@@ -1059,7 +1160,7 @@ void GPFSConfigHandler::task()
                             msg += daName;
                             msg += " in rg: ";
                             msg += rgName;
-                            log_info(msg);
+                            log_debug(msg);
                             ret = refreshDa(daP, clusterid, rgName);
                             if(ret != TEAL_SUCCESS)
                             {
@@ -1081,7 +1182,7 @@ void GPFSConfigHandler::task()
                                 if(pdiskP == NULL)
                                 {
                                     msg = "pdisk: ";
-                                    msg += Utils::int_to_char(tmp,10,(unsigned int*)&i);
+                                    msg += Utils::int_to_char(tmp,10,(unsigned int*)&j);
                                     msg += " in (rg: ";
                                     msg += rgName;
                                     msg += ", da: ";
@@ -1098,7 +1199,7 @@ void GPFSConfigHandler::task()
                                 msg += ", da: ";
                                 msg += daName;
                                 msg += ")";
-                                log_info(msg);
+                                log_debug(msg);
                                 ret = refreshPdisk(pdiskP,clusterid,rgName,daName);
                                 if(ret != TEAL_SUCCESS)
                                 {
@@ -1118,7 +1219,7 @@ void GPFSConfigHandler::task()
                                 if(vdiskP == NULL)
                                 {
                                     msg = "vdisk: ";
-                                    msg += Utils::int_to_char(tmp,10,(unsigned int*)&ret);
+                                    msg += Utils::int_to_char(tmp,10,(unsigned int*)&k);
                                     msg += " in (rg: ";
                                     msg += rgName;
                                     msg += ", da: ";
@@ -1134,7 +1235,7 @@ void GPFSConfigHandler::task()
                                 msg += rgName;
                                 msg += ", da: ";
                                 msg += daName;
-                                log_info(msg);
+                                log_debug(msg);
                                 ret = refreshVdisk(vdiskP,clusterid,rgName,daName);
                                 if(ret != TEAL_SUCCESS)
                                 {
@@ -1153,7 +1254,7 @@ void GPFSConfigHandler::task()
                         }
                         msg = "Refresh rg: ";
                         msg += rgName;
-                        log_info(msg);  
+                        log_debug(msg);  
                         ret = refreshRg(rgP, clusterid,allDaOK);
                         if(ret != TEAL_SUCCESS)
                         {
@@ -1170,7 +1271,7 @@ void GPFSConfigHandler::task()
                         msg += rgName;
                         msg += " failed with ";
                         msg += Utils::int_to_char(tmp,10,(unsigned int*)&rc);
-                        log_error(msg);
+                        log_warn(msg);
                         continue;
                     }
                 }
@@ -1180,24 +1281,29 @@ void GPFSConfigHandler::task()
                     msg += Utils::int_to_char(tmp,10,(unsigned int*)&i);
                     msg += " failed with ";
                     msg += Utils::int_to_char(tmp,10,(unsigned int*)&rc);
-                    log_error(msg);
+                    log_warn(msg);
                     continue;
                 }
              }
           }
         else
         {
-            log_error("No recovery group found!");
+            log_warn("No recovery group found!");
         }
 
+    }
+    else if(rc == ENODEV)
+    {
+        msg = "No perseus configuration..";
+        log_info(msg);
     }
     else
     {
         msg = "Failed to getNsdRAIDSdrInfo with ";
         msg += Utils::int_to_char(tmp,10,(unsigned int*)&rc);
-        log_error(msg);
+        log_warn(msg);
     }
-    log_info("########################End of GPFSConfigHandler#########################################");
+    log_info("########################End of refresh all entities#########################################");
     return;
     
 }

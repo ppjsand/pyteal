@@ -203,7 +203,7 @@ class GearInstanceHelper(TealTestCase):
     
     def test_zzzfailure1(self):
         ''' Test failures '''
-        myteal = teal.Teal('data/teal_test/good_01.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+        myteal = teal.Teal('data/teal_test/good_01.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
         self.assertRaisesTealError(XMLParsingError, 'nothing specified', Comparitor, '')
         self.assertRaisesTealError(XMLParsingError, 'empty parenthesis', Comparitor, '()')
         self.assertRaisesTealError(XMLParsingError, 'empty parenthesis', Comparitor, '(a()')
@@ -218,7 +218,7 @@ class GearInstanceHelper(TealTestCase):
         myteal.shutdown()
         return 
     
-#            myteal = teal.Teal('data/gear_ruleset_test/bugs/x000001/config.conf', 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+#            myteal = teal.Teal('data/gear_ruleset_test/bugs/x000001/config.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
 #        myteal.shutdown()
 #
 #           #my_str = "[1,2] or [3,4]"

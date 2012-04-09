@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -40,6 +40,7 @@ from ibm.teal.metadata import META_ALERT_PRIORITY
 from ibm.teal.analyzer.gear.error_handlers import GearErrorHandlers 
 from ibm.teal.util.msg_target import MsgTargetLogger
 from ibm.teal.analyzer.gear.rule_value import _parse_gear_variable
+from ibm.teal.util.teal_thread import ThreadKilled
 
 TEAL_ALERT_PRIORITIZATION = 'TEAL_ALERT_PRIORITIZATION'
 TEAL_TEST_POOL_TIMERS_OFF = 'TEAL_TEST_POOL_TIMERS_OFF'
@@ -214,11 +215,11 @@ class GearRuleset(dict, GearEngine):
                 self.parse_error(self.trace_id[0], 'unexpected element {0}'.format(entry_name))
         return
     
-    def close_event_pool_callback(self, reason):
+    def close_event_pool_callback(self, reason, last_rec_id):
         '''
         Close callback
         '''
-        self.trace_info(str(self.number), 'Pool closed.  Reason = {0}'.format(POOL_CLOSE_REASON_AS_STRING[reason]))
+        self.trace_info(str(self.number), 'Pool closed.  Reason = {0}   Last event = {1}'.format(POOL_CLOSE_REASON_AS_STRING[reason], str(last_rec_id)))
         get_logger().debug('Close_callback called')
         get_logger().debug('     Pool closing: {0}'.format(str(self.event_pool)))
         
@@ -247,6 +248,8 @@ class GearRuleset(dict, GearEngine):
             if alert.priority is None:
                 try:
                     alert.priority = alert.get_metadata()[META_ALERT_PRIORITY]
+                except ThreadKilled:
+                    raise
                 except:
                     get_logger().debug('Unable to get alert metadata for {0}'.format(str(alert.alert_id)))
                     
@@ -328,6 +331,12 @@ class GearRuleset(dict, GearEngine):
         self.trace_debug(self.trace_id[1], 'Analyzing event: {0}'.format(event.brief_str()))
         self[GRSE_ANALYZE].analyze_event(event, pool, self[GRSE_GEAR_CTL])
         return
+    
+    def is_not_processing_addition(self):
+        ''' Return true if the previous checkpoint didn't move anything forward 
+            Cheat by checking if the current pool has any moved forward elements
+        '''
+        return len(self.event_pool.moved_forward) == 0
     
     def prime_event(self, event, pool):
         ''' Prime the event -- get the conditions setup with it, but don't take actions '''

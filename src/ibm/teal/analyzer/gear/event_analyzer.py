@@ -30,7 +30,7 @@ class GearEventAnalyzer(EventAnalyzer):
         
         self.engine = engine_factory(name, config_dict, event_input=True, number=number, send_alert=self.send_alert)
         EventAnalyzer.__init__(self, name, inQueue, outQueue, config_dict, number, checkpoint=self.engine.checkpoint)
-        self.base_analyze_event = self.base_analyze_event_NORMAL
+        self.base_analyze_event_CHECKPOINT = self.analyze_event   # Manages checkpoints via pool checkpointer
         return
     
     def will_analyze_event(self, event):
@@ -55,4 +55,7 @@ class GearEventAnalyzer(EventAnalyzer):
         elif control_msg.msg_type == CONTROL_MSG_TYPE_END_OF_DATA:
             self.engine.end_of_events()
         return
-       
+    
+    def is_not_processing(self):
+        ''' Return true if the analyzer is processing an event or events '''
+        return EventAnalyzer.is_not_processing(self) and self.engine.is_not_processing_addition()

@@ -1,0 +1,59 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "AlertCNM", 
+        "creation_time": "2011-02-22 16:29:08.820000", 
+        "event_loc": "MB-PR2", 
+        "event_loc_type": "C", 
+        "raw_data": "L1 L2 L3", 
+        "reason": "This is a CNM alert", 
+        "rec_id": 1, 
+        "recommendation": "do stuff", 
+        "severity": "I", 
+        "src_name": "Analyzer1", 
+        "fru_loc": "030-2C425",
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "2": {
+      "data": {
+        "alert_id": "AlertCNM", 
+        "creation_time": "2011-02-22 16:29:09.164000", 
+        "event_loc": "MB-PR2", 
+        "event_loc_type": "C", 
+        "raw_data": "L1 L2 L3", 
+        "reason": "This is a CNM alert", 
+        "rec_id": 5, 
+        "recommendation": "do stuff", 
+        "severity": "I", 
+        "src_name": "Analyzer3", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }, 
+    "3": {
+      "data": {
+        "alert_id": "AlertCNM", 
+        "creation_time": "2011-02-22 16:29:09.242000", 
+        "event_loc": "MB-PR2", 
+        "event_loc_type": "C", 
+        "raw_data": "L1 L2", 
+        "reason": "This is a CNM alert", 
+        "rec_id": 6, 
+        "recommendation": "do stuff", 
+        "severity": "I", 
+        "src_name": "Analyzer2", 
+        "state": "Open", 
+        "urgency": "N"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

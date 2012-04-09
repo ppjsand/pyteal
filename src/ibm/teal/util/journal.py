@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -21,7 +21,7 @@ from ibm.teal.alert import ALERT_ATTR_CREATION_TIME, ALERT_ATTR_REC_ID, \
     ALERT_STATE_CLOSED
 from ibm.teal.control_msg import ControlMsg, CONTROL_MSG_ATTR_CREATION_TIME, \
     CONTROL_MSG_ATTR_MSG_TYPE, CONTROL_MSG_TYPE_AS_STRING,\
-    CONTROL_MSG_TYPE_END_OF_DATA
+    CONTROL_MSG_TYPE_END_OF_DATA, CONTROL_MSG_ATTR_DATA_DICT
 from ibm.teal.database import db_interface
 from ibm.teal.event import Event, EVENT_ATTR_RAW_DATA, EVENT_ATTR_REC_ID, \
     EVENT_ATTR_TIME_LOGGED, EVENT_ATTR_EVENT_ID, EVENT_ATTR_SRC_COMP, \
@@ -664,7 +664,7 @@ class JournalEntryEvent(JournalEntry):
     
     def create_item(self):
         ''' create the event from the Journal Entry and return it'''
-        new_event = Event(in_dict=self.data_dict)
+        new_event = Event.fromDict(self.data_dict)
         if self.raw_data_values is not None:
             # Format is name,type,value; name,type,value
             values = self.raw_data_values.split(';')
@@ -689,9 +689,15 @@ class JournalEntryEvent(JournalEntry):
                 if key == EVENT_ATTR_REC_ID:
                     self.data_dict[EVENT_ATTR_REC_ID] = long(value)
                 elif key == EVENT_ATTR_TIME_OCCURRED:
-                    self.data_dict[EVENT_ATTR_TIME_OCCURRED] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+                    if value.find('.') == -1:
+                        self.data_dict[EVENT_ATTR_TIME_OCCURRED] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                    else:
+                        self.data_dict[EVENT_ATTR_TIME_OCCURRED] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
                 elif key == EVENT_ATTR_TIME_LOGGED:
-                    self.data_dict[EVENT_ATTR_TIME_LOGGED] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+                    if value.find('.') == -1:
+                        self.data_dict[EVENT_ATTR_TIME_LOGGED] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                    else:
+                        self.data_dict[EVENT_ATTR_TIME_LOGGED] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
                 elif key == EVENT_ATTR_EVENT_ID:
                     self.data_dict[EVENT_ATTR_EVENT_ID] = value
                 elif key == EVENT_ATTR_SRC_COMP:
@@ -707,11 +713,15 @@ class JournalEntryEvent(JournalEntry):
                 elif key == EVENT_ATTR_RPT_LOC_TYPE:
                     self.data_dict[EVENT_ATTR_RPT_LOC_TYPE] = value
                 elif key == EVENT_ATTR_EVENT_CNT:
-                    self.data_dict[EVENT_ATTR_EVENT_CNT] = int(value)
+                    if value is not None:
+                        self.data_dict[EVENT_ATTR_EVENT_CNT] = int(value)
                 elif key == EVENT_ATTR_ELAPSED_TIME:
-                    self.data_dict[EVENT_ATTR_ELAPSED_TIME] = int(value)
+                    if value is not None: 
+                        self.data_dict[EVENT_ATTR_ELAPSED_TIME] = int(value)
                 elif key == EVENT_ATTR_RAW_DATA_FMT:
                     self.data_dict[EVENT_ATTR_RAW_DATA_FMT] = long(value,16)
+                # May get as a raw data entry with a dictionary, hex value or as ext.name entries
+                ## dictionary or hex value 
                 elif key == EVENT_ATTR_RAW_DATA:
                     if value[0:2] == '0x':
                         self.data_dict[EVENT_ATTR_RAW_DATA] = binascii.unhexlify(value[2:])
@@ -719,6 +729,17 @@ class JournalEntryEvent(JournalEntry):
                         self.data_dict[EVENT_ATTR_RAW_DATA] = value
                 elif key == 'raw_data_values':
                     self.raw_data_values = value.strip()
+                # See if raw data entry 
+                elif key.split('.')[0] == 'ext': 
+                    if EVENT_ATTR_RAW_DATA not in self.data_dict:
+                        self.data_dict[EVENT_ATTR_RAW_DATA] = dict()
+                    if EVENT_ATTR_RAW_DATA_FMT not in self.data_dict:
+                        self.data_dict[EVENT_ATTR_RAW_DATA_FMT] = long(0)
+                    try: 
+                        rd_key = key.split('.')[1]
+                        self.data_dict[EVENT_ATTR_RAW_DATA][rd_key] = value
+                    except:
+                        get_logger().warning('ext.* entry \'{0}\' ... entry ignored'.format(key))
                 else:
                     get_logger().warning('Read from event json encountered unexpected element {0}'.format(key))
         except:
@@ -861,11 +882,14 @@ class JournalEntryAlert(JournalEntry):
     
     def create_item(self):
         ''' create the alert from the Journal Entry and return it'''
-        # TODO: Should these really be commited alerts or just in memory alerts?  Should it be an option?
         alert_mgr = get_service(SERVICE_ALERT_MGR)
-        alert = alert_mgr.allocate(self.data_dict[ALERT_ATTR_ALERT_ID], self.data_dict)
-        # TODO: Should this commit?
-        alert_mgr.commit(alert)
+        t_data_dict = dict(self.data_dict)
+        del t_data_dict[ALERT_ATTR_STATE]
+        alert = alert_mgr.allocate(self.data_dict[ALERT_ATTR_ALERT_ID], t_data_dict)
+        if self.data_dict[ALERT_ATTR_STATE] == ALERT_STATE_OPEN or self.data_dict[ALERT_ATTR_STATE] == ALERT_STATE_CLOSED:
+            alert_mgr.commit(alert)
+        if self.data_dict[ALERT_ATTR_STATE] == ALERT_STATE_CLOSED:
+            alert_mgr.close(alert.rec_id)
         return alert
     
     def read_from_json(self, json_dict):
@@ -879,7 +903,10 @@ class JournalEntryAlert(JournalEntry):
                 if key == ALERT_ATTR_ALERT_ID:
                     self.data_dict[ALERT_ATTR_ALERT_ID] = value
                 elif key == ALERT_ATTR_CREATION_TIME:
-                    self.data_dict[ALERT_ATTR_CREATION_TIME] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+                    if value.find('.') == -1:
+                        self.data_dict[ALERT_ATTR_CREATION_TIME] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                    else:
+                        self.data_dict[ALERT_ATTR_CREATION_TIME] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
                 elif key == ALERT_ATTR_SEVERITY:
                     self.data_dict[ALERT_ATTR_SEVERITY] = value
                 elif key == ALERT_ATTR_URGENCY:
@@ -1066,6 +1093,8 @@ class JournalEntryControlMsg(JournalEntry):
                         self.data_dict[CONTROL_MSG_ATTR_MSG_TYPE] = str_value
                 elif key == CONTROL_MSG_ATTR_CREATION_TIME:
                     self.data_dict[CONTROL_MSG_ATTR_CREATION_TIME] = datetime.strptime(value, '%Y-%m-%d %H:%M:%S.%f')
+                elif key == CONTROL_MSG_ATTR_DATA_DICT:
+                    self.data_dict[CONTROL_MSG_ATTR_DATA_DICT] = value 
                 else:
                     get_logger().warning('Read from control msg json encountered unexpected element {0}'.format(key))
         except:
@@ -1091,6 +1120,8 @@ class JournalEntryControlMsg(JournalEntry):
                 out_dict[CONTROL_MSG_ATTR_MSG_TYPE] = CONTROL_MSG_TYPE_AS_STRING[int(value)]
             elif key == CONTROL_MSG_ATTR_CREATION_TIME:
                 out_dict[CONTROL_MSG_ATTR_CREATION_TIME] = datetime.strftime(value, '%Y-%m-%d %H:%M:%S.%f')
+            elif key == CONTROL_MSG_ATTR_DATA_DICT:
+                out_dict[CONTROL_MSG_ATTR_DATA_DICT] = str(value)
             else:
                 get_logger().warning('Alert Journal Entry contains unrecognized key: {0}'.format(key))
         return out_dict

@@ -5,12 +5,27 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2011     
+# (C) Copyright IBM Corp.  2011,2012  
 # Eclipse Public License (EPL)
 #
 # ================================================================
 #
 # end_generated_IBM_copyright_prolog
+
+# Increate the ulimits to allow for more memory usage due to interfacing
+# with MMANTRAS and DB2. These numbers are based on xCAT documented settings
+# for large clusters
+ulimit -m unlimited
+ulimit -n 102400
+ulimit -d unlimited
+ulimit -f unlimited
+ulimit -s unlimited
+ulimit -t unlimited
+ulimit -u unlimited
+
+# Need to set this so calls to RMC will work correctly
+export CT_MANAGEMENT_SCOPE=1
+
 TEAL_ROOT=/opt/teal/bin
 IS_DAEMON=-d
 IS_POLLING=-p

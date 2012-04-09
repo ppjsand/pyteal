@@ -472,8 +472,8 @@ CREATE TABLE x_fsetinfo_tmp (
 CREATE TABLE x_rginfo (
   "cluster_id" VARCHAR(128) NOT NULL,
   "rg_name" VARCHAR(64) NOT NULL,
-  "rg_act_svr" VARCHAR(32) DEFAULT NULL,
-  "rg_svrs" VARCHAR(64) DEFAULT NULL,
+  "rg_act_svr" VARCHAR(64) DEFAULT NULL,
+  "rg_svrs" VARCHAR(128) DEFAULT NULL,
   "rg_id" VARCHAR(20) DEFAULT NULL,
   "rg_das" INTEGER DEFAULT NULL,
   "rg_vdisks" INTEGER DEFAULT NULL,
@@ -487,8 +487,8 @@ CREATE TABLE x_rginfo (
 CREATE TABLE x_rginfo_tmp (
   "cluster_id" VARCHAR(128) DEFAULT NULL,
   "rg_name" VARCHAR(64) DEFAULT NULL,
-  "rg_act_svr" VARCHAR(32) DEFAULT NULL,
-  "rg_svrs" VARCHAR(64) DEFAULT NULL,
+  "rg_act_svr" VARCHAR(64) DEFAULT NULL,
+  "rg_svrs" VARCHAR(128) DEFAULT NULL,
   "rg_id" VARCHAR(20) DEFAULT NULL,
   "rg_das" INTEGER DEFAULT NULL,
   "rg_vdisks" INTEGER DEFAULT NULL,

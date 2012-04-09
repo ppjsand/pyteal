@@ -28,6 +28,7 @@ import itertools
 from ibm.teal.analyzer.gear.external_base_classes import ExtEvaluate
 from ibm.teal.analyzer.gear.rule_condition_data import ConditionData,\
     InstanceError
+from ibm.teal.util.teal_thread import ThreadKilled
 
 GCON_TYPE_CONDITION = 'condition'
 GCON_TYPE_ALL_EVENTS = 'all_events'
@@ -387,8 +388,7 @@ class GearCondition(GearEvaluatableContainer):
         '''Resolve and validate the condition''' 
         GearEvaluatableContainer.resolve_and_validate(self, rule, imin=1, imax=1)
         return
-    
-   
+       
     def get_truth_space(self, exclude_events, exclude_primes=False):
         ''' Get the sets of events that make the condition true 
         
@@ -400,6 +400,8 @@ class GearCondition(GearEvaluatableContainer):
                 get_logger().debug('Condition: {0}'.format(_dump_truth_space(results)))
             #else:
             #    print "Results is " + str(results)
+        except ThreadKilled:
+            raise
         except:
             get_logger().fatal('Condition {0} failed getting truth space'.format(self.trace_id))
             raise
@@ -471,6 +473,8 @@ class GearEvaluatableEventEquals(GearEvaluatable):
             if self.scope.is_set() and self.scope.get_value()[1] is not None:
                 try:
                     sc_loc = event.src_loc.new_location_by_scope(self.scope.get_value()[1])
+                except ThreadKilled:
+                    raise
                 except:
                     get_logger().exception('event_equals exception!')
             else:
@@ -500,6 +504,8 @@ class GearEvaluatableEventEquals(GearEvaluatable):
         '''
         try:
             result = [(self.comp.get_value(), self.id.get_value())]
+        except ThreadKilled:
+            raise
         except:
             result = None
         return result
@@ -531,6 +537,8 @@ class GearEvaluatableEventEquals(GearEvaluatable):
                 if self.scope.is_set() and self.scope.get_value()[1] is not None:
                     try:
                         use_loc = e.src_loc.new_location_by_scope(self.scope.get_value()[1])
+                    except ThreadKilled:
+                        raise
                     except:
                         get_logger().exception('event_equals exception!')
             locs.add(use_loc)
@@ -772,6 +780,8 @@ class GearEvaluatableNot(GearEvaluatableContainer):
         elif self.scope.is_set():
             try:
                 new_loc = event.src_loc.new_location_by_scope(self.scope.get_value()[1])
+            except ThreadKilled:
+                raise
             except:
                 # If can't scope then ignore it
                 self.ruleset.debug(self.trace_id[0], 'Event ignored because cannot scope {0} using {1}'.format(str(event.src_loc.get_location()), self.scope.in_str))
@@ -907,6 +917,8 @@ class GearEvaluatableEventOccurred(GearEvaluatable):
         if self.scope.is_set():
             try:
                 new_loc = event.src_loc.new_location_by_scope(self.scope.get_value()[1])
+            except ThreadKilled:
+                raise
             except:
                 # If can't scope then ignore it
                 get_logger().debug('Event ignored because cannot scope {0} using {1}'.format(str(event.src_loc.get_location()), self.scope.in_str))
@@ -938,6 +950,8 @@ class GearEvaluatableEventOccurred(GearEvaluatable):
         if self.scope.is_set():
             try:
                 new_loc = event.src_loc.new_location_by_scope(self.scope.get_value()[1])
+            except ThreadKilled:
+                raise
             except:
                 # If can't scope then ignore it
                 get_logger().debug('Event ignored because cannot scope {0} using {1}'.format(str(event.src_loc.get_location()), self.scope.in_str))
@@ -1026,6 +1040,8 @@ class GearEvaluatableEventOccurred(GearEvaluatable):
         '''
         try:
             result = [(self.comp.get_value(), self.id.get_value())]
+        except ThreadKilled:
+            raise
         except:
             result = None
         return result
@@ -1114,6 +1130,8 @@ class GearEvaluatableAllEvents(GearEvaluatable):
         if self.scope.is_set():
             try:
                 new_loc = event.src_loc.new_location_by_scope(self.scope.get_value()[1])
+            except ThreadKilled:
+                raise
             except:
                 # If can't scope then ignore it
                 get_logger().debug('Event ignored because cannot scope {0} using {1}'.format(str(event.src_loc.get_location()), self.scope.in_str))
@@ -1155,6 +1173,8 @@ class GearEvaluatableAllEvents(GearEvaluatable):
         if self.scope.is_set():
             try:
                 new_loc = event.src_loc.new_location_by_scope(self.scope.get_value()[1])
+            except ThreadKilled:
+                raise
             except:
                 # If can't scope then ignore it
                 get_logger().debug('Event ignored because cannot scope {0} using {1}'.format(str(event.src_loc.get_location()), self.scope.in_str))
@@ -1268,6 +1288,8 @@ class GearEvaluatableAllEvents(GearEvaluatable):
         ''' Return the id in a list '''
         try:
             result = self.ids.get_list()
+        except ThreadKilled:
+            raise
         except:
             result = self.ids.in_str.split(',')
         return result
@@ -1279,6 +1301,8 @@ class GearEvaluatableAllEvents(GearEvaluatable):
         try:
             comp = self.comp.get_value()
             result = [(comp, tid) for tid in self.ids.get_list()]
+        except ThreadKilled:
+            raise
         except:
             result = None
         return result
@@ -1417,6 +1441,8 @@ class GearEvaluatableAnyEvents(GearEvaluatable):
         try:
             comp = self.comp.get_value()
             result = [(comp, tid) for tid in self.ids.get_list()]
+        except ThreadKilled:
+            raise
         except:
             result = None
         return result
@@ -1464,8 +1490,10 @@ class GearEvaluatableEvaluate(GearEvaluatable):
             module_name, class_name = class_spec.rsplit('.', 1)
             module = __import__(module_name, globals(), locals(), [class_name])
             tmp_class = getattr(module, class_name)
+        except ThreadKilled:
+            raise
         except:
-            self.ruleset.parse_error(self.trace_id[0], 'evaluate element was unable to load specified the class: {0}'.format(self.class_spec))
+            self.ruleset.parse_error(self.trace_id[0], 'evaluate element was unable to load specified the class: {0}'.format(class_spec))
         
         # Get parameters to pass to init 
         try:
@@ -1503,6 +1531,8 @@ class GearEvaluatableEvaluate(GearEvaluatable):
         ''' Prime the condition '''
         try:
             self.call_class.prime(event)
+        except ThreadKilled:
+            raise
         except:
             self.ruleset.trace_error(self.trace_id[1], 'evaluate {0} call failed with exception'.format(self.name))
             get_logger().exception('')
@@ -1512,6 +1542,8 @@ class GearEvaluatableEvaluate(GearEvaluatable):
         ''' Accumulate events '''
         try:
             self.call_class.accumulate(event)
+        except ThreadKilled:
+            raise
         except:
             self.ruleset.trace_error(self.trace_id[1], 'evaluate {0} call failed with exception'.format(self.name))
             get_logger().exception('')
@@ -1525,6 +1557,8 @@ class GearEvaluatableEvaluate(GearEvaluatable):
             tmp_result = self.call_class.get_truth_space(exclude_events, exclude_primes)
             if tmp_result is not None:
                 result_space.update(tmp_result)
+        except ThreadKilled:
+            raise
         except:
             self.ruleset.trace_error(self.trace_id[1], 'evaluate {0} call failed with exception'.format(self.name))
             get_logger().exception('')
@@ -1536,6 +1570,8 @@ class GearEvaluatableEvaluate(GearEvaluatable):
         '''Reset the condition'''
         try:
             self.call_class.reset()
+        except ThreadKilled:
+            raise
         except:
             self.ruleset.trace_error(self.trace_id[1], 'evaluate {0} call failed with exception'.format(self.name))
             get_logger().exception('')
@@ -1557,6 +1593,8 @@ class GearEvaluatableEvaluate(GearEvaluatable):
             # TODO: Is this the right way to do this or should we add a new interface?
             comp = self.comp.get_value()
             result = [(comp, tid) for tid in self.call_class.get_cross_ref()]
+        except ThreadKilled:
+            raise
         except:
             result = None
         return result
@@ -1583,6 +1621,8 @@ def _get_scoped_locs(events, scope_val):
     for event in events:
         try:
             result_locs.add(event.src_loc.new_location_by_scope(scope_val.get_value()[1]))
+        except ThreadKilled:
+            raise
         except:
             continue
     return result_locs
@@ -1617,6 +1657,8 @@ def _scope_truth_locs(truth_locs, scope_var):
     for sc_loc in truth_locs:
         try:
             new_t_locs.add(sc_loc.new_location_by_scope(scope_var.get_value()[1]))
+        except ThreadKilled:
+            raise
         except:
             continue
     return frozenset(new_t_locs)

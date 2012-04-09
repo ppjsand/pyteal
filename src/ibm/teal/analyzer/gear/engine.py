@@ -13,6 +13,7 @@
 from ibm.teal.registry import get_logger
 from ibm.teal.analyzer.gear.common import GearTrace
 from abc import ABCMeta, abstractmethod
+from ibm.teal.util.teal_thread import ThreadKilled
 
 class GearEngine(GearTrace):
     ''' Base class for GEAR engines '''
@@ -45,6 +46,8 @@ class GearEngine(GearTrace):
         try:
             comp_val = comp.get_value()
             event_id_val = event_id.get_value()
+        except ThreadKilled:
+            raise
         except:
             get_logger().debug('Unable to validate comp {0} event id {1}'.format(str(comp.in_str)), str(event_id.in_str))
         if not self.will_analyze_event_validation(comp_val, event_id_val):
@@ -66,6 +69,8 @@ class GearEngine(GearTrace):
             # TODO: This makes it so that a list containing a dynamic element won't be validated
             #       which means the static elements are not going to be validated!
             event_id_list = event_ids.get_list()
+        except ThreadKilled:
+            raise
         except:
             get_logger().debug('Unable to validate comp {0} event id {1}'.format(str(comp.in_str), str(event_ids.in_str)))
         else:

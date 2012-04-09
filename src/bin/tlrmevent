@@ -23,7 +23,7 @@ _ = t.lgettext
 
 import sys
 import itertools
-from optparse import OptionParser
+import optparse
 
 from ibm.teal import Teal, registry, event, alert 
 from ibm.teal.database import db_interface
@@ -31,16 +31,19 @@ from ibm.teal.util import command
 
 if __name__ == '__main__':
     # Parse the command line        
-    parser = command.TealOptionParser([])
+    parser = optparse.OptionParser()
     parser.add_option('-i','--ids',
                         type='string',
-                        action='store',
+                        action='callback',
+                        callback=command.opt_validate_type,
+                        callback_args=(command.FIELD_TYPE_INT, True), # Integer List
                         dest='recid_list',
                         default=None,
                         help=_('A single event id or a comma-separated list of event ids'))
     parser.add_option('-o','--older-than',
                         type='string',
-                        action='store',
+                        action='callback',
+                        callback=command.opt_validate_timestamp,
                         dest='query_time',
                         default=None,
                         help=_('The time condition_qry in the format YYYY-MM-DD-HH:MM::SS'))
@@ -63,13 +66,7 @@ if __name__ == '__main__':
         delete_recid_where = ''
 
     if options.query_time is not None:
-        try:
-            time_range = parser.validate_timestamp(options.query_time)
-        except BaseException,be:
-            registry.get_logger().exception(be)
-            parser.error(_('Invalid timestamp for {0}: {1}').format('--older-than', options.query_time))
-
-        older_where = "AND ${0} < '{1}'".format(event.EVENT_ATTR_TIME_LOGGED, time_range[0])
+        older_where = "AND ${0} < '{1}'".format(event.EVENT_ATTR_TIME_LOGGED, options.query_time[0])
         where_flds.append(event.EVENT_ATTR_TIME_LOGGED)
     else:
         older_where = ''

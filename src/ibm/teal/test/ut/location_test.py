@@ -24,7 +24,7 @@ from ibm.teal.test.teal_unittest import TealTestCase
 class LocationTest(TealTestCase):
 
     def setUp(self):
-        self.teal = Teal('data/location_test/locationtest_01.conf', 'stderr', commit_alerts=False, commit_checkpoints=False)
+        self.teal = Teal('data/location_test/locationtest_01.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
                 
     def tearDown(self):
         self.teal.shutdown()
@@ -219,7 +219,6 @@ class LocationTest(TealTestCase):
         self.assertEquals(sd1['parent'], 'foo')
         l2 = Location("TC",'R-H-K8-S')
         sd2 = l2.get_substitution_dict()
-        print l2,sd2
         self.assertEquals(len(sd2.keys()), 4)
         self.assertTrue('kilroy' in sd2)
         self.assertEquals(sd2['kilroy'], 'K8')

@@ -23,8 +23,8 @@ _ = t.lgettext
 
 import sys
 from optparse import OptionParser
-from ibm.teal.registry import TEAL_LOG_DIR
-from ibm.teal.teal import TEAL_LOG_FILE
+#from ibm.teal.registry import TEAL_LOG_DIR
+#from ibm.teal.teal import TEAL_LOG_FILE
 
 ORDERED_LEVELS = ['DEBUG','INFO', 'WARNING', 'ERROR', 'CRITICAL']
 

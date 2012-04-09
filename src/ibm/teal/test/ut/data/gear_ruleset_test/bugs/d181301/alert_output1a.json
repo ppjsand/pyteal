@@ -1,0 +1,32 @@
+[
+  {
+    "1": {
+      "data": {
+        "alert_id": "BDFF00AA", 
+        "associations": [
+          "C:E:1049088", 
+          "C:E:1049091", 
+          "C:E:1049092", 
+          "C:E:1049095", 
+          "C:E:1049096", 
+          "C:E:1049097", 
+          "C:E:1049101", 
+          "C:E:1049102"
+        ], 
+        "creation_time": "2012-02-16 14:13:41.657048", 
+        "event_loc": "FR003-CG10-SN049-DR3", 
+        "event_loc_type": "H", 
+        "raw_data": "{\"fru_list\":\"{ HFI_RDL,Isolation Procedure,,,, }\",\"nbr_loc\":\"FR001-CG06-SN000-DR3-HB3-OM14-LD14\",\"nbr_typ\":\"H\",\"pwr_enc\":\"11\",\"eed_loc\":\"12\",\"encl_mtms\":\"10\"}", 
+        "reason": "A drawer has a random set of D-links reporting events at about the same time. Frame FR003 cage CG10 (superNode SN049 drawer DR3) (Random D-links in a Drawer)", 
+        "rec_id": 1, 
+        "recommendation": "A random set of D-links have issues at the drawer level.\nContact IBM Service and report the alert ID.", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest001", 
+        "state": "Open", 
+        "urgency": "S"
+      }, 
+      "delay": "0.0", 
+      "type": "alert"
+    }
+  }
+]

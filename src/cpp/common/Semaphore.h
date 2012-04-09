@@ -61,7 +61,7 @@ namespace TEAL {
      *
      * \retval A C-style string representing the exception.
      */
-    virtual const char *what() throw()
+    virtual const char *what() const throw()
     {
       return strerror(ivErrnoVal);
     }
@@ -113,7 +113,7 @@ namespace TEAL {
      *
      */
 
-    Semaphore(Role role = CLIENT,
+    Semaphore(Role role = SERVER,
               const std::string& name = "/var/log/teal" ,
               int ProjId = 0x646c6100);
 

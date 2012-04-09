@@ -51,7 +51,8 @@ TLGPFS_ERR_T GPFSDiskEventLogging::action(GPFSEvent* evt)
     if(behavior > 1)
         log_debug("Need to log this event!");
 
-    std::string srcloc(GPFSEventHandler::getEventHandler()->getCluster()); //srcloc  == clustername 
+    std::string srcloc("C:"); //srcloc  == C: 
+    srcloc += GPFSEventHandler::getEventHandler()->getCluster() ; //srcloc  == C:clustername 
     std::string rptloc(GPFSEventHandler::getEventHandler()->getHostName());  //rptloc == nodename
     
     
@@ -71,7 +72,7 @@ TLGPFS_ERR_T GPFSDiskEventLogging::action(GPFSEvent* evt)
     cbe->rpt_comp           = "TEAL";
     cbe->rpt_loc_type       = "A";    
 
-    srcloc                 += ":"; //srcloc == clustername:
+    srcloc                 += "|DK:"; // srcloc == C:clustername|DK:
     rptloc                 += "##"; //rptloc == nodename##
     rptloc                 += GPFSEventHandler::getEventHandler()->getProcName(); //rptloc == nodename##tlgpfsmon
     rptloc                 += "##";// rptloc == nodename##tlgpfsmon##
@@ -92,7 +93,7 @@ TLGPFS_ERR_T GPFSDiskEventLogging::action(GPFSEvent* evt)
     if(type == ADDDISK)
     {
         DiskActionEvent* event         = (DiskActionEvent*)evt->getEvent();
-        srcloc                        += event->getDiskName(); // srcloc == clustername:diskname
+        srcloc                        += event->getDiskName(); // srcloc == C:clustername|DK:diskname
         cbe->event_id                  = "GP000003";            
         cbe->src_loc                   = (char*)srcloc.c_str();
         
@@ -120,7 +121,7 @@ TLGPFS_ERR_T GPFSDiskEventLogging::action(GPFSEvent* evt)
     else if(type == DELDISK)
     {
         DiskActionEvent* event        = (DiskActionEvent*)evt->getEvent();
-        srcloc                       += event->getDiskName(); // srcloc == clustername:diskname
+        srcloc                       += event->getDiskName(); // srcloc == C:clustername|DK:diskname
         cbe->event_id                 = "GP000004";            
         cbe->src_loc                  = (char*)srcloc.c_str();
       
@@ -148,7 +149,7 @@ TLGPFS_ERR_T GPFSDiskEventLogging::action(GPFSEvent* evt)
     else if(type == CHDISK)
     {
         ChdiskEvent* event            = (ChdiskEvent*)evt->getEvent();
-        srcloc                       += event->getDiskName(); // srcloc == clustername:diskname
+        srcloc                       += event->getDiskName(); // srcloc == C:clustername|DK:diskname
         cbe->event_id                 = "GP000005";            
         cbe->src_loc                  = (char*)srcloc.c_str();
       
@@ -177,7 +178,7 @@ TLGPFS_ERR_T GPFSDiskEventLogging::action(GPFSEvent* evt)
     else if(type == LONG_IOTIME)
     {
         LongIoTimeEvent* event        = (LongIoTimeEvent*)evt->getEvent();
-        srcloc                       += event->getDiskName(); // srcloc == clustername:diskname
+        srcloc                       += event->getDiskName(); // srcloc == C:clustername|DK:diskname
         cbe->event_id                 = "GP000015";            
         cbe->src_loc                  = (char*)srcloc.c_str();
       
@@ -208,7 +209,7 @@ TLGPFS_ERR_T GPFSDiskEventLogging::action(GPFSEvent* evt)
     else if(type == NSD_CKSUM_MISMATCH)
     {
         NsdCksumMismatchEvent* event   = (NsdCksumMismatchEvent*)evt->getEvent();
-        srcloc                        += event->getCkNSD(); // srcloc == clustername:diskname
+        srcloc                        += event->getCkNSD(); // srcloc == C:clustername|DK:diskname
         cbe->event_id                  = "GP000025";            
         cbe->src_loc                   = (char*)srcloc.c_str();
       

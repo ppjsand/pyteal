@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <eventMetadata  xmlns:tns="http://www.ibm.com/teal/eventmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/eventmeta ../../../../../xml/eventmeta.xsd ">>
-  <!-- Version: 20110923a; Source: errList.20110913.v1.csv -->
+  <!-- Version: 2012036a; Source: errList.20120227.v1.csv -->
 
   <event id="BD000000" comp="CNM">
     <description>event: INVMINOR:Invalid Minor Number</description>
@@ -73,6 +73,7 @@ received from a broadcast packet. -->
     <message>Multicast Output Array Correctable Error</message>
   </event>
 
+  <!-- Depends on number of outstanding packets. If goes off, it will be 4 or 5 times back to back within 100ms and then will go quiet for 9 seconds, then go off again. It  cycles LNMC hot error threshold = 24/min -->
   <event id="BD20000C" comp="CNM">
     <description>event: MC_PTO:Multicast Packet Timeout Error</description>
     <message>Multicast Packet Timeout Error</message>
@@ -173,9 +174,15 @@ received from a broadcast packet. -->
     <message>HFI Ramp Output Port Array Uncorrectable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD400020" comp="CNM">
     <description>event: HFI_SENDER_HANG:HFI Ramp Output Port Sender Hang</description>
     <message>HFI Ramp Output Port Sender Hang</message>
+  </event>
+
+  <event id="BD400021" comp="CNM">
+    <description>event: HFI_HWCHK:HFI Ramp Hardware Check Failure</description>
+    <message>HFI Ramp Hardware Check Failure</message>
   </event>
 
   <event id="BD700021" comp="CNM">
@@ -263,6 +270,7 @@ received from a broadcast packet. -->
     <message>Llocal Input Port Unexpected Flit Type</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD500032" comp="CNM">
     <description>event: LLNK_IPVC_DEADLOCK:Llocal Input Port VC Deadlock Case</description>
     <message>Llocal Input Port VC Deadlock Case</message>
@@ -273,181 +281,217 @@ received from a broadcast packet. -->
     <message>Llocal Port Output Port Credit Overflow</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD500034" comp="CNM">
     <description>event: LLNK_OUTPSENDER_HANG:Llocal Port Output Port Sender Hang</description>
     <message>Llocal Port Output Port Sender Hang</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD500035" comp="CNM">
     <description>event: LLNK_OUTP_HWERR:Llocal Port Output Port Hard Failure</description>
     <message>Llocal Port Output Port Hard Failure</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700036" comp="CNM">
     <description>event: DLNK_INCRC:D Link Inbound Port CRC Threshold Exceeded</description>
     <message>D Link Inbound Port CRC Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700037" comp="CNM">
     <description>event: DLNK_DROPFLIT:D Link Port Dropped Flit Threshold Exceeded</description>
     <message>D Link Port Dropped Flit Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700038" comp="CNM">
     <description>event: DLNK_TOTREPLAY:D Link Port Total Replay Threshold Exceeded</description>
     <message>D Link Port Total Replay Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700039" comp="CNM">
     <description>event: DLNK__FLITRETRY:D Link Port Same Flit Retry Threshold Exceeded</description>
     <message>D Link Port Same Flit Retry Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70003A" comp="CNM">
     <description>event: DLNK_LINKUP_THRES:D Link Port Link Up Threshold Exceeded</description>
     <message>D Link Port Link Up Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70003B" comp="CNM">
     <description>event: DLNK_INLL_PE:D Link Input Port Linked List Parity Error</description>
     <message>D Link Input Port Linked List Parity Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70003C" comp="CNM">
     <description>event: DLNK_PCR_OF:D Link Port Credit Overflow</description>
     <message>D Link Port Credit Overflow</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70003D" comp="CNM">
     <description>event: DLNK_PBUF_OF:D Link Port Buffer Overflow</description>
     <message>D Link Port Buffer Overflow</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70003E" comp="CNM">
     <description>event: DLNK_PVC_DEADLOCK:D Link Port VC Deadlock Case</description>
     <message>D Link Port VC Deadlock Case</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70003F" comp="CNM">
     <description>event: DLNK_PUNEX_FLIT:D Link Port Unexpected Flit Type</description>
     <message>D Link Port Unexpected Flit Type</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700040" comp="CNM">
     <description>event: DLNK_SENDER_HANG:D Link Port Sender Hang</description>
     <message>D Link Port Sender Hang</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700041" comp="CNM">
     <description>event: DLNK_IPVC_HANG:D Link Port Input Port VC Hang Timeout</description>
     <message>D Link Port Input Port VC Hang Timeout</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700042" comp="CNM">
     <description>event: DLNK_IPAIFA_UE:D Link Input Port Async IF Array Uncorrectable Error</description>
     <message>D Link Input Port Async IF Array Uncorrectable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700043" comp="CNM">
     <description>event: DLNK_IPAIFA_CE:D Link Input Port Async IF Array Correctable Error</description>
     <message>D Link Input Port Async IF Array Correctable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700044" comp="CNM">
     <description>event: DLNK_IPA_UE:D Link Input Port Array Uncorrectable Error</description>
     <message>D Link Input Port Array Uncorrectable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700045" comp="CNM">
     <description>event: DLNK_IPA_CE:D Link Input Port Array Correctable Error</description>
     <message>D Link Input Port Array Correctable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700046" comp="CNM">
     <description>event: DLNK_OPA_UE:D Link Output Port Array Uncorrectable Error</description>
     <message>D Link Output Port Array Uncorrectable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700047" comp="CNM">
     <description>event: DLNK_OPA_CE:D Link Output Port Array Correctable Error</description>
     <message>D Link Output Port Array Correctable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700048" comp="CNM">
     <description>event: DLNK_OPAIFA_UE:D Link Output Port Async IF Array Uncorrectable Err</description>
     <message>D Link Output Port Async IF Array Uncorrectable Err</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700049" comp="CNM">
     <description>event: DLNK_OPAIFA_CE:D Link Output Port Async IF Array Correctable Error</description>
     <message>D Link Output Port Async IF Array Correctable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70004A" comp="CNM">
     <description>event: DLNK_HWERR:D Link Port Hard Failure</description>
     <message>D Link Port Hard Failure</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70004B" comp="CNM">
     <description>event: DLNK_PRT1A_UE:D Port PRT1 Array Uncorrectable Error</description>
     <message>D Port PRT1 Array Uncorrectable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70004C" comp="CNM">
     <description>event: DLNK_PRT1A_CE:D Port PRT1 Array Correctable Error</description>
     <message>D Port PRT1 Array Correctable Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70004D" comp="CNM">
     <description>event: LRLNK_INCRC:LR Link Inbound Port CRC Threshold Exceeded</description>
     <message>LR Link Inbound Port CRC Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70004E" comp="CNM">
     <description>event: LRLNK_DROPFLIT:LR Link Port Dropped Flit Threshold Exceeded</description>
     <message>LR Link Port Dropped Flit Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD70004F" comp="CNM">
     <description>event: LRLNK_TOTREPLAY:LR Link Port Total Replay Threshold Exceeded</description>
     <message>LR Link Port Total Replay Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700050" comp="CNM">
     <description>event: LRLNK__FLITRETRY:LR Link Port Same Flit Retry Threshold Exceeded</description>
     <message>LR Link Port Same Flit Retry Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700051" comp="CNM">
     <description>event: LRLNK_LINKUP_THRES:LR Link Port Link Up Threshold Exceeded</description>
     <message>LR Link Port Link Up Threshold Exceeded</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700052" comp="CNM">
     <description>event: LRLNK_INLL_PE:LR Link Input Port Linked List Parity Error</description>
     <message>LR Link Input Port Linked List Parity Error</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700053" comp="CNM">
     <description>event: LRLNK_PCR_OF:LR Link Port Credit Overflow</description>
     <message>LR Link Port Credit Overflow</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700054" comp="CNM">
     <description>event: LRLNK_PBUF_OF:LR Link Port Buffer Overflow</description>
     <message>LR Link Port Buffer Overflow</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700055" comp="CNM">
     <description>event: LRLNK_PVC_DEADLOCK:LR Link Port VC Deadlock Case</description>
     <message>LR Link Port VC Deadlock Case</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700056" comp="CNM">
     <description>event: LRLNK_PUNEX_FLIT:LR Link Port Unexpected Flit Type</description>
     <message>LR Link Port Unexpected Flit Type</message>
   </event>
 
+  <!-- Hot error threshold in LNMC = 12/min -->
   <event id="BD700057" comp="CNM">
     <description>event: LRLNK_SENDER_HANG:LR Link Port Sender Hang</description>
     <message>LR Link Port Sender Hang</message>
@@ -766,11 +810,6 @@ received from a broadcast packet. -->
     <message>Suspicious Frame</message>
   </event>
 
-  <event id="BDFF0070" comp="CNM">
-    <description>event: NETWORKFAULT:Network Fault</description>
-    <message>Network Fault</message>
-  </event>
-
   <event id="BDFF0080" comp="CNM">
     <description>event: BOUNCINGDLNK:Bouncing D-Link</description>
     <message>Bouncing D-Link</message>
@@ -781,46 +820,55 @@ received from a broadcast packet. -->
     <message>Bouncing LR-Link</message>
   </event>
 
+  <!-- Subtle difference from suspect frame in that this can include events from within the frame; whereas the suspect frame is purely neighbors. -->
   <event id="BDFF00A0" comp="CNM">
     <description>event: RANDOM_DLNK_FRAME:Random D-links in a Frame</description>
     <message>Random D-links in a Frame</message>
   </event>
 
+  <!-- Subtle difference from suspect frame in that this can include events from within the frame; whereas the suspect frame is purely neighbors. -->
   <event id="BDFF00A1" comp="CNM">
     <description>event: RANDOM_LRNK_FRAME:Random LR-links in a Frame</description>
     <message>Random LR-links in a Frame</message>
   </event>
 
+  <!-- Subtle difference from suspect frame in that this can include events from within the frame; whereas the suspect frame is purely neighbors. -->
   <event id="BDFF00A2" comp="CNM">
     <description>event: RANDOM_OM_FRAME:Random Optical Modules in a Frame</description>
     <message>Random Optical Modules in a Frame</message>
   </event>
 
+  <!-- Subtle difference from suspect supernode in that this can include events from within the supernode; whereas the suspect supernode is purely neighbors. -->
   <event id="BDFF00A5" comp="CNM">
     <description>event: RANDOM_DLNK_SUPERNODE:Random D-links in a SuperNode</description>
     <message>Random D-links in a SuperNode</message>
   </event>
 
+  <!-- Subtle difference from suspect supernode in that this can include events from within the supernode; whereas the suspect supernode is purely neighbors. -->
   <event id="BDFF00A6" comp="CNM">
     <description>event: RANDOM_LRNK_SUPERNODE:Random LR-links in a SuperNode</description>
     <message>Random LR-links in a SuperNode</message>
   </event>
 
+  <!-- Subtle difference from suspect supernode in that this can include events from within the supernode; whereas the suspect supernode is purely neighbors. -->
   <event id="BDFF00A7" comp="CNM">
     <description>event: RANDOM_OM_SUPERNODE:Random Optical Modules in a SuperNode</description>
     <message>Random Optical Modules in a SuperNode</message>
   </event>
 
+  <!-- Subtle difference from suspect drawer in that this can include events from within the drawer; whereas the suspect drawer is purely neighbors. -->
   <event id="BDFF00AA" comp="CNM">
     <description>event: RANDOM_DLNK_DRWR:Random D-links in a Drawer</description>
     <message>Random D-links in a Drawer</message>
   </event>
 
+  <!-- Subtle difference from suspect drawer in that this can include events from within the drawer; whereas the suspect drawer is purely neighbors. Also, put this behind in priority vs. the LR-link connector compound alerts. -->
   <event id="BDFF00AB" comp="CNM">
     <description>event: RANDOM_LRNK_DRWR:Random LR-links in a Drawer</description>
     <message>Random LR-links in a Drawer</message>
   </event>
 
+  <!-- Subtle difference from suspect drawer in that this can include events from within the drawer; whereas the suspect drawer is purely neighbors. -->
   <event id="BDFF00AC" comp="CNM">
     <description>event: RANDOM_OM_DRWR:Random Optical Modules in a Drawer</description>
     <message>Random Optical Modules in a Drawer</message>

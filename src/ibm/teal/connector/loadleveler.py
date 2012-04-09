@@ -352,7 +352,7 @@ if __name__ == '__main__':
                       default='warn')
     parser.add_option("-l", 
                       "--logfile",
-                      help="set the trace message level",
+                      help="set the fully qualified log file",
                       action="store",
                       dest="log_file",
                       default=None)
@@ -363,6 +363,9 @@ if __name__ == '__main__':
         # Do the necessary processing to spin off as a daemon
         command.daemonize('teal_ll')
     else:
+        # Make sure there is no other instances running
+        command.single_instance('teal_ll')
+
         # Allow the user to CTRL-C application and shutdown cleanly        
         signal.signal(signal.SIGINT, app_terminate)    # CTRL-C
     

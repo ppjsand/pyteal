@@ -4,7 +4,7 @@
 // After initializing,  DO NOT MODIFY OR MOVE
 // ================================================================
 //
-// (C) Copyright IBM Corp.  2010,2011
+// (C) Copyright IBM Corp.  2010,2012
 // Eclipse Public License (EPL)
 //
 // ================================================================
@@ -31,12 +31,20 @@ namespace TEAL {
 
     int semflags = 0;
     if (role == SERVER) {
-      semflags = IPC_CREAT | 0620;
+      semflags = IPC_CREAT | 0662;
     }
 
     int rc = semget(key,1,semflags);
     if (rc < 0) {
-      throw SemaphoreException(errno);
+      if (errno == EACCES) {
+    	  // Assume that this was upgrade from a previous release that had a
+    	  // different permission for the semaphore and try again
+          semflags = IPC_CREAT | 0620;
+    	  rc = semget(key,1,semflags);
+      }
+      if (rc < 0) {
+    	  throw SemaphoreException(errno);
+      }
     }
 
     ivId = rc;
@@ -45,26 +53,27 @@ namespace TEAL {
 
   void Semaphore::post()
   {
-    sembuf op = {0,1,0};
+	  sembuf op = {0,1,0};
 
-    int rc = semop(ivId,&op,1);
+	  int rc = semop(ivId,&op,1);
 
-    if (rc) {
-      std::string error(strerror(errno));
-      TEAL::getLog().printForced(TEAL_LOG_ERROR,"TEAL_SEM","Failed to post to semaphore");
-      TEAL::getLog().printForced(TEAL_LOG_INFO,"TEAL_SEM",error.c_str());
-      if(errno == EINTR) {
-        rc = semop(ivId,&op,1);
-        if(rc) {
-          std::string error(strerror(errno));
-          TEAL::getLog().printForced(TEAL_LOG_ERROR,
-                                     "TEAL_SEM","Retry failed to post to semaphore");
-          TEAL::getLog().printForced(TEAL_LOG_INFO,"TEAL_SEM",error.c_str());
-
-        }
-
-      }
-    }
+	  if (rc) {
+		  if (errno != ERANGE) {
+			  if(errno == EINTR) {
+				  rc = semop(ivId,&op,1);
+				  if(rc) {
+					  std::string error(strerror(errno));
+					  TEAL::getLog().printForced(TEAL_LOG_ERROR,
+							  "TEAL_SEM","Retry failed to post to semaphore");
+					  TEAL::getLog().printForced(TEAL_LOG_INFO,"TEAL_SEM",error.c_str());
+				  }
+			  } else {
+				  std::string error(strerror(errno));
+				  TEAL::getLog().printForced(TEAL_LOG_ERROR,"TEAL_SEM","Failed to post to semaphore");
+				  TEAL::getLog().printForced(TEAL_LOG_INFO,"TEAL_SEM",error.c_str());
+			  }
+		  }
+	  }
   }
 
 

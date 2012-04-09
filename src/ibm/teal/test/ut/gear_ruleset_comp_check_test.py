@@ -23,7 +23,7 @@ class GearRulesetCompCheck(TealTestCase):
         ''' test that isnm rule loads '''
         config = 'data/gear_ruleset_test/isnm/config.conf'
         try:
-            myteal = teal.Teal(config, 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+            myteal = teal.Teal(config, 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
             myteal.shutdown()
         except IOError:
             # Assume it is because it isn't installed 
@@ -34,7 +34,7 @@ class GearRulesetCompCheck(TealTestCase):
         ''' test that ll rule loads '''
         config = 'data/gear_ruleset_test/ll/config.conf'
         try:
-            myteal = teal.Teal(config, 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+            myteal = teal.Teal(config, 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
             myteal.shutdown()
         except IOError:
             # Assume it is because it isn't installed 
@@ -45,7 +45,7 @@ class GearRulesetCompCheck(TealTestCase):
         ''' test that pnsd rule loads '''
         config = 'data/gear_ruleset_test/pnsd/config.conf'
         try:
-            myteal = teal.Teal(config, 'stderr', msgLevel='info', commit_alerts=False, commit_checkpoints=False)
+            myteal = teal.Teal(config, 'stderr', msgLevel=self.msglevel, commit_alerts=False, commit_checkpoints=False)
             myteal.shutdown()
         except IOError:
             # Assume it is because it isn't installed 

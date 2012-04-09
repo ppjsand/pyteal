@@ -421,7 +421,7 @@ void DbStgPoolInfo::updateRegularTable(SQLHSTMT sqlStmt,string& table, void* tem
    *tmp->change = anyChange?CHANGE_MODIFIED:CHANGE_NONE;
    //"status": "Invalid" "NotInUse" "BeingAdded" "Valid" "BeingDeleted"
    //only when "status"=="Invalid", it's unhealthy
-   *tmp->health = strcmp(tmp->status,"Invalid")?HEALTHY:UNHEALTHY;
+   *tmp->health = strstr(tmp->status,"Invalid")?UNHEALTHY:HEALTHY;
    updateTable(sqlStmt,table,tmp);
 }
 }

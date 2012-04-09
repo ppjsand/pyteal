@@ -29,7 +29,7 @@ CREATE TABLE x_tealalert2alert (
   comments text,
   disable text,
   PRIMARY KEY  (assoc_id)
-);
+) ENGINE=InnoDB;
 CREATE VIEW tealalert2alert AS SELECT * FROM x_tealalert2alert;
 
 CREATE TABLE x_tealalert2event (
@@ -40,7 +40,7 @@ CREATE TABLE x_tealalert2event (
   comments text,
   disable text,
   PRIMARY KEY  (assoc_id)
-);
+) ENGINE=InnoDB;
 CREATE VIEW tealalert2event AS SELECT * FROM x_tealalert2event;
 
 CREATE TABLE x_tealcheckpoint (
@@ -51,7 +51,7 @@ CREATE TABLE x_tealcheckpoint (
   comments text,
   disable text,
   PRIMARY KEY  (chkpt_id)
-);
+) ENGINE=InnoDB;
 CREATE VIEW tealcheckpoint AS SELECT * FROM x_tealcheckpoint;
 
 
@@ -72,7 +72,7 @@ CREATE TABLE x_tealalertlog (
   comment text,
   disable text,
   PRIMARY KEY  (rec_id)
-);
+) ENGINE=InnoDB;
 CREATE VIEW tealalertlog AS SELECT * FROM x_tealalertlog;
 
 
@@ -95,7 +95,7 @@ CREATE TABLE x_tealeventlog (
   comments text,
   disable text,
   PRIMARY KEY  (rec_id)
-);
+) ENGINE=InnoDB;
 CREATE VIEW tealeventlog AS SELECT * FROM x_tealeventlog;
 
 CREATE TABLE x_CNM_1_2 (
@@ -122,7 +122,7 @@ CREATE TABLE x_CNM_1_2 (
   comments text,
   disable text,
   PRIMARY KEY  (rec_id)
-);
+) ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS site;
 CREATE TABLE site (
@@ -131,22 +131,21 @@ CREATE TABLE site (
     comments TEXT,
     disable TEXT,
     PRIMARY KEY  (`key`)
-);
+) ENGINE=InnoDB;
 
-ALTER TABLE x_tealalert2alert ADD FOREIGN KEY (alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE CASCADE;
-ALTER TABLE x_tealalert2alert ADD FOREIGN KEY (t_alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE RESTRICT;
-ALTER TABLE x_tealalert2alert ADD CONSTRAINT CHECK(assoc_type IN ('C','S','D'));
+ALTER TABLE x_tealalert2alert ADD CONSTRAINT teal_fk_arec FOREIGN KEY (alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE CASCADE;
+ALTER TABLE x_tealalert2alert ADD CONSTRAINT teal_fk_t_arec FOREIGN KEY (t_alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE RESTRICT;
+ALTER TABLE x_tealalert2alert ADD CONSTRAINT teal_a2a_assoc_check CHECK(assoc_type IN ('C','S','D'));
 
-ALTER TABLE x_tealalert2event ADD FOREIGN KEY (alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE CASCADE;
-ALTER TABLE x_tealalert2event ADD FOREIGN KEY (t_event_recid) REFERENCES x_tealeventlog (rec_id) ON DELETE RESTRICT;
-ALTER TABLE x_tealalert2event ADD CONSTRAINT CHECK(assoc_type IN ('C','S'));
+ALTER TABLE x_tealalert2event ADD CONSTRAINT teal_fk_erec FOREIGN KEY (alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE CASCADE;
+ALTER TABLE x_tealalert2event ADD CONSTRAINT teal_fk_t_erec FOREIGN KEY (t_event_recid) REFERENCES x_tealeventlog (rec_id) ON DELETE RESTRICT;
+ALTER TABLE x_tealalert2event ADD CONSTRAINT teal_a2e_assoc_check CHECK(assoc_type IN ('C','S'));
 
-ALTER TABLE x_tealcheckpoint ADD FOREIGN KEY (event_recid) REFERENCES x_tealeventlog (rec_id) ON DELETE RESTRICT;
+ALTER TABLE x_tealcheckpoint ADD CONSTRAINT teal_fk_chkrec FOREIGN KEY (event_recid) REFERENCES x_tealeventlog (rec_id) ON DELETE RESTRICT;
 
-ALTER TABLE x_tealalertlog ADD CONSTRAINT CHECK (state IN (1,2));
+ALTER TABLE x_tealalertlog ADD CONSTRAINT teal_alert_state_check CHECK (state IN (1,2));
 
-ALTER TABLE x_CNM_1_2 ADD FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;
 DELIMITER $$
-CREATE TRIGGER dupalert_delete AFTER DELETE ON x_tealalert2alert FOR EACH ROW BEGIN IF (OLD.assoc_type = 'D') THEN DELETE FROM x_tealalertlog WHERE rec_id = OLD.t_alert_recid; END IF; END$$
+CREATE TRIGGER teal_alertlog_delete BEFORE DELETE ON x_tealalertlog FOR EACH ROW BEGIN IF OLD.state = 1 THEN UPDATE `Error: Alert is in an invalid state for deletion` Set x = 1; END IF; END$$
 DELIMITER ;
 

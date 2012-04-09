@@ -26,7 +26,7 @@ from ibm.teal.analyzer.gear.rule_value import _contains_gear_variable,\
 #    '''Test loading GEAR rulesets'''
 #
 #    def setUp(self):
-#        self.teal = teal.Teal('data/gear_ruleset_test/gear_ruleset_test.conf', 'stderr', msgLevel='debug', commit_alerts=False)
+#        self.teal = teal.Teal('data/gear_ruleset_test/gear_ruleset_test.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False)
 #        return
 #
 #    def tearDown(self):
@@ -776,7 +776,7 @@ from ibm.teal.analyzer.gear.rule_value import _contains_gear_variable,\
 #    '''
 #
 #    def setUp(self):
-#        self.teal = teal.Teal('data/gear_ruleset_test/t001/config.conf', 'stderr', msgLevel='debug', commit_alerts=False)
+#        self.teal = teal.Teal('data/gear_ruleset_test/t001/config.conf', 'stderr', msgLevel=self.msglevel, commit_alerts=False)
 #        return
 #
 #    def tearDown(self):

@@ -1,15 +1,3 @@
-# begin_generated_IBM_copyright_prolog
-#
-# This is an automatically generated copyright prolog.
-# After initializing,  DO NOT MODIFY OR MOVE
-# ================================================================
-#
-# (C) Copyright IBM Corp.  2011     
-# Eclipse Public License (EPL)
-#
-# ================================================================
-#
-# end_generated_IBM_copyright_prolog
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR ORGANIZATION
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
@@ -17,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-05-17 17:29+CDT\n"
+"POT-Creation-Date: 2011-11-02 08:56+CDT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,104 +15,129 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../ibm/teal/teal.py:600
+#: ../ibm/teal/teal.py:649
 msgid "fully qualified TEAL config file/directory - optional"
 msgstr ""
 
-#: ../ibm/teal/teal.py:601
+#: ../ibm/teal/teal.py:650
 msgid "fully qualified log file"
 msgstr ""
 
-#: ../ibm/teal/teal.py:603
+#: ../ibm/teal/teal.py:652
 msgid "<debug | info | warning | error | critical> - optional [default: info]"
 msgstr ""
 
-#: ../ibm/teal/teal.py:609
+#: ../ibm/teal/teal.py:658
+msgid "Run TEAL in realtime mode"
+msgstr ""
+
+#: ../ibm/teal/teal.py:659
 msgid "run as a daemon"
 msgstr ""
 
-#: ../ibm/teal/teal.py:611
-msgid "<now | begin | timed | lastproc> [default: now]"
+#: ../ibm/teal/teal.py:661
+msgid "<now | begin | recovery | lastproc> [default: recovery]"
 msgstr ""
 
-#: ../ibm/teal/teal.py:624
+#: ../ibm/teal/teal.py:667
+msgid "Run TEAL in historic mode"
+msgstr ""
+
+#: ../ibm/teal/teal.py:673
 msgid "Query parameters used to limit the range of events."
 msgstr ""
 
-#: ../ibm/teal/teal.py:625
+#: ../ibm/teal/teal.py:674
 msgid "Commit alerts in historic mode [default=False]"
 msgstr ""
 
-#: ../ibm/teal/teal.py:632
+#: ../ibm/teal/teal.py:675
+msgid "Use time occurred instead of time logged [default=False]"
+msgstr ""
+
+#: ../ibm/teal/teal.py:681
 msgid "Arguments '{0}' cannot be specified"
 msgstr ""
 
-#: ../ibm/teal/teal.py:635
+#: ../ibm/teal/teal.py:684
 msgid "--historic and --daemon are mutually exclusive"
 msgstr ""
 
-#: ../ibm/teal/teal.py:646
+#: ../ibm/teal/teal.py:692
 msgid "Query option is only valid in historic mode"
 msgstr ""
 
-#: ../ibm/teal/teal.py:649
+#: ../ibm/teal/teal.py:695
 msgid "Commit option is only valid in historic mode"
 msgstr ""
 
-#: ../ibm/teal/teal.py:661
+#: ../ibm/teal/teal.py:700
+msgid "Occurred option is only valid in historic mode"
+msgstr ""
+
+#: ../ibm/teal/teal.py:710
 msgid "Restart option is only valid in realtime mode"
 msgstr ""
 
-#: ../ibm/teal/util/command.py:106
+#: ../ibm/teal/util/command.py:95
+msgid "{0} can not be specified without a valid {1}"
+msgstr ""
+
+#: ../ibm/teal/util/command.py:110
 msgid "Invalid scope specified: {0}"
 msgstr ""
 
-#: ../ibm/teal/util/command.py:147
+#: ../ibm/teal/util/command.py:154
 msgid "Location specification \"{0}\" is invalid"
 msgstr ""
 
-#: ../ibm/teal/util/command.py:178
+#: ../ibm/teal/util/command.py:190 ../ibm/teal/util/command.py:338
 msgid "Invalid timestamp for {0}: {1}"
 msgstr ""
 
-#: ../ibm/teal/util/command.py:230
-msgid "Invalid value(s) for {0}: {1}"
+#: ../ibm/teal/util/command.py:235
+msgid "Query string must not contain quotes"
 msgstr ""
 
-#: ../ibm/teal/util/command.py:287
+#: ../ibm/teal/util/command.py:251
 msgid "Invalid field specified: {0}"
 msgstr ""
 
-#: ../ibm/teal/util/command.py:291
+#: ../ibm/teal/util/command.py:255
 msgid "Invalid operation specified for field \"{0}\": {1}"
 msgstr ""
 
-#: ../ibm/teal/util/command.py:311
+#: ../ibm/teal/util/command.py:275
 msgid "Invalid query string specified"
 msgstr ""
 
-#: tlchalert:40
+#: ../ibm/teal/util/command.py:330
+msgid "Invalid value(s) for {0}: {1}"
+msgstr ""
+
+#: tlchalert:38
 msgid "The record id of the alert. (use tllsalert)"
 msgstr ""
 
-#: tlchalert:47
+#: tlchalert:45
 msgid "The new alert state. (close is the only valid value at this time."
 msgstr ""
 
-#: tlchalert:52
+#: tlchalert:50
 msgid "Invalid id specified"
 msgstr ""
 
-#: tlchalert:55
+#: tlchalert:53
 msgid "Must specify at least one attribute to change"
 msgstr ""
 
-#: tlchalert:66
+#: tlchalert:64
 msgid "Cannot close alert. Reason: {0}"
 msgstr ""
 
-#: tllsalert:36
+#: tllsalert:35
 msgid ""
+"\n"
 "Valid query values and their operations and formats:\n"
 "    \n"
 "rec_id        - =           - A single id or a comma-separated list of ids (equals-only)\n"
@@ -150,40 +163,57 @@ msgid ""
 "\n"
 msgstr ""
 
-#: tllsalert:130
+#: tllsalert:129
 msgid "Query parameters used to limit the range of alerts listed. See list of valid values below"
 msgstr ""
 
-#: tllsalert:137
+#: tllsalert:136
 msgid "Output format of alert: json,csv,text [default = %default]"
 msgstr ""
 
-#: tllsalert:142
+#: tllsalert:141
 msgid "Print the associated events and alerts for the matching alert"
 msgstr ""
 
-#: tllsalert:147
+#: tllsalert:146
 msgid "Print all open and closed alerts"
 msgstr ""
 
-#: tllsalert:152
+#: tllsalert:151
 msgid "Print only closed alerts"
 msgstr ""
 
-#: tllsalert:157
+#: tllsalert:156
 msgid "Print the duplicate alerts also"
 msgstr ""
 
-#: tllsalert:162
+#: tllsalert:161 tllsevent:117
+msgid "Include cross reference data in output"
+msgstr ""
+
+#: tllsalert:166
 msgid "Cannot specify both --all and --closed options"
 msgstr ""
 
-#: tllsalert:165
+#: tllsalert:169
 msgid "Cannot specify --with-assoc with 'brief' formatting"
+msgstr ""
+
+#: tllsalert:172
+msgid "Cannot specify --xref with 'brief' formatting"
+msgstr ""
+
+#: tllsckpt:102
+msgid "Name of checkpoint to list"
+msgstr ""
+
+#: tllsckpt:109
+msgid "Output format of checkpoints: json,csv,text [default = %default]"
 msgstr ""
 
 #: tllsevent:37
 msgid ""
+"\n"
 "Valid query values and their operations and formats:\n"
 "    \n"
 "rec_id        - =,<.>,>=,<= - A single id or a comma-separated list of ids (equals-only)\n"
@@ -221,75 +251,83 @@ msgstr ""
 msgid "Include extended event data in output"
 msgstr ""
 
-#: tllsevent:118
+#: tllsevent:123
 msgid "Cannot use --extended option with 'brief' format"
 msgstr ""
 
-#: tlrmalert:42
+#: tllsevent:126
+msgid "Cannot use --xref option with 'brief' format"
+msgstr ""
+
+#: tlrmalert:43
 msgid "A single alert id or a comma-separated list of alert ids"
 msgstr ""
 
-#: tlrmalert:48 tlrmevent:45
+#: tlrmalert:50 tlrmevent:49
 msgid "The time condition_qry in the format YYYY-MM-DD-HH:MM::SS"
 msgstr ""
 
-#: tlrmalert:124
+#: tlrmalert:125
 msgid "Alert '{0}' cannot be removed."
 msgstr ""
 
-#: tlrmalert:141
+#: tlrmalert:142
 msgid ""
 "\n"
 "{0} unique alert removed"
 msgstr ""
 
-#: tlrmalert:143
+#: tlrmalert:144
 msgid ""
 "\n"
 "{0} unique alerts removed"
 msgstr ""
 
-#: tlrmevent:39
+#: tlrmevent:42
 msgid "A single event id or a comma-separated list of event ids"
 msgstr ""
 
-#: tlrmevent:120
+#: tlrmevent:119
 msgid "Event '{0}' cannot be removed."
 msgstr ""
 
-#: tlrmevent:127
+#: tlrmevent:122
+msgid "\tReason: Event is within the checkpointed events.  (event rec_id {0} >= checkpoint rec_id {1})"
+msgstr ""
+
+#: tlrmevent:126
 msgid "\tReason: Event is associated with Alert '{0}'"
 msgstr ""
 
-#: tlrmevent:136
+#: tlrmevent:135
 msgid ""
 "\n"
 "{0} event removed"
 msgstr ""
 
-#: tlrmevent:138
+#: tlrmevent:137
 msgid ""
 "\n"
 "{0} events removed"
 msgstr ""
 
-#: tlvfyrule:46
+#: tlvfyrule:44
 msgid "verify the rule using this alert metadata specification"
 msgstr ""
 
-#: tlvfyrule:58
+#: tlvfyrule:56
 msgid "verifying a rule that also processes alerts"
 msgstr ""
 
-#: tlvfyrule:63
+#: tlvfyrule:61
 msgid "verify the rule assuming these configuration attributes"
 msgstr ""
 
-#: tlvfyrule:68
+#: tlvfyrule:66
 msgid "if valid provide a cross reference of id usage"
 msgstr ""
 
-#: tlvfyrule:72
+#: tlvfyrule:70
 msgid "rule file to process must be specified"
 msgstr ""
 
