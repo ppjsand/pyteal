@@ -61,6 +61,7 @@ package xCAT_schema::Teal_isnm;
    			nbr_om2 => 'VARCHAR(256)',
    			global_counter => 'BIGINT',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K',        
         table_desc => 'TEAL ISNM Event Extended Data',
         descriptions => {

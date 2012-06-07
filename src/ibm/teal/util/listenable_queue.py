@@ -17,7 +17,8 @@ from Queue import Queue, Empty
 from abc import ABCMeta, abstractmethod
 from ibm.teal.registry import get_logger, SHUTDOWN_MODE_DEFERRED,\
     SERVICE_SHUTDOWN_MODE
-from ibm.teal.control_msg import ControlMsg, CONTROL_MSG_TYPE_END_OF_DATA
+from ibm.teal.control_msg import ControlMsg, CONTROL_MSG_TYPE_END_OF_DATA,\
+    CONTROL_MSG_TYPE_UPDATE_CHECKPOINT
 from ibm.teal import registry
 from ibm.teal.util.teal_thread import TealThread
 
@@ -166,29 +167,34 @@ class ListenableQueueWatcher(TealThread):
         '''Wait for something to come into queue and then call the queue to notify the listeners
         '''
         try:
-            msg = None
-            while self.running:
-                msg = self.queue_to_watch.get()
-                self.queue_to_watch.notify_listeners(msg)
-            
-            # If deferred shutdown, continue processing messages until indication is received that
-            # no more events will be coming
-            if registry.get_service(SERVICE_SHUTDOWN_MODE) == SHUTDOWN_MODE_DEFERRED:
-                while(True):
-                    if (isinstance(msg, ControlMsg) and 
-                        msg.msg_type == CONTROL_MSG_TYPE_END_OF_DATA):
-                        break
-                    try:
-                        msg = self.queue_to_watch.get(True,1)
-                        self.queue_to_watch.notify_listeners(msg)                
-                    except Empty:   # Race condition: running could go false before the EOD msg is put 
-                        pass   
-            # else:  Told to shutdown_immediately by the stop method
+            try:
+                msg = None
+                while self.running:
+                    msg = self.queue_to_watch.get()
+                    self.queue_to_watch.notify_listeners(msg)
+                    if isinstance(msg, ControlMsg) and msg.msg_type == CONTROL_MSG_TYPE_UPDATE_CHECKPOINT and not self.queue_to_watch.empty():
+                        get_logger().info('{0}: queue depth is {1}'.format(self.queue_to_watch.name, self.queue_to_watch.qsize()))
+                
+                # If deferred shutdown, continue processing messages until indication is received that
+                # no more events will be coming
+                if registry.get_service(SERVICE_SHUTDOWN_MODE) == SHUTDOWN_MODE_DEFERRED:
+                    while(True):
+                        if (isinstance(msg, ControlMsg) and 
+                            msg.msg_type == CONTROL_MSG_TYPE_END_OF_DATA):
+                            break
+                        try:
+                            msg = self.queue_to_watch.get(True,1)
+                            self.queue_to_watch.notify_listeners(msg)                
+                        except Empty:   # Race condition: running could go false before the EOD msg is put 
+                            pass   
+                # else:  Told to shutdown_immediately by the stop method
+            except:
+                get_logger().exception('Exception in run method')
+            get_logger().debug('End of run method')
         except:
-            get_logger().exception('Exception in run method')
-        get_logger().debug('End of run method')
+            pass
         return
-    
+
     def stop(self):
         ''' Prepare to stop watching for events '''
         self.running = False

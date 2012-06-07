@@ -659,9 +659,9 @@ class GearActionableCreateAlert(GearActionable):
                             get_logger().exception('')
             
                     # Allocate the potential alert 
-                    self.ruleset.trace_info(self.trace_id[1], 'Allocating alert {0} at {1}:{2}'.format(str(self.id.get_value()), alert_dict[ALERT_ATTR_EVENT_LOC_TYPE], alert_dict[ALERT_ATTR_EVENT_LOC]))
+                    self.ruleset.trace_info(self.trace_id[1], 'Allocating alert {0} at {1}:{2}'.format(alert_id, alert_dict[ALERT_ATTR_EVENT_LOC_TYPE], alert_dict[ALERT_ATTR_EVENT_LOC]))
                     amgr = get_service(SERVICE_ALERT_MGR)
-                    new_alert = amgr.allocate(self.id.get_value(), alert_dict)
+                    new_alert = amgr.allocate(alert_id, alert_dict)
                     # Add suppressions based on the condition events 
                     new_suppressions = set()
                     for event in new_alert.condition_events:

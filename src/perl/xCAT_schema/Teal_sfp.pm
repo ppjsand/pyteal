@@ -27,6 +27,7 @@ package xCAT_schema::Teal_sfp;
             fru_list => 'VARCHAR(1536)',
             sfp_raw_data => 'VARCHAR(2048)',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc => 'TEAL Loadleveler Event Extended Data',
         descriptions => {

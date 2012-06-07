@@ -27,6 +27,7 @@ package xCAT_schema::Teal_ll;
             message => 'VARCHAR(1024)',
             detail => 'VARCHAR(1024)',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS16K', 
         table_desc => 'TEAL Loadleveler Event Extended Data',
         descriptions => {

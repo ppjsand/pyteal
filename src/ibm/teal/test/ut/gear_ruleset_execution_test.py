@@ -30,7 +30,7 @@ class GearRulesetExecution(TealTestCase):
         # TODO: Remove restriction
         #   8, 23 - Problem is optimization of location_match=unique not working the same way with instances option.
         skip = [8, 23]
-        num_tests = 26  
+        num_tests = 27  
         for x in xrange(1, num_tests+1):  # one more than max dir num
             if x in skip:
                 continue
@@ -44,7 +44,7 @@ class GearRulesetExecution(TealTestCase):
 #        ''' Run gear execution tests'''
 #        #save_env = self.force_env('TEAL_ALERT_PRIORITIZATION', 'NO')
 #        #save_env2 = self.force_env('TEAL_LOCATION_VALIDATION', 'IMMEDIATE')
-#        test = 27 # 27 is NEXT
+#        test = 28 # 28 is NEXT
 #        for x in xrange(test, test+1):  # one more than max dir num
 #            test_dir = 't' + str(x).zfill(3)
 #            print '>>>> Testing ' + test_dir

@@ -2,19 +2,18 @@
   {
     "1": {
       "data": {
-        "alert_id": "BD00FFF0", 
+        "alert_id": "E0000006", 
         "associations": [
-          "C:E:3"
+          "C:E:6"
         ], 
-        "creation_time": "2011-08-04 12:03:37.265000", 
-        "event_loc": "sys##prog##pid#test025", 
-        "event_loc_type": "A", 
-        "raw_data": "{\"exception\":\"<type 'exceptions.ValueError'>: Location Code 'C: MB-SL-ET1-PT1' invalid: Invalid component at position 1\"}", 
-        "reason": "This is Alert 12", 
+        "creation_time": "2012-05-16 15:24:02.198608", 
+        "event_loc": "MB-SL3-ET1-PT1", 
+        "event_loc_type": "C", 
+        "reason": "*** DETERMINED BY ALERT INIT ****", 
         "rec_id": 1, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
+        "recommendation": "Refer to vendor documentation for appropriate repair actions", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest027", 
         "state": "Open", 
         "urgency": "N"
       }, 
@@ -23,19 +22,18 @@
     }, 
     "2": {
       "data": {
-        "alert_id": "BD00FFF0", 
+        "alert_id": "E0000005", 
         "associations": [
-          "C:E:6"
+          "C:E:5"
         ], 
-        "creation_time": "2011-08-04 12:03:37.281000", 
-        "event_loc": "sys##prog##pid#test025", 
-        "event_loc_type": "A", 
-        "raw_data": "{\"exception\":\"<type 'exceptions.ValueError'>: Location Code 'FR008-CG03-SN001-DR0-HB1-LD10' of type C has too many components\"}", 
-        "reason": "This is Alert 12", 
+        "creation_time": "2012-05-16 15:24:02.203603", 
+        "event_loc": "MB-SL1-ET1-PT2", 
+        "event_loc_type": "C", 
+        "reason": "*** DETERMINED BY ALERT INIT ****", 
         "rec_id": 2, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
+        "recommendation": "Refer to vendor documentation for appropriate repair actions", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest027", 
         "state": "Open", 
         "urgency": "N"
       }, 
@@ -44,19 +42,18 @@
     }, 
     "3": {
       "data": {
-        "alert_id": "BD00FFF0", 
+        "alert_id": "E0000004", 
         "associations": [
-          "C:E:8"
+          "C:E:4"
         ], 
-        "creation_time": "2011-08-04 12:03:37.296000", 
-        "event_loc": "sys##prog##pid#test025", 
-        "event_loc_type": "A", 
-        "raw_data": "{\"exception\":\"<type 'exceptions.KeyError'>: 'Q'\"}", 
-        "reason": "This is Alert 12", 
+        "creation_time": "2012-05-16 15:24:02.217710", 
+        "event_loc": "MB-SL4-ET1-PT1", 
+        "event_loc_type": "C", 
+        "reason": "*** DETERMINED BY ALERT INIT ****", 
         "rec_id": 3, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
+        "recommendation": "Refer to vendor documentation for appropriate repair actions", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest027", 
         "state": "Open", 
         "urgency": "N"
       }, 
@@ -65,18 +62,18 @@
     }, 
     "4": {
       "data": {
-        "alert_id": "Alert 01", 
+        "alert_id": "E0000003", 
         "associations": [
-          "C:E:1"
+          "C:E:3"
         ], 
-        "creation_time": "2011-08-04 12:03:37.343000", 
-        "event_loc": "MB-SL1-ET1-PT1", 
+        "creation_time": "2012-05-16 15:24:02.222324", 
+        "event_loc": "MB-SL4-ET1-PT2", 
         "event_loc_type": "C", 
-        "reason": "This is Alert 01", 
+        "reason": "*** DETERMINED BY ALERT INIT ****", 
         "rec_id": 4, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
+        "recommendation": "Refer to vendor documentation for appropriate repair actions", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest027", 
         "state": "Open", 
         "urgency": "N"
       }, 
@@ -85,18 +82,18 @@
     }, 
     "5": {
       "data": {
-        "alert_id": "Alert 04", 
+        "alert_id": "E0000002", 
         "associations": [
-          "C:E:4"
+          "C:E:2"
         ], 
-        "creation_time": "2011-08-04 12:03:37.343000", 
+        "creation_time": "2012-05-16 15:24:02.225846", 
         "event_loc": "MB-SL1-ET1-PT1", 
         "event_loc_type": "C", 
-        "reason": "This is Alert 04", 
+        "reason": "*** DETERMINED BY ALERT INIT ****", 
         "rec_id": 5, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
+        "recommendation": "Refer to vendor documentation for appropriate repair actions", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest027", 
         "state": "Open", 
         "urgency": "N"
       }, 
@@ -105,120 +102,18 @@
     }, 
     "6": {
       "data": {
-        "alert_id": "Alert 05", 
+        "alert_id": "E0000001", 
         "associations": [
-          "C:E:5"
+          "C:E:1"
         ], 
-        "creation_time": "2011-08-04 12:03:37.343000", 
-        "event_loc": "MB-SL1-ET1-PT1", 
+        "creation_time": "2012-05-16 15:24:02.232622", 
+        "event_loc": "MB-SL2-ET1-PT1", 
         "event_loc_type": "C", 
-        "reason": "This is Alert 05", 
+        "reason": "*** DETERMINED BY ALERT INIT ****", 
         "rec_id": 6, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
-        "state": "Open", 
-        "urgency": "N"
-      }, 
-      "delay": "0.0", 
-      "type": "alert"
-    }, 
-    "7": {
-      "data": {
-        "alert_id": "Alert 07", 
-        "associations": [
-          "S:E:2", 
-          "C:E:7"
-        ], 
-        "creation_time": "2011-08-04 12:03:37.343000", 
-        "event_loc": "MB-SL1-ET1-PT1", 
-        "event_loc_type": "C", 
-        "reason": "This is Alert 07", 
-        "rec_id": 7, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
-        "state": "Open", 
-        "urgency": "N"
-      }, 
-      "delay": "0.0", 
-      "type": "alert"
-    }, 
-    "8": {
-      "data": {
-        "alert_id": "Alert 09", 
-        "associations": [
-          "C:E:9"
-        ], 
-        "creation_time": "2011-08-04 12:03:37.343000", 
-        "event_loc": "MB-SL1-ET1-PT1", 
-        "event_loc_type": "C", 
-        "reason": "This is Alert 09", 
-        "rec_id": 8, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
-        "state": "Open", 
-        "urgency": "N"
-      }, 
-      "delay": "0.0", 
-      "type": "alert"
-    }, 
-    "9": {
-      "data": {
-        "alert_id": "BD00FFF0", 
-        "associations": [
-          "C:E:10"
-        ], 
-        "creation_time": "2011-08-04 12:03:37.359000", 
-        "event_loc": "sys##prog##pid#test025", 
-        "event_loc_type": "A", 
-        "raw_data": "{\"exception\":\"<type 'exceptions.ValueError'>: Location Code 'C: MB-SL1-ET1-PT55' invalid: Invalid component at position 3\"}", 
-        "reason": "This is Alert 12", 
-        "rec_id": 9, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
-        "state": "Open", 
-        "urgency": "N"
-      }, 
-      "delay": "0.0", 
-      "type": "alert"
-    }, 
-    "10": {
-      "data": {
-        "alert_id": "Alert 11", 
-        "associations": [
-          "C:E:11"
-        ], 
-        "creation_time": "2011-08-04 12:03:37.359000", 
-        "event_loc": "MB-SL1-ET1-PT2", 
-        "event_loc_type": "C", 
-        "reason": "This is Alert 11", 
-        "rec_id": 10, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
-        "state": "Open", 
-        "urgency": "N"
-      }, 
-      "delay": "0.0", 
-      "type": "alert"
-    }, 
-    "11": {
-      "data": {
-        "alert_id": "Alert 12", 
-        "associations": [
-          "C:E:12"
-        ], 
-        "creation_time": "2011-08-04 12:03:37.375000", 
-        "event_loc": "MB-SL1-ET1-PT2", 
-        "event_loc_type": "C", 
-        "reason": "This is Alert 12", 
-        "rec_id": 11, 
-        "recommendation": "Recommend doing something", 
-        "severity": "W", 
-        "src_name": "AnalyzerTest026", 
+        "recommendation": "Refer to vendor documentation for appropriate repair actions", 
+        "severity": "E", 
+        "src_name": "AnalyzerTest027", 
         "state": "Open", 
         "urgency": "N"
       }, 

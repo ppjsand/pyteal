@@ -30,7 +30,6 @@ class GearEventAnalyzer(EventAnalyzer):
         
         self.engine = engine_factory(name, config_dict, event_input=True, number=number, send_alert=self.send_alert)
         EventAnalyzer.__init__(self, name, inQueue, outQueue, config_dict, number, checkpoint=self.engine.checkpoint)
-        self.base_analyze_event_CHECKPOINT = self.analyze_event   # Manages checkpoints via pool checkpointer
         return
     
     def will_analyze_event(self, event):
@@ -40,10 +39,16 @@ class GearEventAnalyzer(EventAnalyzer):
             self.engine.trace_debug(str(self.number),'Will NOT analyze event: {0}'.format(event.brief_str()))
         return result
     
+    def base_analyze_event_CHECKPOINT(self, event):
+        ''' Override because manages the checkpoint via the pool checkpoint support '''
+        self.last_before_analyze = event
+        self.analyze_event(event)
+        return
+    
     def analyze_event(self, event):
         '''The analyze method performs the analysis and determines if alerts
         should be created for conditions that require administrator action.'''
-        get_logger().debug('analyze_event called' + str(event))  
+        get_logger().debug('analyze_event called' + str(event))
         self.engine.add_event(event)
         return
       

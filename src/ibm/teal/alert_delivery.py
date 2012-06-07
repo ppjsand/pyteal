@@ -41,6 +41,12 @@ class AlertDelivery(QueueListener):
         item.process(self, None)
         return True
     
+    def shutdown_immediate(self):
+        ''' Shutdown immediately 
+            Note: non-immediate shutdown is done by calling notify with an End of Data control message
+        ''' 
+        self.inQueue.unregister_listener(self)        
+    
     def process_alert(self, alert, context):
         '''Callback when incoming item is an alert
            Check the filters and call the listeners as appropriate

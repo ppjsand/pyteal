@@ -194,6 +194,7 @@ int main()
         return TEAL_SUCCESS;
     }
     string node(nodeName);
+    /* meanless code since tlgpfserrhandler is moved to cn now....
     //find out the GPFS cluster facing node name here
     
     FILE *fP;
@@ -231,12 +232,12 @@ int main()
     msg += str;
     log_info(msg);
     node = str; // replace node with GPFS cluster facing name here
+    */
     vector<tlgpfs_node_info_t*>* nodes = NULL; 
     string queryColName("node_name");
     msg  = "Start to query cluster id via node name ";
     msg += node;
     log_info(msg);
-    
     //reopen it
     ret = teal_open_connector(&conn_handle,"GPFS","/tmp");
     if(ret != TEAL_SUCCESS)

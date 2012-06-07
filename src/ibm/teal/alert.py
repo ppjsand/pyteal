@@ -407,6 +407,11 @@ class Alert(Incident):
         self.raw_data = dict2raw_data(in_dict)
         return
     
+    def brief_str(self): 
+        ''' Shortest string that identifies this '''
+        return '{0}({1})'.format(self.alert_id, self.rec_id)   
+
+    
 ############
 ## HELPERS
 def raw_data2dict(raw_data):

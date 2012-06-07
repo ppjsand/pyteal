@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Convert events straight into alerts -->
+<!-- 
+
+ -->
 <gear_ruleset>
-<pool_control>
-   <arrival_rate_extension window_min="5" window_max="5" arrival_rate="1" extension="2"/>
-</pool_control>
 <gear_control>
   <default_event_comp value="CNM"/>
 </gear_control>
@@ -14,27 +13,121 @@
    <event id="E0000004" name="E4"/>
    <event id="E0000005" name="E5"/>
    <event id="E0000006" name="E6"/>
-   <event id="E0000007" name="E7"/>
-   <event id="E0000008" name="E8"/>
-   <event id="E0000009" name="E9"/>
-   <event id="E0000010" name="E10"/>
-   <event id="E0000011" name="E11"/>
-   <event id="E0000012" name="E12"/>
 </events>
-<!--   <constants>
-   <constant name="all_events" value="E1,E2,E3,E4,E5,E6,E7,E8,E9,E10,E11,E12"/> 
-</constants>
--->
 <analyze>
-   <on_error type="location" alert_id='BD00FFF0' event_loc="A:sys##prog##pid#test025"/>
-   <!-- Start base setup  -->
+   <rule>
+       <condition>
+          <any_events ids="E1,E2,E3,E4,E5,E6" num="1" location_match="identical"/>
+       </condition>
+       <action>
+          <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                        msg_template="*** DETERMINED BY ALERT INIT ****" 
+                        recommendation="Refer to vendor documentation for appropriate repair actions"
+                        urgency="N"
+                        severity="E" />
+          
+       </action>
+   </rule>
+ <!--  <rule name="E1">
+      <condition>
+         <event_equals id="E1"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 01"/>
+      </action>
+   </rule>
    <rule name="E2">
       <condition>
          <event_equals id="E2"/>
       </condition>
       <action>
-         <create_alert id="E0000001"/>
+         <create_alert id="Alert 02"/>
       </action>
    </rule>
+   <rule name="E3">
+      <condition>
+         <event_equals id="E3"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 03" event_loc="GEAR[last_condition_event.rpt_loc]"/>
+      </action>
+   </rule>
+   <rule name="E4">
+      <condition>
+         <event_equals id="E4"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 04" event_loc="GEAR[last_condition_event.ext.neighbor_loc]"/>
+      </action>
+   </rule>
+   <rule name="E5">
+      <condition>
+         <event_equals id="E5"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 05"/>
+      </action>
+   </rule>
+   <rule name="E6">
+      <condition>
+         <event_equals id="E6"/>
+      </condition>
+      <action>
+         <suppress_events ids="E1"/>
+         <create_alert id="Alert 06"/>
+      </action>
+   </rule>
+   <rule name="E7">
+      <condition>
+         <event_equals id="E7"/>
+      </condition>
+      <action>
+         <suppress_events ids="E2"/>
+         <create_alert id="Alert 07"/>
+      </action>
+   </rule>
+   <rule name="E8">
+      <condition>
+         <event_equals id="E8"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 08"/>
+      </action>
+   </rule>
+   <rule name="E9">
+      <condition>
+         <event_equals id="E9"/>
+      </condition>
+      <action>
+         <create_alert id="Alert 09"/>
+      </action>
+   </rule>
+   <rule name="E10">
+      <condition>
+         <event_equals id="E10"/>
+      </condition>
+      <action>
+         <suppress_events ids="E3"/>
+         <create_alert id="Alert 10"/>
+      </action>
+   </rule>
+   <rule name="E11">
+      <condition>
+         <event_equals id="E11"/>
+      </condition>
+      <action>
+         <suppress_events ids="E4"/>
+         <create_alert id="Alert 11"/>
+      </action>
+   </rule>
+   <rule name="E12">
+      <condition>
+         <event_equals id="E12"/>
+      </condition>
+      <action>
+         <suppress_events ids="E8,E9"/>
+         <create_alert id="Alert 12"/>
+      </action>
+   </rule>  --> 
 </analyze>
 </gear_ruleset>

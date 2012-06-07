@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -71,6 +71,15 @@ def _load_spec_file(spec_loc, area, contains, failures):
             _check_area(filename, sfn, area, failures)
             
             contains.append(sfn)
+        elif line[:7] == '%config':
+            s_line =  line.split()
+            mode = s_line[2].strip()[:3]
+            sfn = s_line[6].strip()
+            _check_mode(filename, sfn, mode, failures)
+            _check_area(filename, sfn, area, failures)
+            
+            contains.append(sfn)
+            
     return
 
 def _check_area(filename, fn, area, failures):
@@ -255,9 +264,13 @@ TEAL_PKGS_CTL = {
                            # Add to il 
                            ['/usr/lib64/libteal_gpfs.so'],
                            # Add to spec
-                           ['/usr/lib/libteal_gpfs.so'],
+                           ['/usr/lib/libteal_gpfs.so',
+                            '/opt/teal/bin/tlgpfserrhandler',
+                            '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/GPFSConnectorMonitor.pm',
+                            '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/GPFSConnectorFailed.pm'
+                           ],
                            # Dir replacements
-                           {},
+                           {'/install/postscripts/rmcmon/' : '/opt/xcat/lib/perl/xCAT_monitoring/rmc/'},
                            # Files not in all check
                            ['/usr/lib64/libteal_gpfs.so',
                             '/usr/lib/libteal_gpfs.so',
@@ -285,6 +298,7 @@ TEAL_PKGS_CTL = {
                             '/usr/lib64/libteal_common.so',
                             '/opt/teal/bin/tlgpfsmon',
                             '/opt/teal/bin/tlgpfsrefresh',
+                            '/opt/teal/bin/tlgpfserrhandler',
                             '/opt/teal/bin/tlgpfslauncher'],
                            # Dirs not in all check
                            ['/opt/teal', '/opt/teal/bin']   # Added by base package
@@ -381,9 +395,13 @@ TEAL_SRC_CTL = (
                      '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition', 
                      '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse', 
                      '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor', 
-                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.Sensor',  # in pkg
-                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/sn/IBM.Condition', # in pkg
-                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/sn/IBM.Sensor'],
+                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/sn/IBM.Condition', 
+                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/sn/IBM.EventResponse', 
+                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/sn/IBM.Sensor', 
+                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.Condition',
+                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.EventResponse',
+                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.Sensor'
+                    ],
                     [],
                     # Add
                     [],
@@ -516,8 +534,11 @@ class TestPkgfiles(TealTestCase):
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_mysql.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor/TealSendAlert.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify.pm')
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify_H.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealNotifyEventLogged.pm')
         base_spec_files.remove('/install/postscripts/rmcmon/resources/sn/IBM.Sensor/TealEventNotify.pm') 
+        base_spec_files.remove('/install/postscripts/rmcmon/resources/sn/IBM.Condition/TealAnyNodeEventNotify.pm') 
+        base_spec_files.remove('/install/postscripts/rmcmon/resources/node/IBM.Sensor/TealEventNotify.pm') 
         _compare_file_lists('base', base_spec_files, 'base-bg', base_bg_spec_files, 'base spec files', failures)
            
         for fail in failures:

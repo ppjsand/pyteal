@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="NM"/>
+</gear_control>
+<events>
+   <event id="NventOne"/>
+   <event id="NventTwo"/>
+   <event id="NventThr"/>   
+</events>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <event_equals id="NventThr"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="NventTwo"/>
+      </action>
+   </rule>
+   <rule name="Alert 02a">
+       <condition>
+           <event_equals id="NventOne"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 01"/>
+       </action>
+    </rule>   
+    <rule name="Alert 02b">
+       <condition>
+           <event_equals id="NventTwo"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 02"/>
+       </action>
+    </rule>
+    <rule name="Alert 02c">
+       <condition>
+           <event_equals id="NventThr"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 03"/>
+       </action>
+    </rule>
+ </analyze>
+</gear_ruleset>

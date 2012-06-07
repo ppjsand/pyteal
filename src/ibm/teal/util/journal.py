@@ -487,7 +487,7 @@ class Journal(dict, QueueListener):
         self.jevent_notify(J_EVENT_JE_DEL, seq)
         return
     
-    def wait_for_entries(self, num_entries, seconds=10, msg_mode='log'):
+    def wait_for_entries(self, num_entries, seconds=20, msg_mode='log'):
         count = 0  
         while len(self) < num_entries:
             if msg_mode != 'quiet':

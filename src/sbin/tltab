@@ -92,6 +92,9 @@ my @TEAL_BASE_PKGS = qw(x_tealeventlog
 
 my @TEAL_PKGS;
 my @TEAL_PKGS_TMP;
+my $db2 = "DB2";
+my $mysql = "mysql";
+my $dbcfg;
 
 sub table_wanted() {
     if (/^(Teal_.*)\.pm/) {
@@ -221,7 +224,11 @@ sub create_tar {
     $now =~ s/ //g; # Need to do this for SCCS control issues with timestamp string
     my $tar_filename = "$user_dir/tltab_$now.tar";
     print "TARFILE: $tar_filename\n";
-    `/bin/tar cf $tar_filename *.ixf *.txt`;
+    if ($dbcfg eq $db2) {
+        `/bin/tar cf $tar_filename *.ixf *.txt`;
+    } else {
+        `/bin/tar cf $tar_filename *.csv`;
+    }
 }
 
 ################################################################################
@@ -246,7 +253,11 @@ sub extract_tar {
     
     `/bin/tar xf $tarfile`;
     
-    return glob "*.ixf *.txt";
+    if ($dbcfg eq $db2) {
+        return glob "*.ixf *.txt";
+    } else {
+        return glob "*.csv";
+    }
 }
 
 ################################################################################
@@ -266,10 +277,19 @@ sub dump_db {
     open(my $sqlh, '>', $sql_file) || die "Could not create sql script";
     
     foreach my $table (get_teal_tables()) {
-        print $sqlh "export to $working_dir/$table.ixf of ixf messages $working_dir/msgs.txt select * from $table;\n";
+        if ($dbcfg eq $db2) {
+            print $sqlh "export to $working_dir/$table.ixf of ixf messages $working_dir/msgs.txt select * from $table;\n";
+        } else {
+            print $sqlh "SELECT * INTO OUTFILE '$working_dir/$table.csv' FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\\\"' from $table;\n";
+        }
     }
     close $sqlh;
     
+    # For MySQL: if run into "Access denied for user 'id'@'host' (using password: YES)" problem,
+    #            may need to grant FILE privilege to user (i.e.: grant file on *.* to 'id'@'host';).
+    # For all: if run into "Can't create/write to file '/tmp/TEALDB_xxx/yyy.csv' (Errcode: 13)",
+    #          potentially it may be due to SELinux (either disable SELinux or switch to 
+    #          Permissive mode: setenforce Permissive). 
     my $rc = system("$::XCATROOT/sbin/runsqlcmd", "-f", $sql_file);
     
     if ($rc == 0) {
@@ -307,9 +327,16 @@ sub restore_db {
         open(my $sqlh, '>', $sql_file) || die "Could not create sql script";
         
         foreach my $table (@tables) {
-            my $file = "$table.ixf";
-            if ($file ~~ @files) {
-                print $sqlh "import from $working_dir/$table.ixf of ixf commitcount automatic messages $working_dir/tltab_msgs.txt insert_update into $table;\n";
+            if ($dbcfg eq $db2) {
+                my $file = "$table.ixf";
+                if ($file ~~ @files) {
+                    print $sqlh "import from $working_dir/$table.ixf of ixf commitcount automatic messages $working_dir/tltab_msgs.txt insert_update into $table;\n";
+                }
+            } else {
+                my $file = "$table.csv";
+                if ($file ~~ @files) {
+                    print $sqlh "LOAD DATA INFILE '$working_dir/$table.csv' INTO TABLE $table FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\\\"';\n";
+                }
             }
         }
         close $sqlh;
@@ -323,19 +350,38 @@ sub restore_db {
         print STDERR "No files in TAR file\n"
     }
     
-    File::Copy::copy("$working_dir/tltab_msgs.txt", $user_path);
+    if ($dbcfg eq $db2) {
+        File::Copy::copy("$working_dir/tltab_msgs.txt", $user_path);
+    }
     chdir $current_dir;
     File::Path::remove_tree($working_dir);
 }
+
+################################################################################
+# Get the type of database defined by xCAT
+################################################################################
+
+sub get_db_config {
+    my $xcatcfg = xCAT::Table->get_xcatcfg();
+    if ($xcatcfg =~ /^DB2:/) {
+        return $db2;
+    } elsif ($xcatcfg =~ /^mysql:/) {
+        return $mysql; 
+    } else {
+        return "Not supported";
+    }
+    
+}
+
 ################################################################################
 ##################################   MAIN    ###################################
 ################################################################################
 
-# Only runs with DB2 currently
-my $xcatcfg = xCAT::Table->get_xcatcfg();
-if ($xcatcfg =~ /^DB2:/) {
+# Only runs with DB2 or MySQL currently
+$dbcfg = get_db_config();
+if ($dbcfg =~ $db2 || $dbcfg =~ $mysql) {
 } else {
-    pod2usage(-message => "Database engine must be DB2");
+    pod2usage(-message => "Database engine must be DB2 or MySQL");
 }
 
 # Parse and validate the user options

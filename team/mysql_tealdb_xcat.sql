@@ -45,9 +45,10 @@ CREATE VIEW tealalert2event AS SELECT * FROM x_tealalert2event;
 
 CREATE TABLE x_tealcheckpoint (
   chkpt_id bigint(20) NOT NULL auto_increment,
+  name varchar(128) NOT NULL,
+  status char(1) default NULL,
   event_recid bigint(20) default NULL,
-  time_processed timestamp NULL,
-  controlled_shutdown char(1) default NULL,
+  data varchar(1024) default NULL,
   comments text,
   disable text,
   PRIMARY KEY  (chkpt_id)
@@ -69,7 +70,7 @@ CREATE TABLE x_tealalertlog (
   src_name varchar(64) NOT NULL,
   state tinyint(4) default NULL,
   raw_data varchar(2048) default NULL,
-  comment text,
+  comments text,
   disable text,
   PRIMARY KEY  (rec_id)
 ) ENGINE=InnoDB;
@@ -107,7 +108,6 @@ CREATE TABLE x_CNM_1_2 (
   neighbor_loc VARCHAR(256),
   recovery_file_path VARCHAR(32) NOT NULL,
   isnm_raw_data VARCHAR(1024) NOT NULL,
-  comments VARCHAR(128) DEFAULT NULL,
   local_port VARCHAR(256), 
   local_torrent VARCHAR(256),
   local_planar VARCHAR(256),

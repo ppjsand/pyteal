@@ -29,7 +29,7 @@ from logging import handlers              # Do not remove
 from stat import S_IWUSR
 
 from ibm.teal import registry
-from ibm.teal.alert import create_teal_alert, TEAL_ALERT_ID_TEAL_STARTED
+from ibm.teal.alert import create_teal_alert, TEAL_ALERT_ID_TEAL_STARTED, Alert
 from ibm.teal.alert_delivery import AlertDelivery
 from ibm.teal.alert_mgr import AlertMgr
 from ibm.teal.checkpoint_mgr import CheckpointMgr
@@ -50,6 +50,7 @@ from ibm.teal.shutdown import Shutdown
 from ibm.teal.teal_error import TealError, ConfigurationError
 from ibm.teal.util import command
 from ibm.teal.util.listenable_queue import ListenableQueue
+from ibm.teal.control_msg import ControlMsg
 
 # locale setup
 curdir = os.path.abspath(os.path.dirname(__file__))
@@ -653,12 +654,15 @@ class Teal:
         if isinstance(event, Event):
             self.event_not_analyzed_log_method('Event {0} was not analyzed in Event Queue'.format(event.brief_str()))
         else:
-            get_logger().debug('Command {0} was not analyzed in Event Queue'.format(event.brief_str()))
+            get_logger().debug('Command {0} was processed by the Event Queue'.format(event.brief_str()))
     
     def alert_not_analyzed_callback(self, alert):
         ''' When an alert is not handled in the alert analyzer queue pass it to the filter queue'''
-        get_logger().debug('Alert not handled by alert analyzer, move to filter q')
-        registry.get_service(SERVICE_ALERT_DELIVERY_Q).put_nowait(alert)
+        if isinstance(alert, Alert):
+            get_logger().debug('Alert {0} was not analyzed in Alert Analysis Queue -- put in Delivery Queue'.format(alert.brief_str()))
+            registry.get_service(SERVICE_ALERT_DELIVERY_Q).put_nowait(alert)
+        else:
+            get_logger().debug('Command {0} was processed by the Alert Analysis Queue'.format(alert.brief_str()))
     
     def shutdown(self):
         logger = get_logger()

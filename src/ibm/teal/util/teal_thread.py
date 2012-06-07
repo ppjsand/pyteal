@@ -12,7 +12,6 @@
 # end_generated_IBM_copyright_prolog
 
 from threading import Thread
-import ctypes
 import exceptions
 from ibm.teal.registry import get_logger
 
@@ -39,7 +38,12 @@ class TealThread(Thread):
     '''
     
     def kill_thread_using_exception(self):
+        global ctypes_mod
         if self.isAlive():
-            get_logger().debug('Sending ThreadKill exception to {0}'.format(self.ident))
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self.ident), ctypes.py_object(ThreadKilled))
+            try:
+                import ctypes
+                get_logger().debug('Sending ThreadKill exception to {0}'.format(self.ident))
+                ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(self.ident), ctypes.py_object(ThreadKilled))
+            except:
+                pass
     

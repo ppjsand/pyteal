@@ -28,10 +28,13 @@ from ibm.teal.teal_error import ConfigurationError
 from ibm.teal.monitor.event_monitor import EventMonitor
 from ibm.teal.checkpoint_mgr import CheckpointListener
 from ibm.teal.util.teal_thread import TealThread
+from ibm.teal.control_msg import inject_update_checkpoint_msg
 
 TEAL_TEST_NOTIFIER_CONFIG = 'TEAL_TEST_NOTIFIER_CONFIG'
 CFG_KEY_NOTIFIER = 'notifier'
 CFG_KEY_RECOVERY = 'recovery_mode'
+TEAL_UPDATE_CHECKPOINT_FREQUENCY = 'TEAL_UPDATE_CHECKPOINT_FREQUENCY'
+DEFAULT_UPDATE_CHECKPOINT_FREQUENCY = 5000
     
 class RealtimeMonitor(EventMonitor):
     '''
@@ -45,6 +48,16 @@ class RealtimeMonitor(EventMonitor):
         # Validate configuration parameters
         if config_dict['enabled'] != 'realtime':
             raise ConfigurationError('Realtime monitor can only enabled for realtime use.  Unsupported value specified: {0}'.format(config_dict['enabled']))
+
+        temp_frequency = os.environ.get(TEAL_UPDATE_CHECKPOINT_FREQUENCY, None)
+        if temp_frequency is None: 
+            self.update_checkpoint_frequency = DEFAULT_UPDATE_CHECKPOINT_FREQUENCY
+        else:     
+            try:   
+                self.update_checkpoint_frequency = long(temp_frequency)
+            except:
+                get_logger().warning('Environment variable \'{0}\' was invalid: \'{1}\'. Default value used'.format(TEAL_UPDATE_CHECKPOINT_FREQUENCY, str(temp_frequency)))
+                self.update_checkpoint_frequency = DEFAULT_UPDATE_CHECKPOINT_FREQUENCY
 
         cfg_notifier = os.environ.get(TEAL_TEST_NOTIFIER_CONFIG, None)
         if cfg_notifier is None:
@@ -113,7 +126,9 @@ class RealtimeMonitor(EventMonitor):
                             self.start_recid = row[0] 
                             if self.running == False: 
                                 get_logger().info('Monitor event injection thread interrupted.  last recid = {0}'.format(self.start_recid))
-                                break 
+                                break
+                            if self.start_recid % self.update_checkpoint_frequency == 0:
+                                inject_update_checkpoint_msg(self.start_recid)
                         cnxn.close()
                     except:
                         cur_time = datetime.now()

@@ -406,6 +406,7 @@ class TealCommandLineTest(TealTestCase):
         + '-x CREF, --cref=CREF  if valid provide a cross reference of id usage')
 
     def test_tlcommand_query_fail(self):
+        ''' Try invalid query options for tllsevent and teal commands '''
         # tllsevent and teal options
         # rec_id        - =,<.>,>=,<= - A single id or a comma-separated list of ids (equals-only)
         # event_id      - =           - A single id or comma-separated list of event ids
@@ -489,6 +490,297 @@ class TealCommandLineTest_tlrmalert(TealTestCase):
         self.assertCmdWorks([LSALERT,'-c','-d'], exp_good_msg=tmp_good_msg)
 
 
+class TealCommandLineTest_tlchalert(TealTestCase):
+    def setUp(self):
+        t = Teal('data/tlcommands_test/test.conf', data_only=True)
+        global RMALERT, CHALERT, LSALERT, RMEVENT, LSEVENT, LSCKPT, TEAL, VFYRULE
+        teal_path = registry.get_service(registry.TEAL_ROOT_DIR)
+        CHALERT = os.path.join(teal_path,'bin/tlchalert')
+        LSALERT = os.path.join(teal_path,'bin/tllsalert')
+        t.shutdown()
+        
+        self.time_pattern = get_table_date_time_pattern()
+
+        self.prepare_db()
+        self._add_journal('data/tlcommands_test/events_001.json')
+        self._add_journal('data/tlcommands_test/alerts_003.json')
+        
+        tmp_data_dir = os.path.join(os.environ.get('TEAL_ROOT_DIR', '/opt/teal'), 'data')
+        self.teal_data_dir = self.force_env('TEAL_DATA_DIR', tmp_data_dir)
+
+    def tearDown(self):
+        self.restore_env('TEAL_DATA_DIR', self.teal_data_dir)
+    
+    def _add_journal(self, json_file):
+        ''' Load the alert DB from the journal JSON file '''
+        t = Teal('data/tlcommands_test/test.conf')
+        # Alerts
+        ja = Journal('temp_journal', file=json_file)
+        ja.insert_in_db(truncate=False, no_delay=True)
+        t.shutdown()
+
+    def test_tlchalert_qry(self):
+        ''' Test tlchalert query string support '''
+        # Close with different severity than others
+        self.assertCmdWorks([CHALERT,'--state','close','--query','severity=E'], exp_good_msg='')
+
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2' +
+                       '    3: Alert_US {2} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {3} C:MB-SL1-ET2-PT3')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000', 
+                                      '2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                                                         
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg=tmp_good_msg)
+        
+        tmp_good_msg =(    '5: Alert_03 {0} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {1} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                                                                 
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+        # Close with split between primary & duplicate alerts where duplicate is in query range
+        self.assertCmdWorks([CHALERT,'--state','close','--query','creation_time>2011-01-17-16:14:15'], exp_good_msg='')
+        
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                                                         
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg=tmp_good_msg)
+        
+        tmp_good_msg =(    '3: Alert_US {0} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {1} C:MB-SL1-ET2-PT3' +
+                       '    5: Alert_03 {2} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {3} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000', 
+                                      '2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+        # Close with split between primary & duplicate where duplicate is not in query range
+        self.assertCmdWorks([CHALERT,'--state','close','--query','creation_time<2011-01-17-16:14:15'], exp_good_msg='')
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg='')
+        
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2' +
+                       '    3: Alert_US {2} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {3} C:MB-SL1-ET2-PT3' +
+                       '    5: Alert_03 {4} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {5} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000', 
+                                      '2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000',
+                                      '2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)        
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+    def test_tlchalert_qryloc(self):
+        ''' Test tlchalert based on location query '''
+        self.assertCmdWorks([CHALERT,'--state','close','-l','MB-SL2-ET1-PT2'], exp_good_msg='')
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2' +
+                       '    3: Alert_US {2} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {3} C:MB-SL1-ET2-PT3')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000', 
+                                      '2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)        
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg=tmp_good_msg)
+
+        tmp_good_msg =(    '5: Alert_03 {0} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {1} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)        
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+        self.assertCmdWorks([CHALERT,'--state','close','-l','MB-SL1-ET1-PT2,MB-SL1-ET2-PT3'], exp_good_msg='')
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg='')
+        
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2' +
+                       '    3: Alert_US {2} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {3} C:MB-SL1-ET2-PT3' +
+                       '    5: Alert_03 {4} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {5} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000', 
+                                      '2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000',
+                                      '2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+    def test_tlchalert_qryloc_delim(self):
+        ''' Test tlchalert based on location query '''
+        self.assertCmdWorks([CHALERT,'--state','close','-l','MB-SL1-ET1-PT2@MB-SL2-ET1-PT2','-d','@'], exp_good_msg='')
+
+        tmp_good_msg =(    '3: Alert_US {0} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {1} C:MB-SL1-ET2-PT3')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg=tmp_good_msg)
+        
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2' +
+                       '    5: Alert_03 {2} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {3} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000', 
+                                      '2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                        
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+    def test_tlchalert_qryloc_contained(self):
+        ''' Test tlchalert based on location query with containment '''
+        self.assertCmdWorks([CHALERT,'--state','close','-l','MB-SL1','-c'], exp_good_msg='')
+        
+        tmp_good_msg =(    '5: Alert_03 {0} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {1} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg=tmp_good_msg)
+
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2' +
+                       '    3: Alert_US {2} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {3} C:MB-SL1-ET2-PT3')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000', 
+                                      '2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+    def test_tlchalert_qryloc_contained_delim(self):
+        ''' Test tlchalert based on location query with delimiter and containment '''
+        self.assertCmdWorks([CHALERT,'--state','close','-l','MB-SL1-ET1@MB-SL2','-c','-d','@'], exp_good_msg='')
+        
+        tmp_good_msg =(    '3: Alert_US {0} C:MB-SL1-ET2-PT3' +
+                       '    4: Alert_US {1} C:MB-SL1-ET2-PT3')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:21.437000', 
+                                      '2011-01-17 16:14:25.437000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                
+        self.assertCmdWorks([LSALERT,'-d'], exp_good_msg=tmp_good_msg)
+        
+        tmp_good_msg =(    '1: Alert_US {0} C:MB-SL1-ET1-PT2' +
+                       '    2: Alert_US {1} C:MB-SL1-ET1-PT2' +
+                       '    5: Alert_03 {2} C:MB-SL2-ET1-PT2' +
+                       '    6: Alert_US {3} C:MB-SL2-ET1-PT2')
+        tmp_dts = apply_time_pattern(['2011-01-17 16:14:13.437000', 
+                                      '2011-01-17 16:14:17.437000', 
+                                      '2011-01-17 16:14:26.453000', 
+                                      '2011-01-17 16:14:33.468000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)                
+        self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
+
+class TealCommandLineTest_tllsevent_metadata_msg(TealTestCase):
+
+    def setUp(self):
+        t = Teal('data/tlcommands_test/test.conf', data_only=True)
+        global LSEVENT, TEAL
+        teal_path = registry.get_service(registry.TEAL_ROOT_DIR)
+        LSEVENT = os.path.join(teal_path,'bin/tllsevent')
+        TEAL    = os.path.join(teal_path,'ibm/teal/teal.py')
+        t.shutdown()
+        
+        self.time_pattern = get_table_date_time_pattern()
+
+        self.prepare_db()
+        self._add_journal('data/tlcommands_test/events_metadata_001.json')
+        
+        tmp_data_dir = os.path.join(os.environ.get('TEAL_ROOT_DIR', '/opt/teal'), 'data')
+        self.teal_data_dir = self.force_env('TEAL_DATA_DIR', tmp_data_dir)
+        tmp_cfg_dir = os.path.join(os.environ.get('TEAL_ROOT_DIR', '/'), 'etc')
+ 
+        # If the path doesn't exists, then it is assumed that this is an installed
+        # version of TEAL and will use the default CONF path
+        if os.path.exists(tmp_cfg_dir):
+            # This is a non-standard install (build environment) and will use
+            # the etc directory from the ROOT dir
+            pass
+        else:
+            tmp_cfg_dir = '/etc'
+
+        self.teal_cfg_dir = self.force_env('TEAL_CONF_DIR', tmp_cfg_dir)
+        
+        # Create a logger for logging if the test was not run because the package was missing
+        self.create_temp_logger('info')
+
+    def tearDown(self):
+        self.restore_env('TEAL_DATA_DIR', self.teal_data_dir)
+        self.restore_env('TEAL_CONF_DIR', self.teal_cfg_dir)
+    
+    def _add_journal(self, json_file):
+        ''' Load the alert DB from the journal JSON file '''
+        t = Teal('data/tlcommands_test/test.conf')
+        # Alerts
+        ja = Journal('temp_journal', file=json_file)
+        ja.insert_in_db(truncate=False, no_delay=True)
+        t.shutdown()
+
+    def test_tllsevent_ll_metadata_msg(self):
+        ''' Test event LL metadata messages for tllsevent '''
+        # Verify that the LL package is loaded and return if it is not
+        if os.path.exists(os.path.join(os.environ['TEAL_ROOT_DIR'],'ibm','teal','connector','loadleveler.py')) is False:
+            registry.get_logger().info('Loadlever package not installed. Skipping test')
+            return
+
+        tmp_good_msg = '===================================================\r\nrec_id : 7\r\nevent_id : LL001000 - Schedd daemon down\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : LL\r\nsrc_loc : MB-SL1-ET1-PT2\r\nsrc_loc_type : C\r\nrpt_comp : TST\r\nrpt_loc : MB-SL1-ET1-PT3\r\nrpt_loc_type : D\r\nevent_cnt : None\r\nelapsed_time : None\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:00.100000', '2011-01-21 21:40:00.100000', '2011-01-21 21:40:12.100000','2011-01-21 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSEVENT,'--query','event_id=LL001000','-f','text'],exp_good_msg=tmp_good_msg)
+        tmp_good_msg = '===================================================\r\nrec_id : 8\r\nevent_id : LL001001 - Startd daemon down\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : LL\r\nsrc_loc : MB-SL1-ET1-PT2\r\nsrc_loc_type : C\r\nrpt_comp : TST\r\nrpt_loc : MB-SL1-ET1-PT3\r\nrpt_loc_type : D\r\nevent_cnt : None\r\nelapsed_time : None\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:00.100000', '2011-01-21 21:40:00.100000', '2011-01-21 21:40:12.100000','2011-01-21 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts) 
+        self.assertCmdWorks([LSEVENT,'--query','event_id=LL001001','-f','text'], exp_good_msg=tmp_good_msg)
+        tmp_good_msg = '===================================================\r\nrec_id : 9\r\nevent_id : LL001003 - Central Manager down\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : LL\r\nsrc_loc : MB-SL1-ET1-PT1\r\nsrc_loc_type : C\r\nrpt_comp : None\r\nrpt_loc : None\r\nrpt_loc_type : None\r\nevent_cnt : 42\r\nelapsed_time : 101\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:04.100000', '2011-01-21 21:40:04.100000', '2011-01-21 21:40:12.100000','2011-01-17 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSEVENT,'--query','event_id=LL001003','-f','text'], exp_good_msg=tmp_good_msg)
+        tmp_good_msg = '===================================================\r\nrec_id : 10\r\nevent_id : LL001004 - Resource Manager down\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : LL\r\nsrc_loc : MB-SL1-ET1-PT2\r\nsrc_loc_type : C\r\nrpt_comp : None\r\nrpt_loc : None\r\nrpt_loc_type : None\r\nevent_cnt : None\r\nelapsed_time : None\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:08.100000', '2011-01-21 21:40:08.100000', '2011-01-17 21:40:12.100000','2011-01-17 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSEVENT,'--query','event_id=LL001004','-f','text'], exp_good_msg=tmp_good_msg)
+        tmp_good_msg = '===================================================\r\nrec_id : 11\r\nevent_id : LL001005 - Region Manager down\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : LL\r\nsrc_loc : MB-SL1-ET1-PT2\r\nsrc_loc_type : C\r\nrpt_comp : None\r\nrpt_loc : None\r\nrpt_loc_type : None\r\nevent_cnt : None\r\nelapsed_time : None\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:12.100000', '2011-01-21 21:40:12.100000', '2011-01-17 21:40:12.100000','2011-01-17 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSEVENT,'--query','event_id=LL001005','-f','text'], exp_good_msg=tmp_good_msg)
+        tmp_good_msg = '===================================================\r\nrec_id : 12\r\nevent_id : LL002001 - Job step rejected\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : LL\r\nsrc_loc : MB-SL1-ET1-PT2\r\nsrc_loc_type : C\r\nrpt_comp : None\r\nrpt_loc : None\r\nrpt_loc_type : None\r\nevent_cnt : None\r\nelapsed_time : None\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:16.100000', '2011-01-21 21:40:16.100000', '2011-01-17 21:40:12.100000','2011-01-17 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSEVENT,'--query','event_id=LL002001','-f','text'], exp_good_msg=tmp_good_msg)
+        tmp_good_msg = '===================================================\r\nrec_id : 13\r\nevent_id : LL002002 - Job step vacated\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : LL\r\nsrc_loc : MB-SL1-ET1-PT2\r\nsrc_loc_type : C\r\nrpt_comp : None\r\nrpt_loc : None\r\nrpt_loc_type : None\r\nevent_cnt : None\r\nelapsed_time : None\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:20.100000', '2011-01-21 21:40:20.100000', '2011-01-17 21:40:12.100000','2011-01-17 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSEVENT,'--query','event_id=LL002002','-f','text'], exp_good_msg=tmp_good_msg)
+
+    def test_tllsevent_pnsd_metadata_msg(self):
+        ''' Test event PNSD metadata messages for tllsevent '''
+        # Verify that the PNSD package is loaded and return if it is not
+        if os.path.exists(os.path.join(os.environ['TEAL_ROOT_DIR'],'ibm','teal','connector','pnsd.py')) is False:
+            registry.get_logger().info('PNSD package not installed. Skipping test')
+            return
+
+        tmp_good_msg = '===================================================\r\nrec_id : 14\r\nevent_id : PNSD0001 - Packet retransmit threshold exceeded\r\ntime_occurred : {0}\r\ntime_logged : {1}\r\nsrc_comp : PNSD\r\nsrc_loc : MB-SL1-ET1-PT2\r\nsrc_loc_type : C\r\nrpt_comp : None\r\nrpt_loc : None\r\nrpt_loc_type : None\r\nevent_cnt : None\r\nelapsed_time : None\r\n'
+        tmp_dts = apply_time_pattern(['2011-01-21 21:40:24.100000', '2011-01-21 21:40:24.100000', '2011-01-17 21:40:12.100000','2011-01-17 21:40:12.100000'], self.time_pattern)
+        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+        self.assertCmdWorks([LSEVENT,'--query','event_id=PNSD0001','-f','text'], exp_good_msg=tmp_good_msg)
+
 if __name__ == "__main__":
-    unittest.main()
+    runner = unittest.TextTestRunner(verbosity=2)
+    unittest.main(testRunner=runner)
 

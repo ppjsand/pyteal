@@ -195,7 +195,7 @@ TEAL_ERR_T GPFSConfigHandler::refreshFS(FilesystemInfo* fsInfo, string& clusterI
     return ret;
 }
 
-TEAL_ERR_T GPFSConfigHandler::refreshDisk(DiskInfo* diskInfo, string& clusterId)
+TEAL_ERR_T GPFSConfigHandler::refreshDisk(DiskInfo* diskInfo, string& clusterId, char* node_name)
 {
     teal_connector_handle conn_handle = NULL;
     TEAL_ERR_T ret = TEAL_SUCCESS;
@@ -223,7 +223,8 @@ TEAL_ERR_T GPFSConfigHandler::refreshDisk(DiskInfo* diskInfo, string& clusterId)
         ret = TEAL_ERR_ARG;
         return ret;    
     }
-
+    if(*disk->is_free == 1)
+        disk->node_name = node_name;
     ret = tlgpfs_update_disk_info(conn_handle,disk);
     if(ret != TEAL_SUCCESS)
     {
@@ -1044,12 +1045,29 @@ void GPFSConfigHandler::task()
             continue;
         }
         diskName = diskInfo->getName();
+        int s;
+        int nServers = diskInfo->getNumServerItems();
+        int nBacks = diskInfo->getNumBackupServerItems();
+        string node_name;
+        for(s = 0; s < nServers; s++)
+        {
+            DiskServerInfo *ds = diskInfo->getServer(s);
+            node_name += string(ds->getName()) + string(" ");
+        }
+
+        for(s = 0; s < nBacks; s++)
+        {
+            DiskServerInfo *ds = diskInfo->getBackupServer(s);
+            node_name += string(ds->getName()) + string(" ");
+        }
         msg  = "Refresh free disk: ";
         msg += "(";
         msg += diskName;
         msg += ")";
         log_debug(msg);
-        ret = refreshDisk(diskInfo, clusterid);
+        char svrList[NAME_STRING_LEN] = {0};
+        strcpy(svrList,node_name.c_str());
+        ret = refreshDisk(diskInfo, clusterid, svrList);
         if(ret != TEAL_SUCCESS)
         {
             msg  = "Refresh free disk: ";

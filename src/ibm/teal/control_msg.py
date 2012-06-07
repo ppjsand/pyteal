@@ -12,7 +12,8 @@
 # end_generated_IBM_copyright_prolog
 
 from datetime import datetime
-from ibm.teal.registry import get_logger, get_service, SERVICE_EVENT_Q
+from ibm.teal.registry import get_logger, get_service, SERVICE_EVENT_Q,\
+    SERVICE_ALERT_ANALYZER_Q, SERVICE_ALERT_DELIVERY_Q
 from ibm.teal.processable import Processable
 
 CONTROL_MSG_TYPE_AS_STRING = ['End of Data', 'Flush', 'Update Checkpoint']
@@ -38,7 +39,7 @@ class ControlMsg(Processable):
         '''
         self.msg_type = msg_type
         self.creation_time = datetime.now()
-        self.data = None  # TODO HERE
+        self.data = None 
         if in_dict is not None:
             self.read_from_dictionary(in_dict)
         if self.msg_type is None:
@@ -98,9 +99,21 @@ class ControlMsg(Processable):
     
     
 # Helper methods
+def inject_in_all_queues(msg):
+    ''' Inject the control message into all of the queues '''
+    get_service(SERVICE_EVENT_Q).put_nowait(msg)
+    get_service(SERVICE_ALERT_ANALYZER_Q).put_nowait(msg)
+    get_service(SERVICE_ALERT_DELIVERY_Q).put_nowait(msg)
+
 def inject_flush_control_msg(create_time=None):
     ''' Inject a flush message '''
     if create_time is None:
         create_time = datetime.now()
-    get_service(SERVICE_EVENT_Q).put_nowait(ControlMsg(CONTROL_MSG_TYPE_FLUSH, {CONTROL_MSG_ATTR_CREATION_TIME: create_time}))
-    return
+    inject_in_all_queues(ControlMsg(CONTROL_MSG_TYPE_FLUSH, {CONTROL_MSG_ATTR_CREATION_TIME: create_time}))
+
+def inject_update_checkpoint_msg(rec_id, create_time=None):
+    ''' Inject a flush message '''
+    if create_time is None:
+        create_time = datetime.now()
+    get_logger().debug('Updating checkpoints at rec_id = {0}'.format(rec_id))
+    inject_in_all_queues(ControlMsg(CONTROL_MSG_TYPE_UPDATE_CHECKPOINT, {CONTROL_MSG_ATTR_CREATION_TIME: create_time, CONTROL_MSG_ATTR_DATA_DICT:{'rec_id':rec_id}}))

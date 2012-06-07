@@ -300,8 +300,8 @@ class CheckpointMgr(object):
         if len(self.event_checkpoints) != 0:
             if self.use_db == True:
                 # Ensure that all checkpoints written to DB
-                self.t1.running = False 
                 self.update_db_event.set()
+                self.t1.running = False 
                 self.t1.join()
                 
                 dump = False
@@ -343,21 +343,24 @@ class CheckpointDBUpdater(TealThread):
     def run(self):
         '''Wait for an update event 
         '''
-        while self.running:
-            self.mgr.update_db_event.wait()
-            self.mgr.update_db_event.clear()
-            # Iterate and update
-            try: 
-                dbi = get_service(SERVICE_DB_INTERFACE)
-                cnxn = dbi.get_connection()
-                cursor = cnxn.cursor()
-                for checkpoint in self.mgr.event_checkpoints.values():
-                    checkpoint.update_db(cursor)
-                cnxn.commit()
-                cnxn.close()
-            except:
-                get_logger().exception('Unable to update checkpoints in DB')
-        get_logger().debug('run method ended')
+        try:
+            while self.running or self.mgr.update_db_event.isSet():
+                self.mgr.update_db_event.wait()
+                self.mgr.update_db_event.clear()
+                # Iterate and update
+                try: 
+                    dbi = get_service(SERVICE_DB_INTERFACE)
+                    cnxn = dbi.get_connection()
+                    cursor = cnxn.cursor()
+                    for checkpoint in self.mgr.event_checkpoints.values():
+                        checkpoint.update_db(cursor)
+                    cnxn.commit()
+                    cnxn.close()
+                except:
+                    get_logger().exception('Unable to update checkpoints in DB')
+            get_logger().debug('run method ended')
+        except:
+            pass
         return
       
         
@@ -399,7 +402,7 @@ class EventCheckpoint(object):
             self.set_checkpoint_no_data = self.set_checkpoint_no_data_DB
             
             self.changed = False
-            self.lock = threading.RLock()
+            self.lock = threading.RLock() 
             
         self.checkpoint_mgr.register_event_checkpoint(self)
         return 
@@ -507,13 +510,12 @@ class EventCheckpoint(object):
         ''' Update the checkpoint for shutdown.   Need to make sure that the monitor has passed the checkpoint 
             before aligning with it
         '''
-        with self.lock:
-            shutdown_recid = self.checkpoint_mgr.shutdown_recid
-            if (shutdown_recid is not None and shutdown_recid >= self.start_rec_id) or (shutdown_recid == self.start_rec_id):
-                # If the shutdown recid is set and has reached my checkpoint then clear it out
-                self.set_status(CHECKPOINT_STATUS_SHUTDOWN)
-                if status_only == False:
-                    self.set_checkpoint(shutdown_recid, None)
+        shutdown_recid = self.checkpoint_mgr.shutdown_recid
+        if (shutdown_recid is not None and shutdown_recid >= self.start_rec_id) or (shutdown_recid == self.start_rec_id):
+            # If the shutdown recid is set and has reached my checkpoint then clear it out
+            self.set_status(CHECKPOINT_STATUS_SHUTDOWN)
+            if status_only == False:
+                self.set_checkpoint(shutdown_recid, None)
         return
     
     def shutdown_immediate(self, status_only=False):
@@ -563,12 +565,10 @@ class EventCheckpoint(object):
                 raise
         return 
     
-    def confirm_checkpoint(self):
-        ''' Confirm that checkpoint data in DB matches in memory values
-            Default is no DB so nothing to do
-        '''
-        pass
-    
+    def update_checkpoint(self, rec_id):
+        ''' Update the checkpoint to the specified rec_id ''' 
+        self.set_checkpoint(rec_id)
+        
     def __str__(self):
         ''' dump the checkpoint into a string '''
         if self.checkpoint_mgr.use_db == True and self.changed == True:

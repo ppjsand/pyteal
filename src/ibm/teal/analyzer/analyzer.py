@@ -12,16 +12,16 @@
 # end_generated_IBM_copyright_prolog
 
 from abc import ABCMeta, abstractmethod
-from ibm.teal.control_msg import  ControlMsg, CONTROL_MSG_TYPE_END_OF_DATA
+from ibm.teal.control_msg import  ControlMsg, CONTROL_MSG_TYPE_END_OF_DATA,\
+    CONTROL_MSG_TYPE_UPDATE_CHECKPOINT
 from ibm.teal.registry import get_logger
 from ibm.teal.util.listenable_queue import QueueListener
 import Queue
-import threading
 from ibm.teal.alert import TEAL_ALERT_ID_ANALYZER_FAILURE, create_teal_alert
 import traceback
 from ibm.teal.checkpoint_mgr import EventCheckpoint, CheckpointRecoveryComplete,\
     CHECKPOINT_STATUS_FAILED, CHECKPOINT_STATUS_RUNNING,\
-    CHECKPOINT_STATUS_INTERRUPTED
+    CHECKPOINT_STATUS_INTERRUPTED, CHECKPOINT_STATUS_UNKNOWN
 from ibm.teal.util.teal_thread import TealThread, ThreadKilled
 
 ANALYZER_STATE_AS_STRING = ['running', 'failed', 'shutdown', 'shutdown_immediate']
@@ -186,7 +186,6 @@ class Analyzer(QueueListener):
             self.queue.put((self.base_handle_control_msg, control_msg))
         else:
             self.base_handle_control_msg(control_msg)
-            
         if (control_msg.msg_type == CONTROL_MSG_TYPE_END_OF_DATA):
             self.shutdown()
         return True
@@ -234,9 +233,9 @@ class Analyzer(QueueListener):
         if self.asynch:
             try:
                 self.t1.join()
-                self.set_state(ANALYZER_STATE_SHUTDOWN)
             except:
                 get_logger().debug('unable to join during shutdown in analyzer {0}'.format(self.name))
+        self.set_state(ANALYZER_STATE_SHUTDOWN)
                 
         self.process_event = self.process_event_SHUTDOWN
         self.process_alert = self.process_alert_SHUTDOWN
@@ -305,23 +304,27 @@ class AnalyzerAsynch(TealThread):
         '''Wait on the input queue
         '''
         try:
-            while self.running:
-                func, item = self.analyzer.queue.get()
-                try:
-                    func(item)
-                except ThreadKilled:
-                    raise
-                except:
-                    get_logger().exception('Analyzer {0} failed'.format(self.name))
-                    self.analyzer.failure()
-            
-                if isinstance(item,ControlMsg) and (item.msg_type == CONTROL_MSG_TYPE_END_OF_DATA):
-                    break
-        except ThreadKilled:
-            return 
+            try:
+                while self.running:
+                    func, item = self.analyzer.queue.get()
+                    try:
+                        func(item)
+                    except ThreadKilled:
+                        raise
+                    except:
+                        get_logger().exception('Analyzer {0} failed'.format(self.analyzer.name))
+                        self.analyzer.failure()
+                
+                    if isinstance(item,ControlMsg):
+                        if item.msg_type == CONTROL_MSG_TYPE_END_OF_DATA:
+                            break
+            except ThreadKilled:
+                return 
+            except:
+                get_logger().exception('run exception')
+            get_logger().debug('Run method ended')
         except:
-            get_logger().exception('run exception')
-        get_logger().debug('Run method ended')
+            pass
         return
     
     
@@ -353,6 +356,7 @@ class EventAnalyzer(Analyzer):
         self.last_before_analyze = None
         self.process_event = self.process_event_RECOVERY
         self.base_analyze_event = self.base_analyze_event_RECOVERY
+        self.base_handle_control_msg = self.base_handle_control_msg_NORMAL
         return
     
     # QueueListener method to register which uses the processable aspect of the events, alerts, and control msgs
@@ -396,7 +400,22 @@ class EventAnalyzer(Analyzer):
         self.last_before_analyze = event 
         self.analyze_event(event)
         self.checkpoint.set_checkpoint(event.rec_id)
-        return     
+        return   
+    
+    def base_handle_control_msg_NORMAL(self, control_msg):  
+        ''' Add support for checkpoint update ''' 
+        self.handle_control_msg(control_msg)
+        if (control_msg.msg_type == CONTROL_MSG_TYPE_UPDATE_CHECKPOINT):
+            if self.checkpoint.get_status() == CHECKPOINT_STATUS_RUNNING:
+                if self.is_not_processing() == True:
+                    self.checkpoint.update_checkpoint(control_msg.data['rec_id'])
+                    self.last_before_analyze = None     # Used in determining if running ... checkpoint isn't for one we processed anymore
+                else:
+                    out_str = ''
+                    if self.asynch == True: 
+                        out_str = ' Queue size = {0}'.format(str(self.queue.qsize()))
+                    get_logger().info('Analyzer \'{1}\' was running so checkpoint not updated to {0}.{2}'.format(str(control_msg.data['rec_id']), self.name, out_str))
+        return True
     
     # Group: process_event
     ## Have to be able to return true for will_analyze even when checkpoint says we don't
@@ -423,7 +442,7 @@ class EventAnalyzer(Analyzer):
                     self.failure()
         self.last_event_processed = event
         return will_result
-    
+        
     # State control 
     def shutdown(self): 
         ''' Shutdown ... add unregistering from Event Queue '''
@@ -468,9 +487,14 @@ class EventAnalyzer(Analyzer):
     
     def is_not_processing(self):
         ''' Return true if the analyzer is processing an event or events '''
+        # If asynchronous and the queue is not empty then processing 
         if self.asynch == True and not self.queue.empty():
             return False 
-        if self.last_before_analyze is None or self.checkpoint.is_checkpoint_rec_id(self.last_before_analyze.rec_id):
+        # If never processed any event then NOT processing 
+        if self.last_before_analyze is None:
+            return True
+        # If last checkpoint matches the last one given to analyze then NOT processing
+        if self.checkpoint.is_checkpoint_rec_id(self.last_before_analyze.rec_id):
             return True
         return False 
 
@@ -482,6 +506,10 @@ class EventAnalyzerCheckpointInterface(object):
     
     def need_to_analyze(self, event):
         ''' Determine if the specified rec_id needs to be analyzed or not '''
+        pass
+    
+    def update_checkpoint(self, rec_id):
+        ''' Update the checkpoint '''
         pass
     
     
@@ -507,7 +535,7 @@ class EventAnalyzerCheckpoint(EventCheckpoint, EventAnalyzerCheckpointInterface)
         ''' If before my checkpointed rec_id then need to process '''
         if event.rec_id > self.start_rec_id:
             raise CheckpointRecoveryComplete(self.start_rec_id,'{0}'.format(self.name))
-        return False
+        return False       
     
     
 class EventAnalyzerCheckpointDisable(EventAnalyzerCheckpointInterface):
@@ -516,11 +544,17 @@ class EventAnalyzerCheckpointDisable(EventAnalyzerCheckpointInterface):
     def need_to_analyze(self, event):
         raise CheckpointRecoveryComplete(None, 'disabled')
     
+    def update_checkpoint(self, rec_id):
+        return
+    
     def set_checkpoint(self, rec_id, data=None):
         return 
     
     def set_status(self, status):
         return
+    
+    def get_status(self):
+        return CHECKPOINT_STATUS_UNKNOWN
     
     def is_checkpoint_rec_id(self, value):
         ''' check if the starting value is equal to the specified value '''

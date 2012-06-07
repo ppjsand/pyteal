@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<gear_ruleset>
+<gear_control>
+  <default_event_comp value="NM"/>
+</gear_control>
+<events>
+   <event id="EventOne" min_time_in_pool="500" />
+   <event id="EventTwo" min_time_in_pool="500"/>
+   <event id="EventThr"/>   
+</events>
+<analyze>
+   <rule name="Sample Rule for suppression">
+      <description>Example5 event ids suppress Example2s</description>
+      <condition>
+         <event_equals id="EventThr"/>
+      </condition>
+      <action>
+        <description>Suppress Evil Example2</description>
+        <suppress_events ids="EventTwo"/>
+      </action>
+   </rule>
+   <rule name="Alert 02a">
+       <condition>
+           <event_equals id="EventOne"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 01"/>
+       </action>
+    </rule>   
+    <rule name="Alert 02b">
+       <condition>
+           <event_equals id="EventTwo"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 02"/>
+       </action>
+    </rule>
+    <rule name="Alert 02c">
+       <condition>
+           <event_equals id="EventThr"/>
+       </condition>
+       <action>
+           <create_alert id="Alert 03"/>
+       </action>
+    </rule>
+ </analyze>
+</gear_ruleset>

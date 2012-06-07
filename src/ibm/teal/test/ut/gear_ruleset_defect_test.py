@@ -196,7 +196,7 @@ class GearDefectRegressionTestA(TealTestCase):
                
         j_exp = Journal('j_exp', 'data/gear_ruleset_test/bugs/d173874/alert_output.json')      
         self.assertTrue(j_out.wait_for_entries(len(j_exp), seconds=20))
-        print j_out
+        #print j_out
         self.assertTrue(j_out.deep_match(j_exp, ignore_delay=True, ignore_times=True, unordered=True)) 
         myteal.shutdown()
         return

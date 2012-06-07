@@ -80,6 +80,7 @@ class Configuration(ConfigParser.ConfigParser):
                     raise ConfigurationError('There can only be one section called \'{0}\''.format(area))
                 
                 results.append((section,result[1]))
+        results.sort()
         return results
     
     def __str__(self):

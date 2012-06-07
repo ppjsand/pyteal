@@ -13,10 +13,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-from ibm.teal.journalable import Journalable
-
-
-class Processable(Journalable):
+class Processable(object):
     '''The Processable ABC is used to allow things in a ListenableQueue to be processed via a
     double dispatch
     '''

@@ -5,7 +5,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -22,7 +22,6 @@ _ = t.lgettext
 
 import sys
 import optparse
-from datetime import datetime
 
 from ibm.teal import Teal
 from ibm.teal import registry
@@ -95,7 +94,9 @@ def do_update(user_qry):
                                     where_fields=where_flds)
 
     # All alerts that are duplicates of the open set of alerts
-    dup_alert_where = "${0} IN ({1}) AND ${2} = '{3}'".format(alert.ALERT2ALERT_ATTR_ALERT_RECID,
+    dup_alert_where = "${0} IN (SELECT ${1} FROM ({2}) AS DUP_ALERTS) AND ${3} = '{4}'".format(
+                                                            alert.ALERT2ALERT_ATTR_ALERT_RECID,
+                                                            alert.ALERT_ATTR_REC_ID,
                                                             base_alert_qry,
                                                             alert.ALERT2ALERT_ATTR_ASSOC_TYPE,
                                                             alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE)
@@ -104,12 +105,13 @@ def do_update(user_qry):
     dup_alert_qry = db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
                                   db_interface.TABLE_ALERT2ALERT,
                                   where=dup_alert_where,
-                                  where_fields=[alert.ALERT2ALERT_ATTR_ALERT_RECID, 
+                                  where_fields=[alert.ALERT2ALERT_ATTR_ALERT_RECID,
+                                                alert.ALERT_ATTR_REC_ID, 
                                                 alert.ALERT2ALERT_ATTR_ASSOC_TYPE])
 
 
 
-    update_where = '${0} IN ({1}) OR ${0} IN ({2})'.format(alert.ALERT_ATTR_REC_ID, base_alert_qry, dup_alert_qry)
+    update_where = '${0} IN (SELECT $rec_id FROM ({1}) AS PRIMARY_ALERTS) OR ${0} IN ({2})'.format(alert.ALERT_ATTR_REC_ID, base_alert_qry, dup_alert_qry)
     update_stmt = db.gen_update([alert.ALERT_ATTR_STATE],
                                 db_interface.TABLE_ALERT_LOG,
                                 where=update_where,

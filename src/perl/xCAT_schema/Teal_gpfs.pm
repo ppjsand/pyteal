@@ -50,6 +50,7 @@ package xCAT_schema::Teal_gpfs;
             pool_status  => 'VARCHAR(256)',
             pool_usage   => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'TEAL GPFS Filesystem-related event data',
         descriptions => {
@@ -124,6 +125,7 @@ package xCAT_schema::Teal_gpfs;
             io_time         => 'INTEGER',
             start_sector    => 'BIGINT',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'TEAL GPFS Disk-related event data',
         descriptions => {
@@ -187,6 +189,7 @@ package xCAT_schema::Teal_gpfs;
             rem_redund=> 'INTEGER',
             err       => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'TEAL GPFS Perseus-related event data',
         descriptions => {
@@ -228,6 +231,7 @@ package xCAT_schema::Teal_gpfs;
             wait_time => 'INTEGER',
             msg_level => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'TEAL GPFS miscellaneous event data',
         descriptions => {
@@ -300,6 +304,7 @@ package xCAT_schema::Teal_gpfs;
             change        => 'INTEGER',
             health        => 'INTEGER'
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Cluster Configuration',
         descriptions => {
             cluster_id    => 'The cluster id assigned by GPFS',
@@ -391,6 +396,7 @@ package xCAT_schema::Teal_gpfs;
             change        => 'INTEGER',
             health        => 'INTEGER'
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Cluster Configuration scratchpad',
         descriptions => {
             cluster_id    => 'The cluster id assigned by GPFS',
@@ -490,6 +496,7 @@ package xCAT_schema::Teal_gpfs;
             change          => 'INTEGER',
             health          => 'INTEGER',
         },
+        engine => 'InnoDB',
 		tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS Node Configuration',
         descriptions => {
@@ -594,6 +601,7 @@ package xCAT_schema::Teal_gpfs;
             change          => 'INTEGER',
             health          => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS Node Configuration scratchpad',
         descriptions => {
@@ -684,6 +692,7 @@ package xCAT_schema::Teal_gpfs;
             change         => 'INTEGER',
             health         => 'INTEGER',
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Filesystem Configuration',
         descriptions => {
             cluster_id     => 'The cluster id assigned by GPFS',
@@ -766,6 +775,7 @@ package xCAT_schema::Teal_gpfs;
             change         => 'INTEGER',
             health         => 'INTEGER',
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Filesystem Configuration scratchpad',
         descriptions => {
             cluster_id     => 'The cluster id assigned by GPFS',
@@ -830,6 +840,7 @@ package xCAT_schema::Teal_gpfs;
             change         => 'INTEGER',
             health         => 'INTEGER',
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Storage Pool Configuration',
         descriptions => {
             cluster_id     => 'The cluster id assigned by GPFS',
@@ -885,6 +896,7 @@ package xCAT_schema::Teal_gpfs;
             change         => 'INTEGER',
             health         => 'INTEGER',
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Storage Pool Configuration scratchpad',
         descriptions => {
             cluster_id     => 'The cluster id assigned by GPFS',
@@ -948,6 +960,7 @@ package xCAT_schema::Teal_gpfs;
             change         => 'INTEGER',
             health         => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS Disk Configuration',
         descriptions => {
@@ -1016,6 +1029,7 @@ package xCAT_schema::Teal_gpfs;
             change         => 'INTEGER',
             health         => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS Disk Configuration scratchpad',
         descriptions => {
@@ -1080,6 +1094,7 @@ package xCAT_schema::Teal_gpfs;
             change       => 'INTEGER',
             health       => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS16K', 
         table_desc   => 'GPFS Fileset configuration ',
         descriptions => {
@@ -1142,6 +1157,7 @@ package xCAT_schema::Teal_gpfs;
             change       => 'INTEGER',
             health       => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS16K', 
         table_desc   => 'GPFS Fileset configuration scratchpad',
         descriptions => {
@@ -1194,6 +1210,7 @@ package xCAT_schema::Teal_gpfs;
             change     => 'INTEGER',
             health     => 'INTEGER',
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Recovery Group configuration',
         descriptions => {
             cluster_id => 'The cluster id assigned by GPFS',
@@ -1240,6 +1257,7 @@ package xCAT_schema::Teal_gpfs;
             change     => 'INTEGER',
             health     => 'INTEGER',
         },
+        engine => 'InnoDB',
         table_desc   => 'GPFS Recovery Group configuration scratchpad',
         descriptions => {
             cluster_id => 'The cluster id assigned by GPFS',
@@ -1296,6 +1314,7 @@ package xCAT_schema::Teal_gpfs;
             change           => 'INTEGER',
             health           => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS16K', 
         table_desc   => 'GPFS Declustered Array configuration',
         descriptions => {
@@ -1358,6 +1377,7 @@ package xCAT_schema::Teal_gpfs;
             change           => 'INTEGER',
             health           => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS16K', 
         table_desc   => 'GPFS Declustered Array configuration scratchpad',
         descriptions => {
@@ -1412,6 +1432,7 @@ package xCAT_schema::Teal_gpfs;
             change           => 'INTEGER',
             health           => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS vdisk configuration',
         descriptions => {
@@ -1462,6 +1483,7 @@ package xCAT_schema::Teal_gpfs;
             change           => 'INTEGER',
             health           => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS vdisk configuration scratchpad',
         descriptions => {
@@ -1514,6 +1536,7 @@ package xCAT_schema::Teal_gpfs;
             change           => 'INTEGER',
             health           => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS pdisk configuration',
         descriptions => {
@@ -1567,6 +1590,7 @@ package xCAT_schema::Teal_gpfs;
             change           => 'INTEGER',
             health           => 'INTEGER',
         },
+        engine => 'InnoDB',
         tablespace =>'XCATTBS32K', 
         table_desc   => 'GPFS pdisk configuration scratchpad',
         descriptions => {

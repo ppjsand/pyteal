@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -12,6 +12,7 @@
 # end_generated_IBM_copyright_prolog
 
 import subprocess
+import os
 
 from ibm.teal.util import command
 from ibm.teal.listener.alert_listener import AlertListener
@@ -38,7 +39,8 @@ class RmcAlertListener(AlertListener):
         alert_str = writer.encode(alert.write_to_dictionary())
         
         try:
-            subprocess.check_call(['/usr/bin/refsensor',self.sensor,'String={0}'.format(repr(alert_str))])
+            with open(os.devnull, 'w') as fnull:
+                subprocess.check_call(['/usr/bin/refsensor', self.sensor,'String=\'{0}\''.format(alert_str)], stderr=subprocess.STDOUT, stdout=fnull)
         except subprocess.CalledProcessError, cpe:
             get_logger().info('Failed to update sensor({0}): {1}'.format(self.sensor,cpe))
         except OSError, ose:

@@ -27,7 +27,7 @@ private:
     static TEAL_ERR_T refreshNode(NodeInfo* nodeInfo, string& clusterId);
     static TEAL_ERR_T refreshStgPool(StoragePoolInfo* stgInfo, string& clusterId, string& fsName);
     static TEAL_ERR_T refreshFS(FilesystemInfo* fsInfo, string& clusterId);
-    static TEAL_ERR_T refreshDisk(DiskInfo* diskInfo, string& clusterId);
+    static TEAL_ERR_T refreshDisk(DiskInfo* diskInfo, string& clusterId, char* serverList = NULL);
     static TEAL_ERR_T refreshRg(gpfsRecoveryGroup* rgInfo, string& clusterId, bool allDAOK);
     static TEAL_ERR_T refreshDa(gpfsRecoveryGroupDeclusteredArray* daInfo, string& clusterId, string& rgName);
     static TEAL_ERR_T refreshPdisk(gpfsDeclusteredArrayPdisk* pdiskInfo, string& clusterId, string& rgName, string& daName);
