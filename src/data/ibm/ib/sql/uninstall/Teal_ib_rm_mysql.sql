@@ -1,0 +1,1 @@
+ALTER TABLE x_IB_1_1 DROP FOREIGN KEY teal_ib_fk;

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gear_ruleset>
+    <description>BMC/AMM Rules</description>
+    <gear_control>
+		<analyze_events id_regx=".*" comp_regx="IPMI|AMM"/>
+	</gear_control>
+    <pool_control>
+        <initial_duration default="10"/>
+        <max_duration default ="60"/>
+    </pool_control>
+    <analyze>
+        <rule name="DefaultEventHandler" >
+            <condition>
+		        <evaluate name="filter_severity" ext_class="ibm.teal.util.gear.MMSeverityFilter">
+		        	<!-- fatal, error, warning, info --> 
+        			<parm name="severity" value="GEAR[conf_dict.severity]"/> 
+        		</evaluate>
+            </condition>
+            <action>
+            	<!-- Severity and message determined by Alert Initialization -->
+                <create_alert id="GEAR[last_condition_event.event_id]" use_metadata="false"
+                              msg_template="" 
+                              recommendation="Refer to vendor documentation for appropriate repair actions"
+                              urgency="N"
+                              severity="W" 
+                              init_class="ibm.teal.util.gear.MMSeverityAlertInit"
+                              />
+            </action>
+        </rule>    
+    </analyze>
+</gear_ruleset> 
+ 

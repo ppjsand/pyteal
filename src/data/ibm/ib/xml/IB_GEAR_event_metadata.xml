@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eventMetadata  xmlns:tns="http://www.ibm.com/teal/eventmeta" 
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+				xsi:schemaLocation="http://www.ibm.com/teal/eventmeta ../../../../../xml/eventmeta.xsd ">>
+        <event id="MX000001" comp="IB">
+                <message>ASIC is down</message>
+        </event>
+        <event id="MX000002" comp="IB">
+                <message>reset happened due to over temperature of ASIC</message>
+        </event>
+        <event id="MX000003" comp="IB">
+                <message>ASIC Temperature too high</message>
+        </event>
+        <event id="MX000004" comp="IB">
+                <message>FabricIT management appliance has insufficient power</message>
+        </event>
+        <event id="MX010001" comp="IB">
+                <message>bx ASIC is down</message>
+        </event>
+        <event id="MX010002" comp="IB">
+                <message>reset happened due to over temperature of bx ASIC</message>
+        </event>
+        <event id="MX010003" comp="IB">
+                <message>bx ASIC Temperature too high</message>
+        </event>
+        <event id="MX020001" comp="IB">
+                <message>Local Subnet Manager has started</message>
+        </event>
+        <event id="MX020002" comp="IB">
+                <message>Local Subnet Manager has stopped</message>
+        </event>
+        <event id="MX020003" comp="IB">
+                <message>Local Subnet Manager been restarted</message>
+        </event>
+        <event id="MX030001" comp="IB">
+                <message>I2C access failed more than 5 times</message>
+        </event>
+        <event id="MX030002" comp="IB">
+                <message>A process managed by FabricIT has terminated unexpectedly and left a core file</message>
+        </event>
+        <event id="MX030003" comp="IB">
+                <message>The FabricIT management appliance CPU is very busy</message>
+        </event>
+        <event id="MX030004" comp="IB">
+                <message>A process managed by FabricIT has terminated unexpectedly and no core file was found</message>
+        </event>
+        <event id="MX030005" comp="IB">
+                <message>FabricIT management appliance shut down unexpectedly</message>
+        </event>
+        <event id="MX030006" comp="IB">
+                <message>FabricIT management appliance is running out of disk space</message>
+        </event>
+        <event id="MX030007" comp="IB">
+                <message>FabricIT management appliance health status</message>
+        </event>
+        <event id="MX030008" comp="IB">
+                <message>FabricIT management appliance has restored to normal power</message>
+        </event>
+        <event id="MX030009" comp="IB">
+                <message>FabricIT management appliance has insufficient number of working fans, please plug in additional fans</message>
+        </event>
+        <event id="MX030010" comp="IB">
+                <message>FabricIT management appliance has a sufficient number of working fans</message>
+        </event>
+        <event id="MX040001" comp="IB">
+                <message>The overall health status of the channel adapter has changed</message>
+        </event>
+        <event id="MX040002" comp="IB">
+                <message>A channel adapter has been inserted in the system</message>
+        </event>
+        <event id="MX040003" comp="IB">
+                <message>A channel adapter has been removed from the system</message>
+        </event>
+        <event id="MX040004" comp="IB">
+                <message>A switch has been inserted in the system</message>
+        </event>
+        <event id="MX040005" comp="IB">
+                <message>A switch has been removed from the system</message>
+        </event>
+        <event id="MX040006" comp="IB">
+                <message>A router has been inserted in the system</message>
+        </event>
+        <event id="MX040007" comp="IB">
+                <message>A router has been removed from the system</message>
+        </event>
+        <event id="MX040008" comp="IB">
+                <message>The port state has changed</message>
+        </event>
+        <event id="MX040009" comp="IB">
+                <message>The physical port state has changed</message>
+        </event>
+        <event id="MX040010" comp="IB">
+                <message>An IBA port has been inserted in the system</message>
+        </event>
+        <event id="MX040011" comp="IB">
+                <message>An IB port has been removed from the system</message>
+        </event>
+        <event id="MX050064" comp="IB">
+                <message>GID Address In Service</message>
+        </event>
+        <event id="MX050065" comp="IB">
+                <message>GID Address Out of Service</message>
+        </event>
+        <event id="MX050066" comp="IB">
+                <message>New MCast group is created</message>
+        </event>
+        <event id="MX050067" comp="IB">
+                <message>Mcast group is deleted</message>
+        </event>
+        <event id="MX050110" comp="IB">
+                <message>Symbol-Error counter threshold was exceeded</message>
+        </event>
+        <event id="MX050111" comp="IB">
+                <message>Link-Error-Recovery counter threshold was exceeded</message>
+        </event>
+        <event id="MX050112" comp="IB">
+                <message>Link down threshold exceeded</message>
+        </event>
+        <event id="MX050113" comp="IB">
+                <message>PortRcvErrors counter threshold was exceeded</message>
+        </event>
+        <event id="MX050114" comp="IB">
+                <message>PortRcvRemotePhysicalErrors counter rate threshold exceeded</message>
+        </event>
+        <event id="MX050115" comp="IB">
+                <message>PortRcvSwitchRelayErrors counter rate threshold exceeded</message>
+        </event>
+        <event id="MX050116" comp="IB">
+                <message>PortXmitDiscards counter threshold exceeded</message>
+        </event>
+        <event id="MX050117" comp="IB">
+                <message>PortXmitConstraintErrors counter threshold exceeded</message>
+        </event>
+        <event id="MX050118" comp="IB">
+                <message>PortRcvConstraintErrors counter threshold exceeded</message>
+        </event>
+        <event id="MX050119" comp="IB">
+                <message>LocalLinkIntegrityErrors counter threshold exceeded</message>
+        </event>
+        <event id="MX050120" comp="IB">
+                <message>ExcessiveBufferOverrunErrors counter threshold exceeded</message>
+        </event>
+        <event id="MX050121" comp="IB">
+                <message>VL15Dropped counter threshold exceeded</message>
+        </event>
+        <event id="MX050122" comp="IB">
+                <message>Congested Bandwidth (in percents) threshold exceeded</message>
+        </event>
+        <event id="MX050123" comp="IB">
+                <message>Port Normalized Transmit BW counter threshold exceeded</message>
+        </event>
+        <event id="MX050128" comp="IB">
+                <message>Link state changed</message>
+        </event>
+        <event id="MX050130" comp="IB">
+                <message>Found a link that operates in non-optimal width mode</message>
+        </event>
+        <event id="MX050133" comp="IB">
+                <message>Port Normalized Transmit Wait counter threshold exceeded</message>
+        </event>
+        <event id="MX050141" comp="IB">
+                <message>Flow Control Update watchdog timer has expired</message>
+        </event>
+        <event id="MX050144" comp="IB">
+                <message>Capability Mask Modified</message>
+        </event>
+        <event id="MX050145" comp="IB">
+                <message>System Image GUID is changed</message>
+        </event>
+        <event id="MX050156" comp="IB">
+                <message>Link Speed Enforcement is Disabled</message>
+        </event>
+        <event id="MX050252" comp="IB">
+                <message>License has expired</message>
+        </event>
+        <event id="MX050253" comp="IB">
+                <message>Duplicate Serial Number %s detected on installed licenses</message>
+        </event>
+        <event id="MX050254" comp="IB">
+                <message>License Limit Exceeded</message>
+        </event>
+        <event id="MX050255" comp="IB">
+                <message>License is about to expire</message>
+        </event>
+        <event id="MX050256" comp="IB">
+                <message>Bad M Key</message>
+        </event>
+        <event id="MX050257" comp="IB">
+                <message>Bad P Key</message>
+        </event>
+        <event id="MX050258" comp="IB">
+                <message>Bad Q Key</message>
+        </event>
+        <event id="MX050259" comp="IB">
+                <message>Bad P Key for Switch External Port</message>
+        </event>
+        <event id="MX050271" comp="IB">
+                <message>ISBL Lag Port is Up</message>
+        </event>
+        <event id="MX050272" comp="IB">
+                <message>ISBL Lag Port is Down</message>
+        </event>
+        <event id="MX050273" comp="IB">
+                <message>Lag Port is Up</message>
+        </event>
+        <event id="MX050274" comp="IB">
+                <message>Lag Port is Down</message>
+        </event>
+        <event id="MX050275" comp="IB">
+                <message>Port is Up</message>
+        </event>
+        <event id="MX050276" comp="IB">
+                <message>Port is Down</message>
+        </event>
+        <event id="MX050277" comp="IB">
+                <message>Port of Lag is Up</message>
+        </event>
+        <event id="MX050278" comp="IB">
+                <message>Port of Lag is Down</message>
+        </event>
+        <event id="MX050279" comp="IB">
+                <message>Port of ISBL is Up</message>
+        </event>
+        <event id="MX050280" comp="IB">
+                <message>Port of ISBL is Down</message>
+        </event>
+        <event id="MX050301" comp="IB">
+                <message>Logical Server changed state</message>
+        </event>
+        <event id="MX050302" comp="IB">
+                <message>Logical Server failed to changed state</message>
+        </event>
+        <event id="MX050306" comp="IB">
+                <message>Logical Server is added</message>
+        </event>
+        <event id="MX050307" comp="IB">
+                <message>Logical Server is removed</message>
+        </event>
+        <event id="MX050308" comp="IB">
+                <message>Logical Server allocated Resources</message>
+        </event>
+        <event id="MX050312" comp="IB">
+                <message>Compute Resource is released</message>
+        </event>
+        <event id="MX050313" comp="IB">
+                <message>Compute Resource is allocated</message>
+        </event>
+        <event id="MX050314" comp="IB">
+                <message>Logical Server allocated Additional Resources</message>
+        </event>
+        <event id="MX050315" comp="IB">
+                <message>Logical Server released Resources"</message>
+        </event>
+        <event id="MX050316" comp="IB">
+                <message>Logical Server Compute Resource is Down</message>
+        </event>
+        <event id="MX050317" comp="IB">
+                <message>Logical Server Compute Resource is Up</message>
+        </event>
+        <event id="MX050331" comp="IB">
+                <message>Site configuration changes node is Down</message>
+        </event>
+        <event id="MX050332" comp="IB">
+                <message>Site configuration changes node is Up</message>
+        </event>
+        <event id="MX050336" comp="IB">
+                <message>Port Action Succeeded</message>
+        </event>
+        <event id="MX050337" comp="IB">
+                <message>Port Action Failed</message>
+        </event>
+        <event id="MX050338" comp="IB">
+                <message>Action on device succeeded</message>
+        </event>
+        <event id="MX050339" comp="IB">
+                <message>Action on device failed</message>
+        </event>
+        <event id="MX050340" comp="IB">
+                <message>Network Interface is added</message>
+        </event>
+        <event id="MX050341" comp="IB">
+                <message>Network Interface is removed</message>
+        </event>
+        <event id="MX050350" comp="IB">
+                <message>Environment is Added</message>
+        </event>
+        <event id="MX050351" comp="IB">
+                <message>Environment is Removed</message>
+        </event>
+        <event id="MX050352" comp="IB">
+                <message>Network is Added</message>
+        </event>
+        <event id="MX050353" comp="IB">
+                <message>Network is Removed</message>
+        </event>
+        <event id="MX050358" comp="IB">
+                <message>Vmm Bad Access Credentials</message>
+        </event>
+        <event id="MX050359" comp="IB">
+                <message>Vm is Created</message>
+        </event>
+        <event id="MX050360" comp="IB">
+                <message>Vm is Removed</message>
+        </event>
+        <event id="MX050361" comp="IB">
+                <message>Vmm Is Down</message>
+        </event>
+        <event id="MX050362" comp="IB">
+                <message>Vmm Is Up</message>
+        </event>
+        <event id="MX050364" comp="IB">
+                <message>Vm State is Changed</message>
+        </event>
+        <event id="MX050365" comp="IB">
+                <message>Vm Is Down</message>
+        </event>
+        <event id="MX050366" comp="IB">
+                <message>Vm Is Up</message>
+        </event>
+        <event id="MX050367" comp="IB">
+                <message>Vm migration failed</message>
+        </event>
+        <event id="MX050368" comp="IB">
+                <message>Vm Has been Migrated</message>
+        </event>
+        <event id="MX050369" comp="IB">
+                <message>Vm Alarm Status Has Changed</message>
+        </event>
+        <event id="MX050370" comp="IB">
+                <message>Ethernet link has changed its state</message>
+        </event>
+        <event id="MX050371" comp="IB">
+                <message>Gateway received a re-register event from the SM</message>
+        </event>
+        <event id="MX050372" comp="IB">
+                <message>Change in the number of 10GbE Gateways has been detected</message>
+        </event>
+        <event id="MX050373" comp="IB">
+                <message>Gateway is about to reboot</message>
+        </event>
+        <event id="MX050374" comp="IB">
+                <message>10GbE Gateway has finished reloading</message>
+        </event>
+        <event id="MX050375" comp="IB">
+                <message>Vcenter is down</message>
+        </event>
+        <event id="MX050376" comp="IB">
+                <message>Vcenter bad access credentials</message>
+        </event>
+        <event id="MX050381" comp="IB">
+                <message>Switch Upgrade failed</message>
+        </event>
+        <event id="MX050383" comp="IB">
+                <message>Host Upgrade failed</message>
+        </event>
+        <event id="MX050385" comp="IB">
+                <message>Switch FW upgrade has started</message>
+        </event>
+        <event id="MX050386" comp="IB">
+                <message>Switch SW upgrade has started</message>
+        </event>
+        <event id="MX050387" comp="IB">
+                <message>Switch upgrade finished</message>
+        </event>
+        <event id="MX050388" comp="IB">
+                <message>Host FW upgrade has started</message>
+        </event>
+        <event id="MX050389" comp="IB">
+                <message>Host SW upgrade has started</message>
+        </event>
+        <event id="MX050391" comp="IB">
+                <message>Module was removed from switch</message>
+        </event>
+        <event id="MX050392" comp="IB">
+                <message>Module Temperature threshold was exceeded</message>
+        </event>
+        <event id="MX050393" comp="IB">
+                <message>Module was added to switch</message>
+        </event>
+        <event id="MX050394" comp="IB">
+                <message>Module status FAULT</message>
+        </event>
+        <event id="MX050395" comp="IB">
+                <message>Action started on device</message>
+        </event>
+        <event id="MX050396" comp="IB">
+                <message>Action started on site</message>
+        </event>
+        <event id="MX050397" comp="IB">
+                <message>Action on Site Failed</message>
+        </event>
+        <event id="MX050398" comp="IB">
+                <message>Chip on module was added to switch</message>
+        </event>
+        <event id="MX050399" comp="IB">
+                <message>Chip on module was removed from switch</message>
+        </event>
+        <event id="MX050403" comp="IB">
+                <message>The device software has been updated and it is pending reboot</message>
+        </event>
+        <event id="MX050502" comp="IB">
+                <message>Device Upgrade has finished</message>
+        </event>
+        <event id="MX050503" comp="IB">
+                <message>UFM backup has started</message>
+        </event>
+        <event id="MX050504" comp="IB">
+                <message>UFM backup has finished</message>
+        </event>
+        <event id="MX050505" comp="IB">
+                <message>UFM backup has finished with error</message>
+        </event>
+        <event id="MX050510" comp="IB">
+                <message>SM is UP</message>
+        </event>
+        <event id="MX050511" comp="IB">
+                <message>SM is Down</message>
+        </event>
+        <event id="MX050512" comp="IB">
+                <message>SM Failover</message>
+        </event>
+        <event id="MX050513" comp="IB">
+                <message>SM System Log Message</message>
+        </event>
+        <event id="MX050514" comp="IB">
+                <message>SM LID is Changed</message>
+        </event>
+        <event id="MX050515" comp="IB">
+                <message>FabricHealth Report completed without Errors or Warnings</message>
+        </event>
+        <event id="MX050516" comp="IB">
+                <message>FabricHealth Report completed with Warnings</message>
+        </event>
+        <event id="MX050517" comp="IB">
+                <message>FabricHealth Report completed with Errors</message>
+        </event>
+        <event id="MX050518" comp="IB">
+                <message>UFM related process is down</message>
+        </event>
+        <event id="MX050519" comp="IB">
+                <message>Failed purging database logs</message>
+        </event>
+        <event id="MX050520" comp="IB">
+                <message>UFM related process is started successfully</message>
+        </event>
+        <event id="MX050521" comp="IB">
+                <message>Stopping UFM server now</message>
+        </event>
+        <event id="MX050522" comp="IB">
+                <message>Restarting UFM server now</message>
+        </event>
+        <event id="MX050523" comp="IB">
+                <message>Attempting UFM failover</message>
+        </event>
+        <event id="MX050524" comp="IB">
+                <message>Connection to the database failed</message>
+        </event>
+        <event id="MX050525" comp="IB">
+                <message>Disk space usage is above the threshold</message>
+        </event>
+        <event id="MX050526" comp="IB">
+                <message>Memory usage is above the threshold</message>
+        </event>
+        <event id="MX050527" comp="IB">
+                <message>CPU usage is above the threshold</message>
+        </event>
+        <event id="MX050528" comp="IB">
+                <message>Fabric interface is down</message>
+        </event>
+        <event id="MX050529" comp="IB">
+                <message>Problem with UFM standby server</message>
+        </event>
+        <event id="MX050530" comp="IB">
+                <message>SM is down</message>
+        </event>
+        <event id="MX050531" comp="IB">
+                <message>Drbd bad condition detected, failover or takeover will fail</message>
+        </event>
+        <event id="MX050532" comp="IB">
+                <message>Remote UFM-SM sync succeed</message>
+        </event>
+        <event id="MX050533" comp="IB">
+                <message>Remote UFM-SM has problem</message>
+        </event>
+        <event id="MX050602" comp="IB">
+                <message>Server started failover</message>
+        </event>
+        <event id="MX050603" comp="IB">
+                <message>Events are suppressed</message>
+        </event>
+        <event id="MX050604" comp="IB">
+                <message>Health report succeeded</message>
+        </event>
+        <event id="MX050605" comp="IB">
+                <message>Health report failed</message>
+        </event>
+        <event id="MX050701" comp="IB">
+                <message>Found a link that operates in non-optimal speed mode.</message>
+        </event>
+        <event id="MX050801" comp="IB">
+                <message>Drop Events counter threshold was exceeded</message>
+        </event>
+        <event id="MX050802" comp="IB">
+                <message>CRC Align Errors counter threshold was exceeded</message>
+        </event>
+        <event id="MX050803" comp="IB">
+                <message>Undersize Packets counter threshold was exceeded</message>
+        </event>
+        <event id="MX050804" comp="IB">
+                <message>Oversize Packets counter threshold was exceeded</message>
+        </event>
+        <event id="MX050805" comp="IB">
+                <message>Fragments counter threshold was exceeded</message>
+        </event>
+        <event id="MX050806" comp="IB">
+                <message>Jabbers counter threshold was exceeded</message>
+        </event>
+        <event id="MX050807" comp="IB">
+                <message>Collisions counter threshold was exceeded</message>
+        </event>
+        <event id="MX050808" comp="IB">
+                <message>Alignment Errors counter threshold was exceeded</message>
+        </event>
+        <event id="MX050809" comp="IB">
+                <message>FCS Errors counter threshold was exceeded</message>
+        </event>
+        <event id="MX050810" comp="IB">
+                <message>Single Collision Frames counter threshold was exceeded</message>
+        </event>
+        <event id="MX050811" comp="IB">
+                <message>Multiple Collision Frames counter threshold was exceeded</message>
+        </event>
+        <event id="MX050812" comp="IB">
+                <message>SQE Test Errors counter threshold was exceeded</message>
+        </event>
+        <event id="MX050813" comp="IB">
+                <message>Deferred Transmissions counter threshold was exceeded</message>
+        </event>
+        <event id="MX050814" comp="IB">
+                <message>Late Collisions counter threshold was exceeded</message>
+        </event>
+        <event id="MX050815" comp="IB">
+                <message>Excessive Collisions counter threshold was exceeded</message>
+        </event>
+        <event id="MX050816" comp="IB">
+                <message>Internal MAC Transmit Error counter threshold was exceeded</message>
+        </event>
+        <event id="MX050817" comp="IB">
+                <message>Internal MAC Receive Error counter threshold was exceeded</message>
+        </event>
+        <event id="MX050818" comp="IB">
+                <message>Carrier Sense Error counter threshold was exceeded</message>
+        </event>
+        <event id="MX050819" comp="IB">
+                <message>Too Long Frames counter threshold was exceeded</message>
+        </event>
+        <event id="MX050820" comp="IB">
+                <message>Symbol Errors counter threshold was exceeded</message>
+        </event>
+        <event id="MX050901" comp="IB">
+                <message>Fabric Configuration started</message>
+        </event>
+        <event id="MX050902" comp="IB">
+                <message>Fabric Configuration completed</message>
+        </event>
+        <event id="MX050903" comp="IB">
+                <message>Fabric Configuration failed</message>
+        </event>
+        <event id="MX050904" comp="IB">
+                <message>Configuration action on device failed</message>
+        </event>
+        <event id="MX050905" comp="IB">
+                <message>Configuration action on device timeout</message>
+        </event>
+        <event id="MX050906" comp="IB">
+                <message>Provisioning validation of fabric failed</message>
+        </event>
+        <event id="MX060001" comp="UFM">
+                <message>UFM Server status is Abnormal</message>
+        </event>
+        <event id="MX060002" comp="UFM">
+                <message>UFM Server is Down</message>
+        </event>
+        <event id="MX060003" comp="UFM">
+                <message>UFM Server is Up</message>
+        </event>
+</eventMetadata>

@@ -1,0 +1,1595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alertMetadata xmlns:tns="http://www.ibm.com/teal/alertmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/alertmeta ../../../../../../xml/alertmeta.xsd ">
+
+  <alert id="MX000001">
+    <msg_template>Switch ASIC is down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX000002">
+    <msg_template>reset happened due to over temperature of ASIC</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX000003">
+    <msg_template>ASIC Temperature too high</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX000004">
+    <msg_template>FabricIT management appliance has insufficient power</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX010001">
+    <msg_template>bx ASIC is down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX010002">
+    <msg_template>reset happened due to over temperature of bx ASIC</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX010003">
+    <msg_template>bx ASIC Temperature too high</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX020001">
+    <msg_template>Local Subnet Manager has started</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX020002">
+    <msg_template>Local Subnet Manager has stopped</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX020003">
+    <msg_template>Local Subnet Manager been restarted</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030001">
+    <msg_template>I2C access failed more than 5 times</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030002">
+    <msg_template>A process managed by FabricIT has terminated unexpectedly and left a core file</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030003">
+    <msg_template>The FabricIT management appliance CPU is very busy</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030004">
+    <msg_template>A process managed by FabricIT has terminated unexpectedly and no core file was found</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030005">
+    <msg_template>FabricIT management appliance shut down unexpectedly</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030006">
+    <msg_template>FabricIT management appliance is running out of disk space</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030007">
+    <msg_template>FabricIT management appliance health status</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX030009">
+    <msg_template>FabricIT management appliance has insufficient number of working fans</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX040001">
+    <msg_template>The overall health status of the channel adapter has changed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX040002">
+    <msg_template>A channel adapter has been inserted in the system</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX040003">
+    <msg_template>A channel adapter has been removed from the system</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX040005">
+    <msg_template>A switch has been removed from the system</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX040007">
+    <msg_template>The FabricIT management appliance CPU is very busy</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX040008">
+    <msg_template>The port state has changed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX040009">
+    <msg_template>The physical port state has changed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX040011">
+    <msg_template>An IB port has been removed from the system</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050067">
+    <msg_template>Mcast group is deleted</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050110">
+    <msg_template>Symbol-Error counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX050111">
+    <msg_template>Link-Error-Recovery counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050112">
+    <msg_template>Link down threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050113">
+    <msg_template>PortRcvErrors counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050114">
+    <msg_template>PortRcvRemotePhysicalErrors counter rate threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050115">
+    <msg_template>PortRcvSwitchRelayErrors counter rate threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050116">
+    <msg_template>PortXmitDiscards counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050117">
+    <msg_template>PortXmitConstraintErrors counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050118">
+    <msg_template>PortRcvConstraintErrors counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050119">
+    <msg_template>LocalLinkIntegrityErrors counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050120">
+    <msg_template>ExcessiveBufferOverrunErrors counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050121">
+    <msg_template>VL15Dropped counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050122">
+    <msg_template>Congested Bandwidth (in percents) threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050123">
+    <msg_template>Port Normalized Transmit BW counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+  <alert id="MX050130">
+    <msg_template>Found a link that operates in non-optimal width mode</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050133">
+    <msg_template>Port Normalized Transmit Wait counter threshold exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050141">
+    <msg_template>Flow Control Update watchdog timer has expired</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX050144">
+    <msg_template>Capability Mask Modified</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050145">
+    <msg_template>System Image GUID is changed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050156">
+    <msg_template>Link Speed Enforcement is Disabled</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050252">
+    <msg_template>License has expired</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050253">
+    <msg_template>Duplicate Serial Number %s detected on installed licenses</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050254">
+    <msg_template>License Limit Exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050255">
+    <msg_template>License is about to expire</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050256">
+    <msg_template>Bad M Key</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050257">
+    <msg_template>Bad P Key</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050258">
+    <msg_template>Bad Q Key</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050259">
+    <msg_template>Bad P Key for Switch External Port</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050271">
+    <msg_template>ISBL Lag Port is Up</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050272">
+    <msg_template>ISBL Lag Port is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050274">
+    <msg_template>Lag Port is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050276">
+    <msg_template>Port is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050277">
+    <msg_template>Port of Lag is Up</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050278">
+    <msg_template>Port of Lag is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050280">
+    <msg_template>Port of ISBL is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050301">
+    <msg_template>Logical Server changed state</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050302">
+    <msg_template>Logical Server failed to changed state</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050307">
+    <msg_template>Logical Server is removed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050308">
+    <msg_template>Logical Server allocated Resources</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050312">
+    <msg_template>Compute Resource is released</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050313">
+    <msg_template>Compute Resource is allocated</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050315">
+    <msg_template>Logical Server released Resources</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050316">
+    <msg_template>Logical Server Compute Resource is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050332">
+    <msg_template>Site configuration changes node is Up</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050336">
+    <msg_template>Port Action Succeeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050337">
+    <msg_template>Port Action Failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050338">
+    <msg_template>Action on device succeeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050339">
+    <msg_template>Action on device failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050340">
+    <msg_template>Network Interface is added</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050341">
+    <msg_template>Network Interface is removed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050350">
+    <msg_template>Environment is Added</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050351">
+    <msg_template>Environment is Removed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050352">
+    <msg_template>Network is Added</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050353">
+    <msg_template>Network is Removed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050358">
+    <msg_template>Vmm Bad Access Credentials</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050359">
+    <msg_template>Vm is Created</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050360">
+    <msg_template>Vm is Removed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050361">
+    <msg_template>Vmm Is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050362">
+    <msg_template>Vmm Is Up</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050364">
+    <msg_template>Vm State is Changed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050365">
+    <msg_template>Vm Is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050366">
+    <msg_template>Vm Is Up</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050367">
+    <msg_template>Vm migration failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050368">
+    <msg_template>Vm Has been Migrated</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050369">
+    <msg_template>Vm Alarm Status Has Changed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050370">
+    <msg_template>Ethernet link has changed its state</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX050371">
+    <msg_template>Gateway received a re-register event from the SM</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX050372">
+    <msg_template>Change in the number of 10GbE Gateways has been detected</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX050373">
+    <msg_template>Gateway is about to reboot</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX050374">
+    <msg_template>10GbE Gateway has finished reloading</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050375">
+    <msg_template>Vcenter is down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050376">
+    <msg_template>Vcenter bad access credentials</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050381">
+    <msg_template>Switch Upgrade failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050383">
+    <msg_template>Host Upgrade failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050385">
+    <msg_template>Switch FW upgrade has started</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050386">
+    <msg_template>Switch SW upgrade has started</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050387">
+    <msg_template>Switch upgrade finished</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050388">
+    <msg_template>Host FW upgrade has started</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050389">
+    <msg_template>Host SW upgrade has started</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050391">
+    <msg_template>Module was removed from switch</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050392">
+    <msg_template>Module Temperature threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050393">
+    <msg_template>Module was added to switch</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050394">
+    <msg_template>Module status FAULT</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050395">
+    <msg_template>Action started on device</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050396">
+    <msg_template>Action started on site</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050397">
+    <msg_template>Action on Site Failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050398">
+    <msg_template>Chip on module was added to switch</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050399">
+    <msg_template>Chip on module was removed from switch</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050403">
+    <msg_template>The device software has been updated and it is pending reboot</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050502">
+    <msg_template>Device Upgrade has finished</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050503">
+    <msg_template>UFM backup has started</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050504">
+    <msg_template>UFM backup has finished</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050505">
+    <msg_template>UFM backup has finished with error</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050510">
+    <msg_template>SM is UP</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050511">
+    <msg_template>SM is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050512">
+    <msg_template>SM Failover</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050513">
+    <msg_template>SM System Log Message</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050514">
+    <msg_template>SM LID is Changed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050515">
+    <msg_template>FabricHealth Report completed without Errors or Warnings</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050516">
+    <msg_template>FabricHealth Report completed with Warnings</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050517">
+    <msg_template>FabricHealth Report completed with Errors</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050518">
+    <msg_template>UFM related process is down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050519">
+    <msg_template>Failed purging database logs</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050520">
+    <msg_template>UFM related process is started successfully</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050521">
+    <msg_template>Stopping UFM server now</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050522">
+    <msg_template>Restarting UFM server now</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050523">
+    <msg_template>Attempting UFM failover</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050524">
+    <msg_template>Connection to the database failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050525">
+    <msg_template>Disk space usage is above the threshold</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050526">
+    <msg_template>Memory usage is above the threshold</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050527">
+    <msg_template>CPU usage is above the threshold</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050528">
+    <msg_template>Fabric interface is down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050529">
+    <msg_template>Problem with UFM standby server</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050530">
+    <msg_template>SM is down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050531">
+    <msg_template>Drbd bad condition detected, failover or takeover will fail</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050532">
+    <msg_template>Remote UFM-SM sync succeed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050533">
+    <msg_template>Remote UFM-SM has problem</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050602">
+    <msg_template>Server started failover</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050603">
+    <msg_template>Events are suppressed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050604">
+    <msg_template>Health report succeeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050605">
+    <msg_template>Health report failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050701">
+    <msg_template>Found a link that operates in non-optimal speed mode</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="MX050801">
+    <msg_template>Drop Events counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050802">
+    <msg_template>CRC Align Errors counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050803">
+    <msg_template>Undersize Packets counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050804">
+    <msg_template>Oversize Packets counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050805">
+    <msg_template>Fragments counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050806">
+    <msg_template>Jabbers counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050807">
+    <msg_template>Collisions counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050808">
+    <msg_template>Alignment Errors counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050809">
+    <msg_template>FCS Errors counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050810">
+    <msg_template>Single Collision Frames counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050811">
+    <msg_template>Multiple Collision Frames counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050812">
+    <msg_template>SQE Test Errors counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050813">
+    <msg_template>Deferred Transmissions counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050814">
+    <msg_template>Late Collisions counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050815">
+    <msg_template>Excessive Collisions counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050816">
+    <msg_template>Internal MAC Transmit Error counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050817">
+    <msg_template>Internal MAC Receive Error counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050818">
+    <msg_template>Carrier Sense Error counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050819">
+    <msg_template>Too Long Frames counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050820">
+    <msg_template>Symbol Errors counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="MX050901">
+    <msg_template>Symbol Errors counter threshold was exceeded</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050902">
+    <msg_template>Fabric Configuration completed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX050903">
+    <msg_template>Fabric Configuration failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050904">
+    <msg_template>Configuration action on device failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050905">
+    <msg_template>Configuration action on device timeout</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX050906">
+    <msg_template>Provisioning validation of fabric failed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="MX060001">
+    <msg_template>UFM Server may not be able to be accessed</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="MX060002">
+    <msg_template>UFM Server is Down</msg_template>
+    <recommendation>Record the alert ID and message. Contact IBM Service. Call your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+</alertMetadata>

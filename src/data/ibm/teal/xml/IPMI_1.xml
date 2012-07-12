@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<tables>
+    <table name="" id="1">
+        <column name="guid" type="CHAR" size="32"/>
+        <column name="sequence" type="INTEGER"/>
+        <column name="time_occurred" type="INTEGER"/>
+        <column name="utc_offset" type="INTEGER"/>
+        <column name="trap_src" type="INTEGER"/>
+        <column name="event_src" type ="INTEGER"/>
+        <column name="severity" type ="INTEGER"/>
+        <column name="sensor_dev" type ="INTEGER"/>
+        <column name="sensor_num" type ="INTEGER"/>
+        <column name="entity" type ="INTEGER"/>
+        <column name="entity_inst" type ="INTEGER"/>
+        <column name="event_data1" type ="INTEGER"/>
+        <column name="event_data2" type ="INTEGER"/>
+        <column name="event_data3" type ="INTEGER"/>
+        <column name="event_data4" type ="INTEGER"/>
+        <column name="event_data5" type ="INTEGER"/>
+        <column name="event_data6" type ="INTEGER"/>
+        <column name="event_data7" type ="INTEGER"/>
+        <column name="event_data8" type ="INTEGER"/>
+        <column name="lang_code" type ="INTEGER"/>
+        <column name="mfg_id" type ="INTEGER"/>
+        <column name="sys_id" type ="INTEGER"/>
+        <column name="message" type ="VARCHAR" size="256"/>
+    </table>
+</tables>

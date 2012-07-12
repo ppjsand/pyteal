@@ -12,23 +12,23 @@
 #
 # end_generated_IBM_copyright_prolog
 # chkconfig: 345 99 00
-# description: teal daemon providing cluster event monitoring support
+# description: teal UFM daemon providing infiniband event monitoring support
 # 
 ### BEGIN INIT INFO
-# Provides:          teal
+# Provides:          teal_ufm
 # Required-Start:
 # Should-Start:
 # Required-Stop:
 # Should-Stop:
 # Default-Start:     3 4 5
 # Default-Stop:      0 1 2 6
-# Short-Description: teal daemon providing cluster event monitoring support
-# Description:       Start teal to allow monitoring of cluster
+# Short-Description: teal UFM daemon providing infiniband event monitoring support
+# Description:       Start teal_ufm to allow monitoring of infiniband
 ### END INIT INFO
 
-TEAL_PID_FILE=/var/lock/teal.pid
-TEAL_SVC_NAME=teal
-TEAL_PROGRAM=/opt/teal/bin/teal
+TEAL_PID_FILE=/var/lock/tlufm.pid
+TEAL_SVC_NAME=teal_ufm
+TEAL_PROGRAM=/opt/teal/ibm/teal/connector/tlufm.py
 
 TEAL_EXEC=/usr/bin/python
 

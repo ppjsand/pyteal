@@ -1,0 +1,1 @@
+ALTER TABLE x_IB_1_1 ADD CONSTRAINT teal_ib_fk FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;
