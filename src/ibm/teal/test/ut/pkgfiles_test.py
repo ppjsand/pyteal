@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2012
+# (C) Copyright IBM Corp.  2010,2011
 # Eclipse Public License (EPL)
 #
 # ================================================================
@@ -79,7 +79,6 @@ def _load_spec_file(spec_loc, area, contains, failures):
             _check_area(filename, sfn, area, failures)
             
             contains.append(sfn)
-            
     return
 
 def _check_area(filename, fn, area, failures):
@@ -292,18 +291,13 @@ TEAL_PKGS_CTL = {
                            # Add to il 
                            ['/usr/lib64/libteal_gpfs.so'],
                            # Add to spec
-                           ['/usr/lib/libteal_gpfs.so',
-                            '/opt/teal/bin/tlgpfserrhandler',
-                            '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/GPFSConnectorMonitor.pm',
-                            '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/GPFSConnectorFailed.pm'
-                           ],
+                           ['/usr/lib/libteal_gpfs.so'],
                            # Dir replacements
                            {'/install/postscripts/rmcmon/' : '/opt/xcat/lib/perl/xCAT_monitoring/rmc/'},
                            # Files not in all check
                            ['/usr/lib64/libteal_gpfs.so',
                             '/usr/lib/libteal_gpfs.so',
                             '/opt/teal/bin/tlgpfsstatus',
-                            '/opt/teal/bin/tlgpfserrhandler',
                             '/opt/teal/bin/tlgpfschnode',
                             '/opt/teal/bin/tlgpfspurge'
                            ],
@@ -330,7 +324,19 @@ TEAL_PKGS_CTL = {
                             '/opt/teal/bin/tlgpfslauncher'],
                            # Dirs not in all check
                            ['/opt/teal', '/opt/teal/bin']   # Added by base package
-                           )
+                           ),
+                 'ib': (
+                        # Add to il
+                        ['/etc/init.d/teal_ufm'],
+                        # Add to spec
+                        [],
+                        # Dir replacments
+                        {'/install/postscripts/rmcmon/' : '/opt/xcat/lib/perl/xCAT_monitoring/rmc/'},
+                        # Files not in all check
+                        [],
+                        # Dirs not in all check
+                        []
+                        )
                  }
 
 # Control the collection of source info from the TEAL dirs
@@ -437,8 +443,7 @@ TEAL_SRC_CTL = (
                      '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/sn/IBM.Sensor', 
                      '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.Condition',
                      '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.EventResponse',
-                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.Sensor'
-                    ],
+                     '/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/node/IBM.Sensor'],
                     [],
                     # Add
                     [],
@@ -558,6 +563,7 @@ class TestPkgfiles(TealTestCase):
         _load_spec_file(spec_loc, 'base', base_spec_files, failures )
         _load_spec_file(spec_loc, 'base-bg', base_bg_spec_files, failures )
         base_spec_files.remove('/etc/teal/teal.conf')
+        base_spec_files.remove('/etc/teal/snmp.conf') 
         base_spec_files.remove('/etc/init.d/teal')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_db2.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_dba_db2.sql')
@@ -565,11 +571,18 @@ class TestPkgfiles(TealTestCase):
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/uninstall/Teal_dba_db2.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/uninstall/Teal_rm_db2.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/uninstall/Teal_rm_mysql.sql')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/xml/AMM_1.xml')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/xml/IPMI_1.xml')
         base_spec_files.remove('/opt/teal/data/ibm/teal/xml/percs_location.xml')
-        base_spec_files.remove('/opt/teal/sbin/tltab')
+        base_spec_files.remove('/opt/teal/data/ibm/teal/xml/MM_GEAR_rules.xml') 
+        base_spec_files.remove('/opt/teal/data/ibm/teal/xml/IPMI_GEAR_event_metadata.xml') 
         base_spec_files.remove('/opt/teal/bin/tlrmevent')
+        base_spec_files.remove('/opt/teal/sbin/tltab')
+        base_spec_files.remove('/opt/teal/sbin/tlconfig')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_db2.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_mysql.pm')
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_amm.pm') 
+        base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_ipmi.pm') 
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor/TealSendAlert.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify_H.pm')
@@ -577,6 +590,10 @@ class TestPkgfiles(TealTestCase):
         base_spec_files.remove('/install/postscripts/rmcmon/resources/sn/IBM.Sensor/TealEventNotify.pm') 
         base_spec_files.remove('/install/postscripts/rmcmon/resources/sn/IBM.Condition/TealAnyNodeEventNotify.pm') 
         base_spec_files.remove('/install/postscripts/rmcmon/resources/node/IBM.Sensor/TealEventNotify.pm') 
+        base_spec_files.remove('/opt/teal/ibm/teal/connector/tlammtraphandler.py') 
+        base_spec_files.remove('/opt/teal/ibm/teal/connector/tlipmitraphandler.py') 
+        base_spec_files.remove('/opt/teal/ibm/teal/util/snmp_config.py') 
+        base_spec_files.remove('/opt/teal/ibm/teal/util/gear.py') 
         _compare_file_lists('base', base_spec_files, 'base-bg', base_bg_spec_files, 'base spec files', failures)
            
         for fail in failures:

@@ -118,5 +118,50 @@
 	        <component type="pdisk" id="PD" pattern=":.+"/>
 	        <component type="vdisk" id="VD" pattern=":.+"/>
 		</complex>
+    </location>
+    <location id="U" type="ufm" separator="|">
+    	<complex>
+		    <!-- Level 1 -->
+		    <component type="site" id="S" pattern=":.+">
+			    <compref ref="switch"/>
+		    	<compref ref="computer"/>
+		    	<compref ref="gateway"/>
+		    	<compref ref="vm"/>
+		    	<compref ref="vmm"/>
+		    </component>
+		    
+		    <!-- Level 2 -->
+		    <component type="switch" id="SW" pattern=":.+">
+		    	<compref ref="swport"/>
+		    	<compref ref="line"/>
+		    	<compref ref="spine"/>
+		      	<compref ref="psu"/>
+		      	<compref ref="smb"/>
+		      	<compref ref="fan"/>
+		    </component>
+		    <component type="computer" id="C" pattern=":.+">
+		    	<compref ref="cport"/>
+		    </component>
+		    <component type="gateway" id="GW" pattern=":.+"/>
+		    <component type="vm" id="VM" pattern=":.+"/>
+		    <component type="vmm" id="V" pattern=":.+"/>
+		
+		    <!-- Level 3 -->
+		    <component type="cport" id="P" pattern=":.+"/>
+		    <component type="swport" id="P" pattern=":.+"/>
+		    <component type="line" id="P" pattern=":.+">
+		    	<compref ref="lport"/>
+		    </component>
+		    <component type="spine" id="SP" pattern=":.+">
+		    	<compref ref="spport"/>
+		    </component>
+		    <component type="psu" id="PS" pattern=":.+"/>
+		    <component type="smb" id="SM" pattern=":.+"/>
+		    <component type="fan" id="F" pattern=":.+"/>
+		    
+		    <!-- Level 4 -->
+		    <component type="lport" id="P" pattern=":.+"/>
+		    <component type="spport" id="P" pattern=":.+"/>
+	    </complex>	    
     </location> 
 </cluster>

@@ -5,67 +5,133 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2012
 # Eclipse Public License (EPL)
 #
 # ================================================================
 #
 # end_generated_IBM_copyright_prolog
-#
-#	/etc/rc.d/init.d/teal_ll
-#
-#       This service manages the IBM Toolkit for Event Analysis and Logging (TEAL) daemon
-#
-# chkconfig: 345 20 80
-# pidfile: /var/lock/teal_ll.pid
+# chkconfig: 345 99 00
+# description: teal_ll daemon providing Loadleveler event monitoring support
 # 
+### BEGIN INIT INFO
+# Provides:          teal_ll
+# Required-Start:
+# Should-Start:
+# Required-Stop:
+# Should-Stop:
+# Default-Start:     3 4 5
+# Default-Stop:      0 1 2 6
+# Short-Description: teal_ll daemon providing Loadleveler event monitoring support
+# Description:       Start teal_ll to allow monitoring of Loadleveler
+### END INIT INFO
 
-# Source function library.
-. /etc/init.d/functions
+TEAL_PID_FILE=/var/lock/teal_ll.pid
+TEAL_SVC_NAME=teal_ll
+TEAL_PROGRAM=/opt/teal/ibm/teal/connector/loadleveler.py
 
-# Local functions and definitions
-teal_ll=/opt/teal/ibm/teal/connector/loadleveler.py
-PIDFILE=/var/lock/teal_ll.pid
+TEAL_EXEC=/usr/bin/python
 
-start() {
-	echo -n "Starting teal_ll: "
-	daemon --pidfile $PIDFILE $teal_ll --daemon
-	RC=$?
-	echo
-	[ $RC -eq 0 ] && touch /var/lock/subsys/teal_ll
-	return $RC
-}	
+# Determine distro based on file existence and initialize functions accordingly
+if [[ -f /etc/init.d/functions ]]; then
+    . /etc/init.d/functions
 
-stop() {
-	echo -n "Shutting down teal_ll: "
-	killproc -p $PIDFILE $TEAL
-	RC=$?
-	echo
-	[ $RC -eq 0 ] && rm -f /var/lock/subsys/teal_ll
-	return $RC
+    DAEMON_STATUS=rhel_status
+    DAEMON_START=rhel_start
+    DAEMON_STOP=rhel_stop
+    
+    # Redhat just looks for the pid in the pid file
+    TEAL_PROC=$TEAL_PROGRAM
+else
+    . /etc/rc.status
+    rc_status -r
+   
+    DAEMON_STATUS=sles_status
+    DAEMON_START=sles_start
+    DAEMON_STOP=sles_stop
+   
+    # SLES looks for the pid AND the executable name
+    TEAL_PROC=$TEAL_EXEC
+fi
+
+###############################################################################
+# RHEL Services
+###############################################################################
+
+rhel_start() {
+    echo -n "Starting $TEAL_SVC_NAME: "
+    daemon --pidfile $TEAL_PID_FILE $TEAL_PROC $* --daemon
+    RC=$?
+    echo
+    return $RC
 }
+
+rhel_stop() {
+    echo -n "Stopping $TEAL_SVC_NAME: "
+    killproc -p $TEAL_PID_FILE -d 15 $TEAL_PROC
+    RC=$?
+    echo
+    return $RC
+}
+
+rhel_status() {
+    status -p $TEAL_PID_FILE $TEAL_PROC
+}
+
+###############################################################################
+# SLES Services
+###############################################################################
+
+sles_start() {
+    echo -n "Starting $TEAL_SVC_NAME: "
+    startproc -p $TEAL_PID_FILE $TEAL_EXEC $TEAL_PROGRAM $* --daemon
+    rc_status -v
+}
+
+sles_stop() {
+    echo -n "Stopping $TEAL_SVC_NAME: "
+    killproc -p $TEAL_PID_FILE -t 15 $TEAL_PROC
+    rc_status -v
+}
+
+sles_status() {
+    echo -n "Checking for service $TEAL_SVC_NAME:"
+    checkproc -p $TEAL_PID_FILE $TEAL_PROC
+    RC=$?
+    
+    # Return dead if pid file exists and no program running
+    if [[ $RC -eq 3 && -f $TEAL_PID_FILE ]]; then
+        rc_failed 2
+    else
+        rc_failed $RC
+    fi
+
+    rc_status -v
+}
+
+###############################################################################
+# Main
+###############################################################################
 
 case "$1" in
     start)
-	start
-	;;
+        shift # drop the command and keep the rest as arguments to the daemon
+        $DAEMON_START $*
+        ;;
     stop)
-	stop
-	;;
+        $DAEMON_STOP
+        ;;
     status)
-	status -p $PIDFILE $teal_ll
-	;;
+        $DAEMON_STATUS
+        ;;
     restart|reload)
-    stop
-	start
-	;;
-    condrestart)
-    	#<Restarts the service if it is already running. For example:>
-	[ -f /var/lock/subsys/<service> ] && restart || :
-	;;
+        $DAEMON_STOP
+        shift # drop the command and keep the rest as arguments to the daemon
+        $DAEMON_START $*
+        ;;
     *)
-	echo "Usage: teal_ll {start|stop|status|restart|reload}"
-	exit 1
-	;;
+        echo "Usage: $TEAL_SVC_NAME {start|stop|status|restart|reload}"
+        exit 1
+        ;;
 esac
 exit $?

@@ -88,6 +88,8 @@ my @TEAL_BASE_PKGS = qw(x_tealeventlog
                         x_tealalert2alert 
                         x_tealalert2event 
                         x_tealcheckpoint
+                        x_IPMI_1_1
+                        x_AMM_1_1
                         );
 
 my @TEAL_PKGS;

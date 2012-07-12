@@ -10,8 +10,5 @@ ALTER TABLE x_tealcheckpoint ADD CONSTRAINT teal_fk_chkrec FOREIGN KEY (event_re
 
 ALTER TABLE x_tealalertlog ADD CONSTRAINT teal_alert_state_check CHECK (state IN (1,2));
 
-DELIMITER $$
-CREATE TRIGGER teal_alertlog_delete BEFORE DELETE ON x_tealalertlog FOR EACH ROW BEGIN IF OLD.state = 1 THEN UPDATE `Error: Alert is in an invalid state for deletion` Set x = 1; END IF; END$$
-DELIMITER ;
-
-
+ALTER TABLE x_IPMI_1_1 ADD CONSTRAINT teal_ipmi_fk FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;
+ALTER TABLE x_AMM_1_1  ADD CONSTRAINT teal_amm_fk  FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;

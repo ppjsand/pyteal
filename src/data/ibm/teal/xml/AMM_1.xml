@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tables>
+    <table name="" id="1">
+        <column name="app_id" type="VARCHAR" size="255"/>
+        <column name="sp_txt_id" type="VARCHAR" size="255"/>
+        <column name="sys_uuid" type="CHAR" size="255"/>
+        <column name="sys_sern" type="VARCHAR" size="255"/>
+        <column name="app_type" type="INTEGER"/>
+        <column name="priority" type="INTEGER"/>
+        <column name="msg_text" type="VARCHAR" size="255"/>
+        <column name="host_contact" type="VARCHAR" size="255"/>
+        <column name="host_location" type="VARCHAR" size="255"/>
+        <column name="blade_name" type="VARCHAR" size="255"/>
+        <column name="blade_sern" type="VARCHAR" size="255"/>
+        <column name="blade_uuid" type="CHAR" size="255"/>
+        <column name="evt_name" type="INTEGER"/>
+        <column name="source_id" type="VARCHAR" size="255"/>
+        <column name="call_home_flag" type="INTEGER"/>
+        <column name="sys_ip_address" type="VARCHAR" size="255"/>
+        <column name="sys_machine_model" type="CHAR" size="255"/>
+        <column name="blade_machine_model" type="VARCHAR" size="255"/>        
+    </table>
+</tables>

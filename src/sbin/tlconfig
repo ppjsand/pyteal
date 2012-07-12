@@ -1,0 +1,144 @@
+#!/usr/bin/env python
+# begin_generated_IBM_copyright_prolog
+#
+# This is an automatically generated copyright prolog.
+# After initializing,  DO NOT MODIFY OR MOVE
+# ================================================================
+#
+# (C) Copyright IBM Corp.  2012
+# Eclipse Public License (EPL)
+#
+# ================================================================
+#
+# end_generated_IBM_copyright_prolog
+
+import os
+import gettext
+curdir = os.path.abspath(os.path.dirname(__file__))
+localedir = os.path.join(curdir, '..', 'locale')
+t = gettext.translation('messages', localedir, fallback=True)
+_ = t.lgettext
+
+import optparse
+import sys
+
+from ibm.teal.util import snmp_config
+from ibm.teal import Teal, registry
+
+# Valid states for a component
+CONFIG_STATES = [_('configured'), _('not configured')]
+
+################################################
+#TODO: Move to separate module
+
+class SnmpBaseConfiguration(object):
+    # Connectors with their filters for the xCAT monsetting table
+    SNMP_CONNECTOR_INFO = [
+                           ('ibm/teal/connector/tlipmitraphandler.py', 'snmpTrapEnterprise.0=~SNMPv2-SMI::enterprises.3183.1.1'),
+                           ('ibm/teal/connector/tlammtraphandler.py',  'snmpTrapEnterprise.0=~BLADESPPALT-MIB')
+                          ]
+
+    # TEAL comment for all SNMP connectors (used for deletion)
+    SNMP_CONNECTOR_COMMENT = 'TEAL Base SNMP Connector'    
+
+    def config(self):
+        ''' Configure the base SNMP support
+        '''
+        cfg = snmp_config.SNMPConnectorInstaller()
+        cfg.install(self.SNMP_CONNECTOR_INFO, self.SNMP_CONNECTOR_COMMENT)
+
+    def deconfig(self):
+        ''' Deconfigure the base SNMP support
+        '''
+        cfg = snmp_config.SNMPConnectorInstaller()
+        cfg.uninstall(self.SNMP_CONNECTOR_COMMENT)
+
+    def status(self):
+        ''' Determine if the base SNMP support is configured or not
+        '''
+        cfg = snmp_config.SNMPConnectorInstaller()
+        if cfg.is_installed(self.SNMP_CONNECTOR_INFO, self.SNMP_CONNECTOR_COMMENT):
+            rc = 0
+        else:
+            rc = 1
+    
+        return rc
+
+################################################
+
+def _get_components():
+    ''' Return the list of available components and their instantiated configuration classes
+    '''
+    # TODO: Make configurable through conf files
+    return {'snmp':SnmpBaseConfiguration()}
+
+if __name__ == '__main__':
+    parser = optparse.OptionParser(usage='tlconfig -l|-c|-d [<component>]')
+    parser.add_option('-l', '--list',
+                        default=False,
+                        action='store_true',
+                        dest='list_comp',
+                        help=_('List the available TEAL components and their status. If no component is specified, then all available components are listed'))
+    parser.add_option('-c', '--config',
+                        default=False,
+                        action='store_true',
+                        dest='config_comp',
+                        help=_('Configure the specified component'))
+    parser.add_option('-d', '--deconfig',
+                        default=False,
+                        action='store_true',
+                        dest='deconfig_comp',
+                        help=_('Deconfigure the specified component'))
+
+    (options, args) = parser.parse_args()
+    
+    if (not options.config_comp and not options.deconfig_comp and not options.list_comp):
+        parser.error(_('Must specify one option'))
+
+    if ((options.config_comp and options.deconfig_comp) or 
+        (options.config_comp and options.list_comp) or
+        (options.deconfig_comp and options.list_comp)):
+        parser.error(_('Must specifiy only one option'))
+    
+    if (options.config_comp or options.deconfig_comp) and not args:
+        parser.error(_('Must specify component with option'))
+    
+    if (len(args) > 1):
+        parser.error(_("Must specify only one component"))
+
+    rc = 0
+    
+    try:
+        t = Teal(None,data_only=True,msgLevel='warn',logFile = "$TEAL_LOG_DIR/tlconfig.log")
+   
+        components = _get_components()
+
+        if (args and args[0] not in components.keys()):
+            parser.error(_('Invalid component specified: {0}'.format(args[0])))
+            
+        if options.list_comp:
+            print (_('Available components'))
+            if args:
+                comp_list = args
+            else:
+                comp_list = components.keys()
+
+            for c in comp_list:
+                rc = components[c].status()
+                print '\t{0}: {1}'.format(c, CONFIG_STATES[rc])
+      
+        elif options.config_comp:
+            components[args[0]].config()
+    
+        elif options.deconfig_comp:
+            components[args[0]].deconfig()
+    
+        t.shutdown()
+    except SystemExit:
+        raise
+    except BaseException, be:
+        registry.get_logger().exception(be)
+        print >>sys.stderr,_('Failed: {0}'.format(be))
+        rc = 1
+            
+    sys.exit(rc)

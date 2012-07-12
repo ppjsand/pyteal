@@ -1,0 +1,472 @@
+#!/usr/bin/env python
+import sys
+import time
+import os
+import commands
+import re
+import optparse
+import getpass
+
+STATUS_SUCCESS             = 0
+STATUS_UFM_FAILED          = 1
+STATUS_BACKUP_FAILED       = 2
+STATUS_VALIDATE_FAILED     = 3
+STATUS_LOAD_FAILED         = 4
+STATUS_EVENT_NOT_FOUND     = 5
+STATUS_BACKUP_ABORTED      = 6
+# default event policy configuration file to be used
+TLUFM_DEF_POLICY           = '/opt/teal/data/ibm/ib/tlufm.conf'
+# command to copy this script to UFM server
+#REMOTE_COPY                = '/opt/xcat/bin/xdcp'
+REMOTE_COPY                = '/usr/bin/scp'
+# command to execute this script remotely
+#REMOTE_SHELL               = '/opt/xcat/bin/xdsh'
+REMOTE_SHELL               = '/usr/bin/ssh'
+# directory where this script will be copied
+REMOTE_DIR                 = '/tmp'
+
+class ufm_info():
+    def __init__(self,server,user,password):
+        self.pwd = str(password)
+        self.svr = str(server)
+        self.usr = str(user)
+
+class event_policy():
+
+    def __init__(self,id,snmp,log,severity,type,category,description,upolicy=None):
+        self.id = str(id)
+        self.snmp = bool(str(snmp) != 'False')
+        self.log = bool(str(log) != 'False')
+        self.severity = str(severity)
+        self.type = str(type)
+        self.category = str(category)
+        self.description = str(description)
+        self.uplc = upolicy
+    
+    def __eq__(self,other):
+        if self.id == other.id and self.snmp == other.snmp and self.log == other.log and self.severity == other.severity and self.type == other.type and self.category == other.category and self.description == other.description:
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        msg = 'event_id={0},enable_snmp={1},enable_log={2},severity={3},type={4},category="{5}",description="{6}"'.format(self.id,self.snmp,self.log,self.severity,self.type,self.category,self.description)
+        return msg
+   
+def commit_policy(policy):
+    '''
+    Commit a customized policy into UFM server
+    '''
+    policy.uplc.name = policy.id
+    policy.uplc.to_snmp = policy.snmp
+    policy.uplc.to_log = policy.log
+    policy.uplc.severity = policy.severity
+    policy.uplc.otype = policy.type
+    policy.uplc.category = policy.category
+    policy.uplc.description = policy.description
+    try:
+        UFMPort.eventpolicies_update(policy.uplc)
+    except:
+        sys.stderr.write('Failed to commit policy "%s"\n' % policy)
+        raise
+    print 'Committed policy "%s" successfully!' % policy
+
+def process_policies(ufm_policies,input_policies):
+    '''
+    Validate policies and commit policies if needed
+    '''
+    found = False
+    commit = False
+    print 'Processing policies....'
+    for ipolicy in input_policies:
+        for upolicy in ufm_policies:
+            if upolicy.id == ipolicy.id:
+                found = True
+                if not upolicy == ipolicy:
+                    print 'Mismatch found! Policy for event {0} currently in UFM is:'.format(upolicy.id)
+                    print upolicy
+                    print 'while its policy in input file is:'
+                    print ipolicy
+                    if ipolicy.snmp and ipolicy.log:
+                        print "Committing this policy won't impact TEAL to do logging."
+                    else:
+                        print 'Committing this policy may cause TEAL to miss this event, please be careful!'
+                    if options.commit:
+                        if not options.force:
+                            if get_check_input('Policy mismatch, commit it?(yes/no)',"^[' ']*(?P<choice>yes|no)[' ']*$",'choice') == 'no':
+                                print "Leave original policy unchanged...."
+                                break
+                        print "Commit it...."
+                        commit = True
+                        break
+        if not found:
+            sys.stderr.write('No such input policy "{0}" found for event {1} in UFM, can not valdiate or commit...\n'.format(ipolicy,ipolicy.id))
+        elif commit:
+            sys.stdout.write('Committing policy for event {0} in UFM.....\n'.format(ipolicy.id))
+            ipolicy.uplc = upolicy.uplc
+            commit_policy(ipolicy)
+        found = False
+        commit = False
+    sys.stdout.write('Process policies finished.....\n')
+
+def get_check_input(msg,reg,group_name = None):
+    '''
+    Read in users input, check the input with the regular expression and return the value parsed out if possible
+    '''
+    value = ''
+    sys.stdout.write(msg)
+    sys.stdout.flush()
+    input = sys.stdin.readline()
+    str = re.match(reg,input)
+    while not str:
+        sys.stdout.write('Input invalid, please retry!\n')
+        sys.stdout.write(msg)
+        sys.stdout.flush()
+        input = sys.stdin.readline()
+        str = re.match(reg,input)
+    if group_name:
+        value = str.group(group_name)
+    return value
+
+def read_in_policy(policy_list,file):
+    '''
+    Read in policies from a file into a list and do some check
+    '''
+    f = open(file,'r') 
+    line_no = 0
+    for line in open(file,'r'):
+        line_no += 1
+        if re.match('^#',line) or re.match("[' ']*$",line):
+            continue   
+        str = re.match("[' ']*event_id[' ']*=[' ']*(?P<id>[0-9]{2,3})[' ']*,['  ']*enable_snmp[' ']*=[' ']*(?P<snmp>True|False)[' ']*,['  ']*enable_log[' ']*=[' ']*(?P<log>True|False)[' ']*,['  ']*severity[' ']*=[' ']*(?P<severity>Critical|Info|Minor|Warning)[' ']*,['  ']*type[' ']*=[' ']*(?P<type>Computer|Grid|Site|Network|Device|Environment|Gateway|LogicalServer|Module|Port|Switch)[' ']*,['  ']*category[' ']*=[' ']*\"(?P<category>Communication Error|Fabric Configuration|Fabric Notification|Fabric Topology|Gateway|Hardware|Logical Model|Maintenance|Module Status)\"[' ']*,[' ']*description=\"(?P<description>.+)\"[' ']*\n",line)
+        if str:
+             if options.id:
+                 if not str.group('id') == options.id:
+                     continue
+             policy_list.append(event_policy(str.group('id'),str.group('snmp'),str.group('log'),str.group('severity'),str.group('type'),str.group('category'),str.group('description')))
+        else:
+            sys.stderr.write('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n')
+            sys.stderr.write('The line at %d in file %s has an invalid fomat, skipping....\n' % (line_no,file))
+            sys.stderr.write(line);
+            sys.stderr.write('A correct sample format should be as follows:\n')
+            sys.stderr.write('event_id=392,enable_snmp=True,enable_log=True,severity=Info,type=Module,category="Hardware",description="Module Temperature Threshold Reached"\n')
+            sys.stderr.write('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n')
+            continue
+    f.close()
+
+def get_ufm_server():
+    '''
+    Backup current UFM event policies into a file
+    '''
+    list = []
+    command = '/opt/xcat/bin/nodels ufm'
+    (status, output) = commands.getstatusoutput(command)
+    if status == 0 :
+        for server in output.split('\n'):
+            cmd = '/opt/xcat/sbin/tabdump -w key==' + server  + ' passwd'
+            (rc, items) = commands.getstatusoutput(cmd)
+            if rc == 0:
+                info = items.split('\n')
+                if len(info) < 2:
+                    print "No such UFM server access info found!"
+                else:
+                    user = info[1].split(',')[1].strip('"')
+                    pwd = info[1].split(',')[2].strip('"')
+                    list.append(ufm_info(server,user,pwd))
+            else:
+                sys.stderr.write("Failed to retrieve access info for %s\n" % server)
+    else:
+        sys.stderr.write("Retrieve UFM server list failed\n")
+    return list
+
+def backup_ufm_config(policy_list,file):
+    '''
+    Backup current UFM event policies into a file
+    '''
+    f = None
+    for policy in policy_list:
+        if options.id:
+            if not policy.id == options.id:
+                continue
+        if not f:
+            if os.path.exists(file) and (not options.force):
+                if get_check_input('File exists, override it?(yes/no)',"^[' ']*(?P<choice>yes|no)[' ']*$",'choice') == 'no':
+                    print "Backup UFM configuration is aborted...."
+                    return STATUS_BACKUP_ABORTED
+            f = open(file,'w') 
+            f.write('#This configuration file is generated UFM configuration tool provided by TEAL.\n')
+            f.write('#Please do not try to modify this file unless you are sure about how to.\n')
+            f.write('#A correct sample format should be as following:\n')
+            f.write('#    event_id=392,enable_snmp=True,enable_log=True,severity=Info,type=Module,category="Hardware",description="Module Temperature Threshold Reached"\n')
+            f.write('#    event_id: event number. Possible value: 00~999\n')
+            f.write('#    enable_snmp: turn on/off generate corresponding trap on this event. Possible value: True|False\n')
+            f.write('#    enable_log: turn on/off logging event into event.log. Possible value: True|False\n')
+            f.write('#    severity: event severity. Possible value: Critical|Info|Minor|Warning\n')
+            f.write('#    type: event type. Possible value: Computer|Grid|Site|Network|Device|Environment|Gateway|LogicalServer|Module|Port|Switch\n')
+            f.write('#    category: event category it belongs to. Possible value: Communication Error|Fabric Configuration|Fabric Notification|Fabric Topology|Gateway|Hardware|Logical Model|Maintenance|Module Status\n')
+            f.write('#    description: event description.\n') 
+            f.write('#This file is created at %s by %s (pid %d).\n' % (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()),os.path.basename(sys.argv[0]),os.getpid()))
+        f.write('%s\n' % policy)
+    if f:
+        f.close()
+        print "Backup UFM configuration finished."
+        return STATUS_SUCCESS
+    else:
+        print "No such event id %s found in UFM configuration, can not continue backup/validate/commit..." % options.id
+        return STATUS_EVENT_NOT_FOUND
+    
+##########MAIN##########
+if __name__ == '__main__':
+    # Parse the command line
+    parser = optparse.OptionParser()
+
+    parser.add_option('-v','--validate',
+                        action='store_true',
+                        dest='validate',
+                        default=False,
+                        help=('Validate current UFM configuration. Should be used with option -f/-i.')) 
+    parser.add_option('-c','--commit',
+                        default=False,
+                        action='store_true',
+                        dest='commit',
+                        help=('Commit customized configuration into UFM. Should be used with option -f/-i.'))
+    parser.add_option('-f','--file',
+                        action='store',
+                        dest='file',
+                        default=None,
+                        type='string',
+                        help=('File which is used as input for validation/commission.'))
+    parser.add_option('-i','--event_id',
+                        action='store',
+                        dest='id',
+                        default=None,
+                        type='string',
+                        help=('Event id which needs to be validated or committed.'))
+    parser.add_option('-b','--backup_file',
+                        action='store',
+                        dest='backup_file',
+                        default=None,
+                        type='string',
+                        help=('Backup UFM configuration to a file.'))
+    parser.add_option('-u','--ufm_user',
+                        action='store',
+                        dest='user',
+                        default=None,
+                        type='string',
+                        help=('UFM server access user name.'))
+    parser.add_option('-p','--ufm_password',
+                        action='store',
+                        dest='passwd',
+                        default=None,
+                        type='string',
+                        help=('UFM server access password.'))
+    parser.add_option('-s','--ufm_server',
+                        action='store',
+                        dest='server',
+                        default=None,
+                        type='string',
+                        help=('UFM server name to be connected.'))
+    parser.add_option('-n','--noprompt',
+                        action='store_true',
+                        dest='force',
+                        default=False,
+                        help=('Force to override backup file and commit customized UFM configuration without prompt.'))
+
+    (options, args) = parser.parse_args()
+    if len(args) > 0 :
+        parser.error("Invalid argument specified!")
+
+    # check this script is invoked on EMS or UFM server
+    exec_remotely = False
+    if os.path.exists('/etc/xCATMN'):
+        print "Invoked on MN, copying script to UFM server and execute remotely..."
+        exec_remotely = True
+    
+    if not (options.backup_file or options.validate or options.commit):
+        if options.force:
+            parser.error('At least one option of -b/-v/-c must be specified!')
+        else:
+            print 'Below is a list indicates operations can be taken:'
+            print '>>> 1 ) back up UFM configuration only'
+            print '>>> 2 ) back up UFM configuration and validate it'
+            print '>>> 3 ) back up UFM configuration, validate it and commit it if needed'
+            print '>>> 4 ) validate UFM configuration and commit it if needed'
+            selection = get_check_input('Please select your operation to be performed and press Enter:',"^[' ']*(?P<no>[1-4])[' ']*$",'no')
+            if int(selection) < 4:
+                file_reg = "[' ']*(?P<f>/+.+[^/' '*]$)\n"
+                options.backup_file = get_check_input('Please input the backup file name with full path and press Enter:',file_reg,'f')
+            if int(selection) > 1:
+                options.validate = True
+            if int(selection) > 2:
+                options.commit = True
+
+    if options.commit or options.validate:
+        if not options.file:
+            if not options.force:
+                if get_check_input('You can specify an input policy file, do you need to specify one?(yes/no)',"^[' ']*(?P<choice>yes|no)[' ']*$",'choice') == 'yes':
+                    file_reg = "[' ']*(?P<f>/+.+[^/' '*]$)\n"
+                    options.file = get_check_input('Please input the file name with full path and ({0} can be used as TEAL optimal UFM configuration validation/commitment template):'.format(TLUFM_DEF_POLICY),file_reg,'f')
+
+    if not options.id:
+        if not options.force:
+            if get_check_input('You can specify an event id to process, do you need to specify one?(yes/no)',"^[' ']*(?P<choice>yes|no)[' ']*$",'choice') == 'yes':
+                id_reg = "[' ']*(?P<id>[0-9]{2,3})[' ']*"
+                options.id = get_check_input('Please input the event id and press Enter:',id_reg,'id')
+
+    if (not (options.id or options.file)) and (options.commit or options.validate):
+        if not options.force:
+            parser.error("You should specify either a file or a event id to process")
+        elif not options.file:
+            print "You didn't specify an input file or an event id, use {0} by default!".format(TLUFM_DEF_POLICY)
+            options.file = TLUFM_DEF_POLICY
+
+    if options.backup_file == options.file and (options.backup_file or options.file):
+        if options.force:
+            parser.error("You can not specify a file currently being used to validate/commit UFM configuration as a backup target!")
+        else:
+            print "You can not specify a file currently being used to validate/commit UFM configuration as a backup target!"
+            options.backup_file = get_check_input('Please input the backup file name with full path and press Enter:',file_reg,'f')
+    if not options.backup_file and not options.force and options.commit:
+        if get_check_input('Do you need backup before commitment?(yes/no)',"^[' ']*(?P<choice>yes|no)[' ']*$",'choice') == 'yes':
+            file_reg = "[' ']*(?P<f>/+.+[^/,' ']$)[' ']*"
+            options.backup_file = get_check_input('Please input the backup file name with full path and press Enter:',file_reg,'f')
+    if not options.server:
+        if not options.force:
+            print 'You did not specify UFM server to access, retrieve from xCAT table....'
+            servers = get_ufm_server()
+            if servers:
+                sys.stdout.write('You can input number of the server in below list:\n')
+                number = 1
+                for server in servers:
+                    print '### %d ) %s' % (number, server.svr)
+                    number += 1
+            else:
+                sys.stdout.write('No UFM server access info found in xCAT table ')
+            selected = get_check_input("and you can input 0 to use another server:","[' ']*(?P<no>[0-9]+)[' ']*",'no')
+            if selected == '0':
+                options.server = get_check_input("Please input the server name/ip of the UFM server:","^[' ']*(?P<server>[0-9a-zA-Z]+.*[0-9a-zA-Z])[' ']*$",'server')
+
+            else:
+                options.server = servers[int(selected)-1].svr
+                options.user = servers[int(selected)-1].usr
+                options.passwd = servers[int(selected)-1].pwd
+        else:
+            parser.error("You did not specify UFM server, exit...")
+
+    if not options.user:
+        if not options.force:
+            options.user = get_check_input("Please input the user name of the UFM server:","[' ']*(?P<no>.*)[' ']*",'no')
+        else:
+            parser.error("Please specify user name for the UFM server...")
+
+    if not options.passwd:
+        if not options.force:
+            options.passwd = getpass.getpass("Please input the password to access the UFM server:")
+        else:
+            parser.error("Please specify password for the UFM server...")
+
+    final_options = ''
+    if options.validate:
+        final_options += ' -v' 
+    if options.commit:
+        final_options += ' -c' 
+    if options.force:
+        final_options += ' -n' 
+    if options.backup_file:
+        final_options += ' -b {0}'.format(options.backup_file)
+    if options.file:
+        final_options += ' -f {0}'.format(options.file)
+    if options.id:
+        final_options += ' -i {0}'.format(options.id)
+    if options.user:
+        final_options += ' -u {0}'.format(options.user)
+    if options.passwd:
+        final_options += ' -p {0}'.format(options.passwd)
+    if options.server:
+        final_options += ' -s {0}'.format(options.server)
+    exec_cmd = sys.argv[0] + final_options
+
+    if exec_remotely:
+        print 'The equivalent command is: \n**********************\n{0}\n**********************\nyou can invoke it in command line directly next time.'.format(exec_cmd)
+        # copy to UFM server and execute it remotely
+        rcp_cmd = ''
+        rexec_cmd = ''
+        # doesn't support interactive mode if invoked on MN via xdsh
+        if not options.force and re.match('.*xdsh',REMOTE_SHELL):
+            options.force = True
+            final_options += ' -n'
+        if options.file:
+        # replace path to remote directory if invoke remotely
+            final_options = final_options.replace(' -f {0}'.format(options.file),' -f {0}/{1}'.format(REMOTE_DIR,os.path.basename(options.file)))
+        else:
+            options.file = ''
+        if options.backup_file:
+        # replace path to remote directory if invoke remotely
+            final_options = final_options.replace(' -b {0}'.format(options.backup_file),' -b {0}/{1}'.format(REMOTE_DIR,os.path.basename(options.backup_file)))
+        else:
+            options.backup_file = ''
+        if re.match('.*xdcp',REMOTE_COPY):
+            rcp_cmd = '{0} {1} {2} {3} {4}'.format(REMOTE_COPY,options.server,sys.argv[0],options.file,REMOTE_DIR)
+        elif re.match('.*scp',REMOTE_COPY):
+            rcp_cmd = '{0} {1} {2} {3}:{4}'.format(REMOTE_COPY,sys.argv[0],options.file,options.server,REMOTE_DIR)
+        else:
+            print "Doesn't support remote copy command: {0}".format(REMOTE_COPY)
+        if re.match('.*xdsh',REMOTE_SHELL):
+            rexec_cmd = '{0} {1} -l root "{2}"'.format(REMOTE_SHELL,options.server,REMOTE_DIR + '/' + os.path.basename(sys.argv[0]) + final_options)
+        elif re.match('.*ssh',REMOTE_SHELL):
+            rexec_cmd = '{0} {1} -l root "{2}"'.format(REMOTE_SHELL,options.server,REMOTE_DIR + '/' + os.path.basename(sys.argv[0]) + final_options)
+        else:
+            print "Doesn't support remote shell: {0}".format(REMOTE_COPY)
+
+        remote_cmd = '{0} && {1}'.format(rcp_cmd,rexec_cmd)
+        if options.backup_file:
+            rcp_back_cmd = ''
+            if re.match('.*xdcp',REMOTE_COPY):
+                rcp_back_cmd += ' && {0} {1} -P {2} {3} && /bin/mv {4} {5}'.format(REMOTE_COPY,options.server,REMOTE_DIR + '/' + os.path.basename(options.backup_file),os.path.dirname(options.backup_file),options.backup_file + '._' + options.server,options.backup_file)
+            else:
+                rcp_back_cmd += ' && {0} {1}:{2} {3}'.format(REMOTE_COPY,options.server,REMOTE_DIR + '/' + os.path.basename(options.backup_file),options.backup_file)
+            remote_cmd += rcp_back_cmd
+        os.system(remote_cmd)
+            
+        sys.exit(0)
+    # below will be executed on UFM server
+    sys.path.append('/opt/ufm/gvvm/')
+    from client import connect
+    try:
+        UFMPort = connect(options.user, options.passwd, options.server)
+        ufm_policies = UFMPort.eventpolicies()
+    except:
+        sys.stderr.write('Can not access UFM server, exit....\n')
+        raise
+        sys.exit(STATUS_UFM_FAILED)
+    orig_policies = []
+    for ufmpolicy in ufm_policies:
+        if options.id:
+            if not ufmpolicy.name == options.id:
+                continue
+        orig_policies.append(event_policy(ufmpolicy.name,ufmpolicy.to_snmp,ufmpolicy.to_log,ufmpolicy.severity,ufmpolicy.policy_object,ufmpolicy.category,ufmpolicy.description,ufmpolicy))
+    if options.id and len(orig_policies) == 0:
+        sys.stderr.write("No policy found in UFM server for event %s, exit....\n" % options.id)
+        sys.exit(STATUS_EVENT_NOT_FOUND)
+    rec = 0
+    if options.backup_file:
+        print "Backup UFM configuration..."
+        try:
+            rec = backup_ufm_config(orig_policies,options.backup_file)
+        except:
+            raise
+            sys.stderr.write("Backup UFM configuration failed, exit....\n")
+            sys.exit(STATUS_BACKUP_FAILED)
+    if not options.file or rec == STATUS_EVENT_NOT_FOUND:
+        sys.exit(rec)
+    input_policies = []
+    try:
+        read_in_policy(input_policies,options.file)
+    except:
+        raise
+        sys.stderr.write("Process input configuration file failed, exit....\n")
+        sys.exit(STATUS_LOAD_FAILED)
+    if len(input_policies) == 0:
+        sys.stderr.write("No valid policy found in the input file, can not continue, exit....\n")
+        sys.exit(STATUS_LOAD_FAILED)
+    process_policies(orig_policies,input_policies)

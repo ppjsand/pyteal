@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tables>
+    <table name="" id="1">
+        <column name="severity"      type="VARCHAR" size="16"/>
+        <column name="category"      type="VARCHAR" size="32"/>        
+        <column name="description"   type="VARCHAR" size="256"/>        
+    </table>
+</tables>
+

@@ -1,0 +1,2346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gear_ruleset>
+    <description>Infiniband Rules</description>
+    <gear_control>
+        <default_event_comp value="IB"/>
+    </gear_control>
+    <events>
+        <event id="MX000001" name="asicChipDown" />
+        <event id="MX000002" name="asicOverTempReset" />
+        <event id="MX000003" name="asicOverTemp" />
+        <event id="MX000004" name="lowPower" />
+        <event id="MX010001" name="bxAsicChipDown" />
+        <event id="MX010002" name="bxAsicOverTempReset" />
+        <event id="MX010003" name="bxAsicOverTemp" />
+        <event id="MX020001" name="ibSMup" />
+        <event id="MX020002" name="ibSMdown" />
+        <event id="MX020003" name="ibSMrestart" />
+        <event id="MX030001" name="internalBusError" />
+        <event id="MX030002" name="procCrash" />
+        <event id="MX030003" name="cpuUtilHigh" />
+        <event id="MX030004" name="procUnexpectedExit" />
+        <event id="MX030005" name="unexpectedShutdown" />
+        <event id="MX030006" name="diskSpaceLow" />
+        <event id="MX030007" name="systemHealthStatus" />
+        <event id="MX030008" name="lowPowerRecover" />
+        <event id="MX030009" name="insufficientFans" />
+        <event id="MX030010" name="insufficientFansRecover" />
+        <event id="MX040001" name="IBCAHealthStatusChange" />
+        <event id="MX040002" name="IBCAInsertion" />
+        <event id="MX040003" name="IBCARemoval" />
+        <event id="MX040004" name="IBSwitchInsertion" />
+        <event id="MX040005" name="IBSwitchRemoval" />
+        <event id="MX040006" name="IBRouterInsertion" />
+        <event id="MX040007" name="IBRouterRemoval" />
+        <event id="MX040008" name="IBPortStateChange" />
+        <event id="MX040009" name="IBPortPhysicalStateChange" />
+        <event id="MX040010" name="IBPortInsertion" />
+        <event id="MX040011" name="IBPortRemoval" />
+        <event id="MX050064" name="GIDAddressInService" />
+        <event id="MX050065" name="GIDAddressOutOfService" />
+        <event id="MX050066" name="NewMCastGroupCreated" />
+        <event id="MX050067" name="MCastGroupDeleted" />
+        <event id="MX050110" name="SymbolError" />
+        <event id="MX050111" name="LinkErrorRecovery" />
+        <event id="MX050112" name="LinkDowned" />
+        <event id="MX050113" name="PortReceiveErrors" />
+        <event id="MX050114" name="PortReceiveSwitchRelayErrors" />
+        <event id="MX050115" name="PortReceiveRemotePhysicalErrors" />
+        <event id="MX050116" name="PortXmitDiscards" />
+        <event id="MX050117" name="PortXmitConstraintErrors" />
+        <event id="MX050118" name="PortReceiveConstraintErrors" />
+        <event id="MX050119" name="LocalLinkIntegrityErrors" />
+        <event id="MX050120" name="ExcessiveBufferOverrunErrors" />
+        <event id="MX050121" name="VL15Dropped" />
+        <event id="MX050122" name="CongestedBandwidthThresholdReached" />
+        <event id="MX050123" name="PortBandwidth(%)ThresholdReached" />
+        <event id="MX050128" name="LinkStateChanged" />
+        <event id="MX050130" name="NonOptimalLinkWidth" />
+        <event id="MX050133" name="PortNormalizedTransmitWait" />
+        <event id="MX050141" name="FlowControlUpdateWatchdogTimerExpired" />
+        <event id="MX050144" name="CapabilityMaskModified" />
+        <event id="MX050145" name="SystemImageGuidChanged" />
+        <event id="MX050156" name="LinkSpeedEnforcementDisabled" />
+        <event id="MX050252" name="LicenseExpired" />
+        <event id="MX050253" name="DuplicatedLicenses" />
+        <event id="MX050254" name="LicenseLimitExceeded" />
+        <event id="MX050255" name="LicenseExpirationDate" />
+        <event id="MX050256" name="BadMKey" />
+        <event id="MX050257" name="BadPKey" />
+        <event id="MX050258" name="BadQKey" />
+        <event id="MX050259" name="_BadPKeySwitchExternalPort" />
+        <event id="MX050271" name="IsblLagPortUp" />
+        <event id="MX050272" name="IsblLagPortDown" />
+        <event id="MX050273" name="LagPortUp" />
+        <event id="MX050274" name="LagPortDown" />
+        <event id="MX050275" name="PortUp" />
+        <event id="MX050276" name="PortDown" />
+        <event id="MX050277" name="PortLagUp" />
+        <event id="MX050278" name="PortLagDown" />
+        <event id="MX050279" name="PortIsblUp" />
+        <event id="MX050280" name="PortIsblDown" />
+        <event id="MX050301" name="LogicalServerStateChanged" />
+        <event id="MX050302" name="LogicalServerStateChangeFailed" />
+        <event id="MX050306" name="LogicalServerAdded" />
+        <event id="MX050307" name="LogicalServerRemoved" />
+        <event id="MX050308" name="LogicalServerResourcesAllocated" />
+        <event id="MX050312" name="ComputeResourceReleased" />
+        <event id="MX050313" name="ComputeResourceAllocated" />
+        <event id="MX050314" name="LogicalServerAdditionalResourcesAllocated" />
+        <event id="MX050315" name="LogicalServerResourcesReleased" />
+        <event id="MX050316" name="LogicalServerComputeResourceIsDown" />
+        <event id="MX050317" name="LogicalServerComputeResourceIsUp" />
+        <event id="MX050331" name="NodeIsDown" />
+        <event id="MX050332" name="NodeIsUp" />
+        <event id="MX050336" name="PortActionSucceeded" />
+        <event id="MX050337" name="PortActionFailed" />
+        <event id="MX050338" name="DeviceActionSucceeded" />
+        <event id="MX050339" name="DeviceActionFailed" />
+        <event id="MX050340" name="NetworkInterfaceAdded" />
+        <event id="MX050341" name="NetworkInterfaceRemoved" />
+        <event id="MX050350" name="EnvironmentAdded" />
+        <event id="MX050351" name="EnvironmentRemoved" />
+        <event id="MX050352" name="NetworkAdded" />
+        <event id="MX050353" name="NetworkRemoved" />
+        <event id="MX050358" name="VmmBadAccessCredentials" />
+        <event id="MX050359" name="VmCreated" />
+        <event id="MX050360" name="VmRemoved" />
+        <event id="MX050361" name="VmmIsDown" />
+        <event id="MX050362" name="VmmIsUp" />
+        <event id="MX050364" name="VmStateChanged" />
+        <event id="MX050365" name="VmIsDown" />
+        <event id="MX050366" name="VmIsUp" />
+        <event id="MX050367" name="VmMigrationFailed" />
+        <event id="MX050368" name="VmHasMigrated" />
+        <event id="MX050369" name="VmAlarmStatusHasChanged" />
+        <event id="MX050370" name="GatewayEthernetLinkStateChanged" />
+        <event id="MX050371" name="_GatewayReRegisterEventReceived" />
+        <event id="MX050372" name="NumberOfGatewaysIsChanged" />
+        <event id="MX050373" name="GatewayWillBeRebooted" />
+        <event id="MX050374" name="GatewayReloadingFinished" />
+        <event id="MX050375" name="VcenterisDown" />
+        <event id="MX050376" name="Vcenterbadaccesscredentials" />
+        <event id="MX050381" name="SwitchUpgradeFailed" />
+        <event id="MX050383" name="HostUpgradeFailed" />
+        <event id="MX050385" name="SwitchFwUpgradeStarted" />
+        <event id="MX050386" name="SwitchSwUpgradeStarted" />
+        <event id="MX050387" name="SwitchUpgradeFinished" />
+        <event id="MX050388" name="HostFwUpgradeStarted" />
+        <event id="MX050389" name="HostSwUpgradeStarted" />
+        <event id="MX050391" name="SwitchModuleRemoved" />
+        <event id="MX050392" name="ModuleTemperatureThresholdReached" />
+        <event id="MX050393" name="SwitchModuleAdded" />
+        <event id="MX050394" name="ModulestatusFAULT" />
+        <event id="MX050395" name="DeviceActionStarted" />
+        <event id="MX050396" name="SiteActionStarted" />
+        <event id="MX050397" name="SiteActionFailed" />
+        <event id="MX050398" name="SwitchChipAdded" />
+        <event id="MX050399" name="SwitchChipRemoved" />
+        <event id="MX050403" name="DevicePendingReboot" />
+        <event id="MX050502" name="DeviceUpgradeFinished" />
+        <event id="MX050503" name="UFMBackUpStarted" />
+        <event id="MX050504" name="UFMBackUpFinished" />
+        <event id="MX050505" name="UFMBackUpFinishedWithError" />
+        <event id="MX050510" name="SMUP" />
+        <event id="MX050511" name="SMDown" />
+        <event id="MX050512" name="DeviceUpgradeFinished" />
+        <event id="MX050513" name="SMSystemLogMessage" />
+        <event id="MX050514" name="SMLIDChange" />
+        <event id="MX050515" name="FabricHealthReportInfo" />
+        <event id="MX050516" name="FabricHealthReportWarning" />
+        <event id="MX050517" name="FabricHealthReportError" />
+        <event id="MX050518" name="UFMHealthInfo" />
+        <event id="MX050519" name="UFMHealthWarning" />
+        <event id="MX050520" name="UFMHealthMinor" />
+        <event id="MX050521" name="UFMHealthMajor" />
+        <event id="MX050522" name="UFMHealthCritical" />
+        <event id="MX050523" name="UFMfailoverisbeingattempted" />
+        <event id="MX050524" name="UFMcannotconnecttoDB" />
+        <event id="MX050525" name="Diskutilizationthresholdreached" />
+        <event id="MX050526" name="Memoryutilizationthresholdreached" />
+        <event id="MX050527" name="CPUutilizationthresholdreached" />
+        <event id="MX050528" name="Fabricinterfaceisdown" />
+        <event id="MX050529" name="UFMstandbyserverproblem" />
+        <event id="MX050530" name="SMisdown" />
+        <event id="MX050531" name="DRBDBadCondition" />
+        <event id="MX050532" name="RemoteUFM-SMSync" />
+        <event id="MX050533" name="RemoteUFM-SMproblem" />
+        <event id="MX050602" name="ServerFailover" />
+        <event id="MX050603" name="SuppressEvents" />
+        <event id="MX050604" name="HealthReportSucceeded" />
+        <event id="MX050605" name="HealthReportFailed" />
+        <event id="MX050701" name="NonOptimalLinkSpeed" />
+        <event id="MX050801" name="DropEvents" />
+        <event id="MX050802" name="CRCAlignErrors" />
+        <event id="MX050803" name="UndersizePkts" />
+        <event id="MX050804" name="OversizePkts" />
+        <event id="MX050805" name="Fragments" />
+        <event id="MX050806" name="Jabbers" />
+        <event id="MX050807" name="Collisions" />
+        <event id="MX050808" name="AlignmentErrors" />
+        <event id="MX050809" name="FCSErrors" />
+        <event id="MX050810" name="SingleCollisionFrames" />
+        <event id="MX050811" name="MultipleCollisionFrames" />
+        <event id="MX050812" name="SQETestErrors" />
+        <event id="MX050813" name="DeferredTransmissions" />
+        <event id="MX050814" name="LateCollisions" />
+        <event id="MX050815" name="ExcessiveCollisions" />
+        <event id="MX050816" name="InternalMacTransmitErrors" />
+        <event id="MX050817" name="InternalMacReceiveErrors" />
+        <event id="MX050818" name="CarrierSenseErrors" />
+        <event id="MX050819" name="FrameTooLongs" />
+        <event id="MX050820" name="SymbolErrors" />
+        <event id="MX050901" name="FabricConfigurationStarted" />
+        <event id="MX050902" name="FabricConfigurationCompleted" />
+        <event id="MX050903" name="FabricConfigurationFailed" />
+        <event id="MX050904" name="DeviceConfigurationFailure" />
+        <event id="MX050905" name="DeviceConfigurationTimeout" />
+        <event id="MX050906" name="ProvisioningValidationFailure" />
+        <event id="MX060001" name="UFMServerAbnormal" comp="UFM" />
+        <event id="MX060002" name="UFMServerDown" comp="UFM" />
+        <event id="MX060003" name="UFMServerUp" comp="UFM" />
+    </events>
+    <pool_control>
+        <initial_duration default="60"/>
+        <max_duration default ="60"/>
+    </pool_control>
+    <analyze>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="asicChipDown" >
+            <description>Switch ASIC is down</description>
+            <condition>
+                <event_equals id="MX000001"/>
+            </condition>
+            <action>
+                <create_alert id="MX000001"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="asicOverTempReset" >
+            <description>reset happened due to over temperature of ASIC</description>
+            <condition>
+                <event_equals id="MX000002"/>
+            </condition>
+            <action>
+                <create_alert id="MX000002"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="asicOverTemp" >
+            <description>ASIC Temperature too high</description>
+            <condition>
+                <event_equals id="MX000003"/>
+            </condition>
+            <action>
+                <create_alert id="MX000003"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  lowPowerRecover(MX030008) -->
+        <rule name="lowPower" >
+            <description>FabricIT management appliance has insufficient power</description>
+            <condition>
+                <event_equals id="MX000004"/>
+            </condition>
+            <action>
+                <create_alert id="MX000004"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="bxAsicChipDown" >
+            <description>bx ASIC is down</description>
+            <condition>
+                <event_equals id="MX010001"/>
+            </condition>
+            <action>
+                <create_alert id="MX010001"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="bxAsicOverTempReset" >
+            <description>reset happened due to over temperature of bx ASIC</description>
+            <condition>
+                <event_equals id="MX010002"/>
+            </condition>
+            <action>
+                <create_alert id="MX010002"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="bxAsicOverTemp" >
+            <description>bx ASIC Temperature too high</description>
+            <condition>
+                <event_equals id="MX010003"/>
+            </condition>
+            <action>
+                <create_alert id="MX010003"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="ibSMup" >
+            <description>Local Subnet Manager has started</description>
+            <condition>
+                <event_equals id="MX020001"/>
+            </condition>
+            <action>
+                <create_alert id="MX020001"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="ibSMdown" >
+            <description>Local Subnet Manager has stopped</description>
+            <condition>
+                <event_equals id="MX020002"/>
+            </condition>
+            <action>
+                <create_alert id="MX020002"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="ibSMrestart" >
+            <description>Local Subnet Manager been restarted</description>
+            <condition>
+                <event_equals id="MX020003"/>
+            </condition>
+            <action>
+                <create_alert id="MX020003"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="internalBusError" >
+            <description>I2C access failed more than 5 times</description>
+            <condition>
+                <event_equals id="MX030001"/>
+            </condition>
+            <action>
+                <create_alert id="MX030001"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="procCrash" >
+            <description>A process managed by FabricIT has terminated unexpectedly and left a core file</description>
+            <condition>
+                <event_equals id="MX030002"/>
+            </condition>
+            <action>
+                <create_alert id="MX030002"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="cpuUtilHigh" >
+            <description>The FabricIT management appliance CPU is very busy</description>
+            <condition>
+                <event_equals id="MX030003"/>
+            </condition>
+            <action>
+                <create_alert id="MX030003"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="procUnexpectedExit" >
+            <description>A process managed by FabricIT has terminated unexpectedly and no core file was found</description>
+            <condition>
+                <event_equals id="MX030004"/>
+            </condition>
+            <action>
+                <create_alert id="MX030004"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="unexpectedShutdown" >
+            <description>FabricIT management appliance shut down unexpectedly</description>
+            <condition>
+                <event_equals id="MX030005"/>
+            </condition>
+            <action>
+                <create_alert id="MX030005"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="diskSpaceLow" >
+            <description>FabricIT management appliance is running out of disk space</description>
+            <condition>
+                <event_equals id="MX030006"/>
+            </condition>
+            <action>
+                <create_alert id="MX030006"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="systemHealthStatus" >
+            <description>FabricIT management appliance health status</description>
+            <condition>
+                <event_equals id="MX030007"/>
+            </condition>
+            <action>
+                <create_alert id="MX030007"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="lowPowerRecover" >
+            <description>FabricIT management appliance has restored to normal power</description>
+            <condition>
+                <event_equals id="MX030008"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX000004" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX030010(insufficientFansRecover) -->
+        <rule name="insufficientFans" >
+            <description>FabricIT management appliance has insufficient number of working fans</description>
+            <condition>
+                <event_equals id="MX030009"/>
+            </condition>
+            <action>
+                <create_alert id="MX030009"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="insufficientFansRecover" >
+            <description>FabricIT management appliance has a sufficient number of working fans</description>
+            <condition>
+                <event_equals id="MX030010"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX030009" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBCAHealthStatusChange" >
+            <description>The overall health status of the channel adapter has changed</description>
+            <condition>
+                <event_equals id="MX040001"/>
+            </condition>
+            <action>
+                <create_alert id="MX040001"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBCAInsertion" >
+            <description>A channel adapter has been inserted in the system</description>
+            <condition>
+                <event_equals id="MX040002"/>
+            </condition>
+            <action>
+                <create_alert id="MX040002"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBCARemoval" >
+            <description>A channel adapter has been removed from the system</description>
+            <condition>
+                <event_equals id="MX040003"/>
+            </condition>
+            <action>
+                <create_alert id="MX040003"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBSwitchInsertion" >
+            <description>A switch has been inserted in the system</description>
+            <condition>
+                <event_equals id="MX040004"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX040005" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX040003(mlxIBSwitchInsertion) -->
+        <rule name="mlxIBSwitchRemoval" >
+            <description>A switch has been removed from the system</description>
+            <condition>
+                <event_equals id="MX040005"/>
+            </condition>
+            <action>
+                <create_alert id="MX040005"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBRouterInsertion" >
+            <description>A router has been inserted in the system</description>
+            <condition>
+                <event_equals id="MX040006"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX040007" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX040006(mlxIBRouterInsertion) -->
+        <rule name="mlxIBRouterRemoval" >
+            <description>The FabricIT management appliance CPU is very busy</description>
+            <condition>
+                <event_equals id="MX040007"/>
+            </condition>
+            <action>
+                <create_alert id="MX040007"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBPortStateChange" >
+            <description>The port state has changed</description>
+            <condition>
+                <event_equals id="MX040008"/>
+            </condition>
+            <action>
+                <create_alert id="MX040008"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBPortPhysicalStateChange" >
+            <description>The physical port state has changed</description>
+            <condition>
+                <event_equals id="MX040009"/>
+            </condition>
+            <action>
+                <create_alert id="MX040009"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="mlxIBPortInsertion" >
+            <description>An IBA port has been inserted in the system</description>
+            <condition>
+                <event_equals id="MX040010"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX040011" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX040010(mlxIBPortInsertion) -->
+        <rule name="mlxIBPortRemoval" >
+            <description>An IB port has been removed from the system</description>
+            <condition>
+                <event_equals id="MX040011"/>
+            </condition>
+            <action>
+                <create_alert id="MX040011"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNewMCastGroupCreated" >
+            <description>New MCast group is created</description>
+            <condition>
+                <event_equals id="MX050066"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050067" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX050066(vol_ufmNewMCastGroupCreated) -->
+        <rule name="vol_ufmMCastGroupDeleted" >
+            <description>Mcast group is deleted</description>
+            <condition>
+                <event_equals id="MX050067"/>
+            </condition>
+            <action>
+                <create_alert id="MX050067"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX050111(vol_ufmLinkErrorRecovery), MX050112(vol_ufmLinkDowned), MX050113(vol_ufmPortReceiveErrors) -->
+        <rule name="vol_ufmSymbolError" >
+            <description>Symbol-Error counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050110"/>
+            </condition>
+            <action>
+                <create_alert id="MX050110"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX050112(vol_ufmLinkDowned) -->
+        <rule name="vol_ufmLinkErrorRecovery" >
+            <description>Link-Error-Recovery counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050111"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050110, MX050113" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050111"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLinkDowned" >
+            <description>Link down threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050112"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050110, MX050111,  MX050113" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050112"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX050111(vol_ufmLinkErrorRecovery), MX050112(vol_ufmLinkDowned) -->
+        <rule name="vol_ufmPortReceiveErrors" >
+            <description>PortRcvErrors counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050113"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050110, MX050115" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050113"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortReceiveRemotePhysicalErrors" >
+            <description>PortRcvRemotePhysicalErrors counter rate threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050114"/>
+            </condition>
+            <action>
+                <create_alert id="MX050114"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  MX050113(vol_ufmPortReceiveErrors) -->
+        <rule name="vol_ufmPortReceiveSwitchRelayErrors" >
+            <description>PortRcvSwitchRelayErrors counter rate threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050115"/>
+            </condition>
+            <action>
+                <create_alert id="MX050115"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortXmitDiscards" >
+            <description>PortXmitDiscards counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050116"/>
+            </condition>
+            <action>
+                <create_alert id="MX050116"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortXmitConstraintErrors" >
+            <description>PortXmitConstraintErrors counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050117"/>
+            </condition>
+            <action>
+                <create_alert id="MX050117"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortReceiveConstraintErrors" >
+            <description>PortRcvConstraintErrors counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050118"/>
+            </condition>
+            <action>
+                <create_alert id="MX050118"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLocalLinkIntegrityErrors" >
+            <description>LocalLinkIntegrityErrors counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050119"/>
+            </condition>
+            <action>
+                <create_alert id="MX050119"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmExcessiveBufferOverrunErrors" >
+            <description>ExcessiveBufferOverrunErrors counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050120"/>
+            </condition>
+            <action>
+                <create_alert id="MX050120"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVL15Dropped" >
+            <description>VL15Dropped counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050121"/>
+            </condition>
+            <action>
+                <create_alert id="MX050121"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmCongestedBandwidthThresholdReached" >
+            <description>Congested Bandwidth (in percents) threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050122"/>
+            </condition>
+            <action>
+                <create_alert id="MX050122"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortBandwidthThresholdReached" >
+            <description>Port Normalized Transmit BW counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050123"/>
+            </condition>
+            <action>
+                <create_alert id="MX050123"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNon-optimallinkwidth" >
+            <description>Found a link that operates in non-optimal width mode</description>
+            <condition>
+                <event_equals id="MX050130"/>
+            </condition>
+            <action>
+                <create_alert id="MX050130"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortNormalizedTransmitWait" >
+            <description>Port Normalized Transmit Wait counter threshold exceeded</description>
+            <condition>
+                <event_equals id="MX050133"/>
+            </condition>
+            <action>
+                <create_alert id="MX050133"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFlowControlUpdateWatchdogTimerExpired" >
+            <description>Flow Control Update watchdog timer has expired</description>
+            <condition>
+                <event_equals id="MX050141"/>
+            </condition>
+            <action>
+                <create_alert id="MX050141"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmCapabilityMaskModified" >
+            <description>Capability Mask Modified</description>
+            <condition>
+                <event_equals id="MX050144"/>
+            </condition>
+            <action>
+                <create_alert id="MX050144"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSystemImageGUIDchanged" >
+            <description>System Image GUID is changed</description>
+            <condition>
+                <event_equals id="MX050145"/>
+            </condition>
+            <action>
+                <create_alert id="MX050145"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLinkSpeedEnforcementDisabled" >
+            <description>Link Speed Enforcement is Disabled</description>
+            <condition>
+                <event_equals id="MX050156"/>
+            </condition>
+            <action>
+                <create_alert id="MX050156"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLicenseExpired" >
+            <description>License has expired</description>
+            <condition>
+                <event_equals id="MX050252"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050255" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050252"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDuplicatedlicenses" >
+            <description>Duplicate Serial Number %s detected on installed licenses</description>
+            <condition>
+                <event_equals id="MX050253"/>
+            </condition>
+            <action>
+                <create_alert id="MX050253"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLicenseLimitExceeded" >
+            <description>License Limit Exceeded</description>
+            <condition>
+                <event_equals id="MX050254"/>
+            </condition>
+            <action>
+                <create_alert id="MX050254"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050252(vol_ufmLicenseExpired) -->
+        <rule name="vol_ufmLicenseExpirationDate" >
+            <description>License is about to expire</description>
+            <condition>
+                <event_equals id="MX050255"/>
+            </condition>
+            <action>
+                <create_alert id="MX050255"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmBadM_Key" >
+            <description>Bad M Key</description>
+            <condition>
+                <event_equals id="MX050256"/>
+            </condition>
+            <action>
+                <create_alert id="MX050256"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmBadP_Key" >
+            <description>Bad P Key</description>
+            <condition>
+                <event_equals id="MX050257"/>
+            </condition>
+            <action>
+                <create_alert id="MX050257"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmBadQ_Key" >
+            <description>Bad Q Key</description>
+            <condition>
+                <event_equals id="MX050258"/>
+            </condition>
+            <action>
+                <create_alert id="MX050258"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmBadP_KeySwitchExternalPort" >
+            <description>Bad P Key for Switch External Port</description>
+            <condition>
+                <event_equals id="MX050259"/>
+            </condition>
+            <action>
+                <create_alert id="MX050259"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmISBLLAGPortUp" >
+            <description>ISBL Lag Port is Up</description>
+            <condition>
+                <event_equals id="MX050271"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050272" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050271"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050271(vol_ufmIsblLagPortUp) -->
+        <rule name="vol_ufmISBLLAGPortDown" >
+            <description>ISBL Lag Port is Down</description>
+            <condition>
+                <event_equals id="MX050272"/>
+            </condition>
+            <action>
+                <create_alert id="MX050272"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLAGPortUp" >
+            <description>Lag Port is Up</description>
+            <condition>
+                <event_equals id="MX050273"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050274" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050273(vol_ufmLagPortUp) -->
+        <rule name="vol_ufmLAGPortDown" >
+            <description>Lag Port is Down</description>
+            <condition>
+                <event_equals id="MX050274"/>
+            </condition>
+            <action>
+                <create_alert id="MX050274"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortUp" >
+            <description>Port is Up</description>
+            <condition>
+                <event_equals id="MX050275"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050276" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050275(vol_ufmPortUp) -->
+        <rule name="vol_ufmPortDown" >
+            <description>Port is Down</description>
+            <condition>
+                <event_equals id="MX050276"/>
+            </condition>
+            <action>
+                <create_alert id="MX050276"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortofLAGUp" >
+            <description>Port of Lag is Up</description>
+            <condition>
+                <event_equals id="MX050277"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050278" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050277"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050277(vol_ufmPortLagUp) -->
+        <rule name="vol_ufmPortofLAGDown" >
+            <description>Port of Lag is Down</description>
+            <condition>
+                <event_equals id="MX050278"/>
+            </condition>
+            <action>
+                <create_alert id="MX050278"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortofISBLUp" >
+            <description>Port of ISBL is Up</description>
+            <condition>
+                <event_equals id="MX050279"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050280" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050279(vol_ufmPortIsblUp) -->
+        <rule name="vol_ufmPortofISBLDown" >
+            <description>Port of ISBL is Down</description>
+            <condition>
+                <event_equals id="MX050280"/>
+            </condition>
+            <action>
+                <create_alert id="MX050280"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLogicalServerStateChanged" >
+            <description>Logical Server changed state</description>
+            <condition>
+                <event_equals id="MX050301"/>
+            </condition>
+            <action>
+                <create_alert id="MX050301"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLogicalServerStateChangeFailed" >
+            <description>Logical Server failed to changed state</description>
+            <condition>
+                <event_equals id="MX050302"/>
+            </condition>
+            <action>
+                <create_alert id="MX050302"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing 
+        <rule name="vol_ufmLogicalServerAdded" >
+            <description>Logical Server is added</description>
+            <condition>
+                <event_equals id="MX050306"/>
+            </condition>
+        </rule>
+        -->
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLogicalServerRemoved" >
+            <description>Logical Server is removed</description>
+            <condition>
+                <event_equals id="MX050307"/>
+            </condition>
+            <action>
+                <create_alert id="MX050307"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLogicalServerResourcesAllocated" >
+            <description>Logical Server allocated Resources</description>
+            <condition>
+                <event_equals id="MX050308"/>
+            </condition>
+            <action>
+                <create_alert id="MX050308"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmComputeResourceReleased" >
+            <description>Compute Resource is released</description>
+            <condition>
+                <event_equals id="MX050312"/>
+            </condition>
+            <action>
+                <create_alert id="MX050312"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmComputeResourceAllocated" >
+            <description>Compute Resource is allocated</description>
+            <condition>
+                <event_equals id="MX050313"/>
+            </condition>
+            <action>
+                <create_alert id="MX050313"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing 
+        <rule name="vol_ufmLogicalServerAdditionalResourcesAllocated" >
+            <description>Logical Server allocated Additional Resources</description>
+            <condition>
+                <event_equals id="MX050314"/>
+            </condition>
+        </rule>
+        -->
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLogicalServerResourcesReleased" >
+            <description>Logical Server released Resources</description>
+            <condition>
+                <event_equals id="MX050315"/>
+            </condition>
+            <action>
+                <create_alert id="MX050315"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050317(vol_ufmLogicalServerComputeResourceIsUp) -->
+        <rule name="vol_ufmLogicalServerComputeResourceisDown" >
+            <description>Logical Server Compute Resource is Down</description>
+            <condition>
+                <event_equals id="MX050316"/>
+            </condition>
+            <action>
+                <create_alert id="MX050316"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLogicalServerComputeResourceisUp" >
+            <description>Logical Server Compute Resource is Up</description>
+            <condition>
+                <event_equals id="MX050317"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050316" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050332(vol_ufmNodeIsUp) 
+        <rule name="vol_ufmNodeisDown" >
+            <description>Site configuration changes node is Down</description>
+            <condition>
+                <event_equals id="MX050331"/>
+            </condition>
+        </rule>
+        -->
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNodeisUp" >
+            <description>Site configuration changes node is Up</description>
+            <condition>
+                <event_equals id="MX050332"/>
+            </condition>
+            <action>
+                <create_alert id="MX050332"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmPortActionSucceeded" >
+            <description>Port Action Succeeded</description>
+            <condition>
+                <event_equals id="MX050336"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050337" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050336"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX050336(vol_ufmPortActionSucceeded) -->
+        <rule name="vol_ufmPortActionFailed" >
+            <description>Port Action Failed</description>
+            <condition>
+                <event_equals id="MX050337"/>
+            </condition>
+            <action>
+                <create_alert id="MX050337"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDeviceActionSucceeded" >
+            <description>Action on device succeeded</description>
+            <condition>
+                <event_equals id="MX050338"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050339" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050338"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  MX050338(vol_ufmDeviceActionSucceeded) -->
+        <rule name="vol_ufmDeviceActionFailed" >
+            <description>Action on device failed</description>
+            <condition>
+                <event_equals id="MX050339"/>
+            </condition>
+            <action>
+                <create_alert id="MX050339"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNetworkInterfaceAdded" >
+            <description>Network Interface is added</description>
+            <condition>
+                <event_equals id="MX050340"/>
+            </condition>
+            <action>
+                <create_alert id="MX050340"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNetworkInterfaceRemoved" >
+            <description>Network Interface is removed</description>
+            <condition>
+                <event_equals id="MX050341"/>
+            </condition>
+            <action>
+                <create_alert id="MX050341"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmEnvironmentAdded" >
+            <description>Environment is Added</description>
+            <condition>
+                <event_equals id="MX050350"/>
+            </condition>
+            <action>
+                <create_alert id="MX050350"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmEnvironmentRemoved" >
+            <description>Environment is Removed</description>
+            <condition>
+                <event_equals id="MX050351"/>
+            </condition>
+            <action>
+                <create_alert id="MX050351"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNetworkAdded" >
+            <description>Network is Added</description>
+            <condition>
+                <event_equals id="MX050352"/>
+            </condition>
+            <action>
+                <create_alert id="MX050352"/>
+            </action>
+        </rule>
+                
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNetworkRemoved" >
+            <description>Network is Removed</description>
+            <condition>
+                <event_equals id="MX050353"/>
+            </condition>
+            <action>
+                <create_alert id="MX050353"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMMbadaccesscredentials" >
+            <description>Vmm Bad Access Credentials</description>
+            <condition>
+                <event_equals id="MX050358"/>
+            </condition>
+            <action>
+                <create_alert id="MX050358"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMCreated" >
+            <description>Vm is Created</description>
+            <condition>
+                <event_equals id="MX050359"/>
+            </condition>
+            <action>
+                <create_alert id="MX050359"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMRemoved" >
+            <description>Vm is Removed</description>
+            <condition>
+                <event_equals id="MX050360"/>
+            </condition>
+            <action>
+                <create_alert id="MX050360"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  MX050362(vol_ufmVmmIsUp) -->
+        <rule name="vol_ufmVMMisDown" >
+            <description>Vmm Is Down</description>
+            <condition>
+                <event_equals id="MX050361"/>
+            </condition>
+            <action>
+                <create_alert id="MX050361"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMMisUp" >
+            <description>Vmm Is Up</description>
+            <condition>
+                <event_equals id="MX050362"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050361" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050362"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMstatechanged" >
+            <description>Vm State is Changed</description>
+            <condition>
+                <event_equals id="MX050364"/>
+            </condition>
+            <action>
+                <create_alert id="MX050364"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  MX050366(vol_ufmVmIsUp) -->
+        <rule name="vol_ufmVMisDown" >
+            <description>Vm Is Down</description>
+            <condition>
+                <event_equals id="MX050365"/>
+            </condition>
+            <action>
+                <create_alert id="MX050365"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMisUp" >
+            <description>Vm Is Up</description>
+            <condition>
+                <event_equals id="MX050366"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050365" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050366"/>
+            </action>
+        </rule>
+                           
+        <!-- Suppressed by:  (MX050368)vol_ufmVmHasMigrated -->
+        <rule name="vol_ufmVMmigrationfailed" >
+            <description>Vm migration failed</description>
+            <condition>
+                <event_equals id="MX050367"/>
+            </condition>
+            <action>
+                <create_alert id="MX050367"/>
+            </action>
+        </rule>
+                                       
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMhasbeenmigrated" >
+            <description>Vm Has been Migrated</description>
+            <condition>
+                <event_equals id="MX050368"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050367" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050368"/>
+            </action>
+        </rule>
+                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVMalarmstatushaschanged" >
+            <description>Vm Alarm Status Has Changed</description>
+            <condition>
+                <event_equals id="MX050369"/>
+            </condition>
+            <action>
+                <create_alert id="MX050369"/>
+            </action>
+        </rule>
+                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmGatewayEthernetLinkStateChanged" >
+            <description>Ethernet link has changed its state</description>
+            <condition>
+                <event_equals id="MX050370"/>
+            </condition>
+            <action>
+                <create_alert id="MX050370"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmGatewayRe-registerEventReceived" >
+            <description>Gateway received a re-register event from the SM</description>
+            <condition>
+                <event_equals id="MX050371"/>
+            </condition>
+            <action>
+                <create_alert id="MX050371"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNumberofGatewaysisChanged" >
+            <description>Change in the number of 10GbE Gateways has been detected</description>
+            <condition>
+                <event_equals id="MX050372"/>
+            </condition>
+            <action>
+                <create_alert id="MX050372"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmGatewaywillbeRebooted" >
+            <description>Gateway is about to reboot</description>
+            <condition>
+                <event_equals id="MX050373"/>
+            </condition>
+            <action>
+                <create_alert id="MX050373"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmGatewayReloadingFinished" >
+            <description>10GbE Gateway has finished reloading</description>
+            <condition>
+                <event_equals id="MX050374"/>
+            </condition>
+            <action>
+                <create_alert id="MX050374"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVcenterisDown" >
+            <description>Vcenter is down</description>
+            <condition>
+                <event_equals id="MX050375"/>
+            </condition>
+            <action>
+                <create_alert id="MX050375"/>
+            </action>
+        </rule>
+                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmVcenterbadaccesscredentials" >
+            <description>Vcenter bad access credentials</description>
+            <condition>
+                <event_equals id="MX050376"/>
+            </condition>
+            <action>
+                <create_alert id="MX050376"/>
+            </action>
+        </rule>
+                                            
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchUpgradeFailed" >
+            <description>Switch Upgrade failed</description>
+            <condition>
+                <event_equals id="MX050381"/>
+            </condition>
+            <action>
+                <create_alert id="MX050381"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmHostUpgradeFailed" >
+            <description>Host Upgrade failed</description>
+            <condition>
+                <event_equals id="MX050383"/>
+            </condition>
+            <action>
+                <create_alert id="MX050383"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchFWUpgradeStarted" >
+            <description>Switch FW upgrade has started</description>
+            <condition>
+                <event_equals id="MX050385"/>
+            </condition>
+            <action>
+                <create_alert id="MX050385"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchSWUpgradeStarted" >
+            <description>Switch SW upgrade has started</description>
+            <condition>
+                <event_equals id="MX050386"/>
+            </condition>
+            <action>
+                <create_alert id="MX050386"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchUpgradeFinished" >
+            <description>Switch upgrade finished</description>
+            <condition>
+                <event_equals id="MX050387"/>
+            </condition>
+            <action>
+                <create_alert id="MX050387"/>
+            </action>
+        </rule>
+                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmHostFWUpgradeStarted" >
+            <description>Host FW upgrade has started</description>
+            <condition>
+                <event_equals id="MX050388"/>
+            </condition>
+            <action>
+                <create_alert id="MX050388"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmHostSWUpgradeStarted" >
+            <description>Host SW upgrade has started</description>
+            <condition>
+                <event_equals id="MX050389"/>
+            </condition>
+            <action>
+                <create_alert id="MX050389"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchModuleRemoved" >
+            <description>Module was removed from switch</description>
+            <condition>
+                <event_equals id="MX050391"/>
+            </condition>
+            <action>
+                <create_alert id="MX050391"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmModuleTemperatureThresholdReached" >
+            <description>Module Temperature threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050392"/>
+            </condition>
+            <action>
+                <create_alert id="MX050392"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchModuleAdded" >
+            <description>Module was added to switch</description>
+            <condition>
+                <event_equals id="MX050393"/>
+            </condition>
+            <action>
+                <create_alert id="MX050393"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmModulestatusFAULT" >
+            <description>Module status FAULT</description>
+            <condition>
+                <event_equals id="MX050394"/>
+            </condition>
+            <action>
+                <create_alert id="MX050394"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDeviceActionStarted" >
+            <description>Action started on device</description>
+            <condition>
+                <event_equals id="MX050395"/>
+            </condition>
+            <action>
+                <create_alert id="MX050395"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSiteActionStarted" >
+            <description>Action started on site</description>
+            <condition>
+                <event_equals id="MX050396"/>
+            </condition>
+            <action>
+                <create_alert id="MX050396"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSiteActionFailed" >
+            <description>Action on Site Failed</description>
+            <condition>
+                <event_equals id="MX050397"/>
+            </condition>
+            <action>
+                <create_alert id="MX050397"/>
+            </action>
+        </rule>
+                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchChipAdded" >
+            <description>Chip on module was added to switch</description>
+            <condition>
+                <event_equals id="MX050398"/>
+            </condition>
+            <action>
+                <create_alert id="MX050398"/>
+            </action>
+        </rule>
+                                                                      
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSwitchChipRemoved" >
+            <description>Chip on module was removed from switch</description>
+            <condition>
+                <event_equals id="MX050399"/>
+            </condition>
+            <action>
+                <create_alert id="MX050399"/>
+            </action>
+        </rule>
+                                                                      
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDevicePendingReboot" >
+            <description>The device software has been updated and it is pending reboot</description>
+            <condition>
+                <event_equals id="MX050403"/>
+            </condition>
+            <action>
+                <create_alert id="MX050403"/>
+            </action>
+        </rule>
+                                                                      
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDeviceUpgradeFinished" >
+            <description>Device Upgrade has finished</description>
+            <condition>
+                <event_equals id="MX050502"/>
+            </condition>
+            <action>
+                <create_alert id="MX050502"/>
+            </action>
+        </rule>
+                                                                      
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMBackUpStarted" >
+            <description>UFM backup has started</description>
+            <condition>
+                <event_equals id="MX050503"/>
+            </condition>
+            <action>
+                <create_alert id="MX050503"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMBackUpFinished" >
+            <description>UFM backup has finished</description>
+            <condition>
+                <event_equals id="MX050504"/>
+            </condition>
+            <action>
+                <create_alert id="MX050504"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMBackUpFinishedWithError" >
+            <description>UFM backup has finished with error</description>
+            <condition>
+                <event_equals id="MX050505"/>
+            </condition>
+            <action>
+                <create_alert id="MX050505"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSMUP" >
+            <description>SM is UP</description>
+            <condition>
+                <event_equals id="MX050510"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050511" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050510"/>
+            </action>
+        </rule>
+                                                                                
+        <!-- Suppressed by:  MX050510(vol_ufmSMUP) -->
+        <rule name="vol_ufmSMDown" >
+            <description>SM is Down</description>
+            <condition>
+                <event_equals id="MX050511"/>
+            </condition>
+            <action>
+                <create_alert id="MX050511"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSMFailover" >
+            <description>SM Failover</description>
+            <condition>
+                <event_equals id="MX050512"/>
+            </condition>
+            <action>
+                <create_alert id="MX050512"/>
+            </action>
+        </rule>
+                                                                                                          
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSMSystemLogMessage" >
+            <description>SM System Log Message</description>
+            <condition>
+                <event_equals id="MX050513"/>
+            </condition>
+            <action>
+                <create_alert id="MX050513"/>
+            </action>
+        </rule>
+                                                                      
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSMLIDChange" >
+            <description>SM LID is Changed</description>
+            <condition>
+                <event_equals id="MX050514"/>
+            </condition>
+            <action>
+                <create_alert id="MX050514"/>
+            </action>
+        </rule>
+                                                                      
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFabricHealthReportInfo" >
+            <description>FabricHealth Report completed without Errors or Warnings</description>
+            <condition>
+                <event_equals id="MX050515"/>
+            </condition>
+            <action>
+                <create_alert id="MX050515"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFabricHealthReportWarning" >
+            <description>FabricHealth Report completed with Warnings</description>
+            <condition>
+                <event_equals id="MX050516"/>
+            </condition>
+            <action>
+                <create_alert id="MX050516"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFabricHealthReportError" >
+            <description>FabricHealth Report completed with Errors</description>
+            <condition>
+                <event_equals id="MX050517"/>
+            </condition>
+            <action>
+                <create_alert id="MX050517"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  MX050520(vol_ufmRestartofUFM-relatedprocesssucceeded) -->
+        <rule name="vol_ufmUFM-relatedprocessisdown" >
+            <description>UFM related process is down</description>
+            <condition>
+                <event_equals id="MX050518"/>
+            </condition>
+            <action>
+                <create_alert id="MX050518"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLogspurgefailure" >
+            <description>Failed purging database logs</description>
+            <condition>
+                <event_equals id="MX050519"/>
+            </condition>
+            <action>
+                <create_alert id="MX050519"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmRestartofUFM-relatedprocesssucceeded" >
+            <description>UFM related process is started successfully</description>
+            <condition>
+                <event_equals id="MX050520"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050518" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050520"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMisbeingstopped" >
+            <description>Stopping UFM server now</description>
+            <condition>
+                <event_equals id="MX050521"/>
+            </condition>
+            <action>
+                <create_alert id="MX050521"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMisbeingrestarted" >
+            <description>Restarting UFM server now</description>
+            <condition>
+                <event_equals id="MX050522"/>
+            </condition>
+            <action>
+                <create_alert id="MX050522"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMfailoverisbeingattempted" >
+            <description>Attempting UFM failover</description>
+            <condition>
+                <event_equals id="MX050523"/>
+            </condition>
+            <action>
+                <create_alert id="MX050523"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMcannotconnecttoDB" >
+            <description>Connection to the database failed</description>
+            <condition>
+                <event_equals id="MX050524"/>
+            </condition>
+            <action>
+                <create_alert id="MX050524"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDiskutilizationthresholdreached" >
+            <description>Disk space usage is above the threshold</description>
+            <condition>
+                <event_equals id="MX050525"/>
+            </condition>
+            <action>
+                <create_alert id="MX050525"/>
+            </action>
+        </rule>
+                                                                               
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmMemoryutilizationthresholdreached" >
+            <description>Memory usage is above the threshold</description>
+            <condition>
+                <event_equals id="MX050526"/>
+            </condition>
+            <action>
+                <create_alert id="MX050526"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmCPUutilizationthresholdreached" >
+            <description>CPU usage is above the threshold</description>
+            <condition>
+                <event_equals id="MX050527"/>
+            </condition>
+            <action>
+                <create_alert id="MX050527"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFabricinterfaceisdown" >
+            <description>Fabric interface is down</description>
+            <condition>
+                <event_equals id="MX050528"/>
+            </condition>
+            <action>
+                <create_alert id="MX050528"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMstandbyserverproblem" >
+            <description>Problem with UFM standby server</description>
+            <condition>
+                <event_equals id="MX050529"/>
+            </condition>
+            <action>
+                <create_alert id="MX050529"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSMisdown" >
+            <description>SM is down</description>
+            <condition>
+                <event_equals id="MX050530"/>
+            </condition>
+            <action>
+                <create_alert id="MX050530"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDRBDBadCondition" >
+            <description>Drbd bad condition detected, failover or takeover will fail</description>
+            <condition>
+                <event_equals id="MX050531"/>
+            </condition>
+            <action>
+                <create_alert id="MX050531"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmRemoteUFM-SMSync" >
+            <description>Remote UFM-SM sync succeed</description>
+            <condition>
+                <event_equals id="MX050532"/>
+            </condition>
+            <action>
+                <create_alert id="MX050532"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  MX050532(vol_ufmRemoteUFM-SMSync) -->
+        <rule name="vol_ufmRemoteUFM-SMproblem" >
+            <description>Remote UFM-SM has problem</description>
+            <condition>
+                <event_equals id="MX050533"/>
+            </condition>
+            <action>
+                <create_alert id="MX050533"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUFMServerFailover" >
+            <description>Server started failover</description>
+            <condition>
+                <event_equals id="MX050602"/>
+            </condition>
+            <action>
+                <create_alert id="MX050602"/>
+            </action>
+        </rule>
+                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmEventsSuppression" >
+            <description>Events are suppressed</description>
+            <condition>
+                <event_equals id="MX050603"/>
+            </condition>
+            <action>
+                <create_alert id="MX050603"/>
+            </action>
+        </rule>
+                                                                                            
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmHealthReportSucceeded" >
+            <description>Health report succeeded</description>
+            <condition>
+                <event_equals id="MX050604"/>
+            </condition>
+            <action>
+                <create_alert id="MX050604"/>
+            </action>
+        </rule>
+                                                                                                           
+        <!-- Suppressed by:  MX050604(vol_ufmHealthReportSucceeded) -->
+        <rule name="vol_ufmHealthReportFailed" >
+            <description>Health report failed</description>
+            <condition>
+                <event_equals id="MX050605"/>
+            </condition>
+            <action>
+                <create_alert id="MX050605"/>
+            </action>
+        </rule>
+                                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmNon-optimalLinkSpeed" >
+            <description>Found a link that operates in non-optimal speed mode</description>
+            <condition>
+                <event_equals id="MX050701"/>
+            </condition>
+            <action>
+                <create_alert id="MX050701"/>
+            </action>
+        </rule>
+                                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDropEvents" >
+            <description>Drop Events counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050801"/>
+            </condition>
+            <action>
+                <create_alert id="MX050801"/>
+            </action>
+        </rule>
+                                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmCRCAlignErrors" >
+            <description>CRC Align Errors counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050802"/>
+            </condition>
+            <action>
+                <create_alert id="MX050802"/>
+            </action>
+        </rule>
+                                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmUndersizePkts" >
+            <description>Undersize Packets counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050803"/>
+            </condition>
+            <action>
+                <create_alert id="MX050803"/>
+            </action>
+        </rule>
+                                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmOversizePkts" >
+            <description>Oversize Packets counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050804"/>
+            </condition>
+            <action>
+                <create_alert id="MX050804"/>
+            </action>
+        </rule>
+                                                                                                           
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFragments" >
+            <description>Fragments counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050805"/>
+            </condition>
+            <action>
+                <create_alert id="MX050805"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmJabbers" >
+            <description>Jabbers counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050806"/>
+            </condition>
+            <action>
+                <create_alert id="MX050806"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmCollisions" >
+            <description>Collisions counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050807"/>
+            </condition>
+            <action>
+                <create_alert id="MX050807"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmAlignmentErrors" >
+            <description>Alignment Errors counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050808"/>
+            </condition>
+            <action>
+                <create_alert id="MX050808"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFCSErrors" >
+            <description>FCS Errors counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050809"/>
+            </condition>
+            <action>
+                <create_alert id="MX050809"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSingleCollisionFrames" >
+            <description>Single Collision Frames counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050810"/>
+            </condition>
+            <action>
+                <create_alert id="MX050810"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmMultipleCollisionFrames" >
+            <description>Multiple Collision Frames counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050811"/>
+            </condition>
+            <action>
+                <create_alert id="MX050811"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSQETestErrors" >
+            <description>SQE Test Errors counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050812"/>
+            </condition>
+            <action>
+                <create_alert id="MX050812"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDeferredTransmissions" >
+            <description>Deferred Transmissions counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050813"/>
+            </condition>
+            <action>
+                <create_alert id="MX050813"/>
+            </action>
+        </rule>
+                                                                                                                     
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmLateCollisions" >
+            <description>Late Collisions counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050814"/>
+            </condition>
+            <action>
+                <create_alert id="MX050814"/>
+            </action>
+        </rule>
+                                                                                                                              
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmExcessiveCollisions" >
+            <description>Excessive Collisions counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050815"/>
+            </condition>
+            <action>
+                <create_alert id="MX050815"/>
+            </action>
+        </rule>
+                                                                                                                              
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmInternalMacTransmitErrors" >
+            <description>Internal MAC Transmit Error counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050816"/>
+            </condition>
+            <action>
+                <create_alert id="MX050816"/>
+            </action>
+        </rule>
+                                                                                                                              
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmInternalMacReceiveErrors" >
+            <description>Internal MAC Receive Error counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050817"/>
+            </condition>
+            <action>
+                <create_alert id="MX050817"/>
+            </action>
+        </rule>
+                                                                                                                              
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmCarrierSenseErrors" >
+            <description>Carrier Sense Error counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050818"/>
+            </condition>
+            <action>
+                <create_alert id="MX050818"/>
+            </action>
+        </rule>
+                                                                                                                              
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFrameTooLongs" >
+            <description>Too Long Frames counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050819"/>
+            </condition>
+            <action>
+                <create_alert id="MX050819"/>
+            </action>
+        </rule>
+                                                                                                                              
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmSymbolErrors" >
+            <description>Symbol Errors counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050820"/>
+            </condition>
+            <action>
+                <create_alert id="MX050820"/>
+            </action>
+        </rule>
+                                                                                                                              
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFabricConfigurationStarted" >
+            <description>Symbol Errors counter threshold was exceeded</description>
+            <condition>
+                <event_equals id="MX050901"/>
+            </condition>
+            <action>
+                <create_alert id="MX050901"/>
+            </action>
+        </rule>
+                                                                                                                                             
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmFabricConfigurationCompleted" >
+            <description>Fabric Configuration completed</description>
+            <condition>
+                <event_equals id="MX050902"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX050903" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+                <create_alert id="MX050903"/>
+            </action>
+        </rule>
+                                                                                                                                             
+        <!-- Suppressed by:  MX050902(vol_ufmFabricConfigurationCompleted) -->
+        <rule name="vol_ufmFabricConfigurationFailed" >
+            <description>Fabric Configuration failed</description>
+            <condition>
+                <event_equals id="MX050903"/>
+            </condition>
+            <action>
+                <create_alert id="MX050903"/>
+            </action>
+        </rule>
+                                                                                                                                             
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDeviceConfigurationFailure" >
+            <description>Configuration action on device failed</description>
+            <condition>
+                <event_equals id="MX050904"/>
+            </condition>
+            <action>
+                <create_alert id="MX050904"/>
+            </action>
+        </rule>
+                                                                                                                                             
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmDeviceConfigurationTimeout" >
+            <description>Configuration action on device timeout</description>
+            <condition>
+                <event_equals id="MX050905"/>
+            </condition>
+            <action>
+                <create_alert id="MX050905"/>
+            </action>
+        </rule>
+                                                                                                                                             
+        <!-- Suppressed by:  Nothing -->
+        <rule name="vol_ufmProvisioningValidationFailure" >
+            <description>Provisioning validation of fabric failed</description>
+            <condition>
+                <event_equals id="MX050906"/>
+            </condition>
+            <action>
+                <create_alert id="MX050906"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="UFMServerAbnormal" >
+            <description>UFM Server may not be able to be accessed</description>
+            <condition>
+                <event_equals id="MX060001" comp="UFM"/>
+            </condition>
+            <action>
+                <create_alert id="MX060001"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  MX060003(UFMServerUp) -->
+        <rule name="UFMServerDown" >
+            <description>UFM Server is Down</description>
+            <condition>
+                <event_equals id="MX060002" comp="UFM"/>
+            </condition>
+            <action>
+                <create_alert id="MX060002"/>
+            </action>
+        </rule>
+        
+        <!-- Suppressed by:  Nothing -->
+        <rule name="UFMServerUp" >
+            <description>UFM Server is Up</description>
+            <condition>
+                <event_equals id="MX060003" comp="UFM"/>
+            </condition>
+            <action>
+                <suppress_events ids="MX060002" comp="UFM"
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+                                                                                                                                             
+    </analyze>
+</gear_ruleset> 
+ 
