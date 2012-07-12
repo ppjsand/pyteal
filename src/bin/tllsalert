@@ -121,6 +121,7 @@ if __name__ == '__main__':
     
     # Parse the command line    
     parser = optparse.OptionParser(epilog=query_text)
+    parser.description = 'List TEAL alerts'
     parser.add_option('-q', '--query',
                         type='string',
                         action='store',

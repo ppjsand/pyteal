@@ -29,6 +29,8 @@ import unittest
 import sys
 from ibm.teal.event import EVENT_ATTR_REC_ID, EVENT_ATTR_EVENT_ID,\
     EVENT_ATTR_SRC_COMP, EVENT_ATTR_TIME_OCCURRED, EVENT_ATTR_TIME_LOGGED
+import threading
+import time
        
     
 class TestIncidentPoolBasic(TealTestCase):
@@ -1764,6 +1766,95 @@ class TestIncidentPoolCheckpointing(TealTestCase):
         expected = '["{0}", "3", ["3U288"]]'.format(str(right_now + timedelta(seconds=p1.duration)))
         self.assertEqual(cp.data, expected)
         return
+    
+class BlockingIncidentPool(IncidentPool):
+    '''Create a pool that can be used for testing locking '''
+        
+    def __init__(self, mode):
+        ''' initialize '''
+        IncidentPool.__init__(self, mode)
+        self.event = threading.Event()
+        self.event.clear()
+        return 
+    
+    def close(self, close_time, reason):
+        '''Close the pool
+        '''
+        with self.lock:
+            self.event.wait()
+            IncidentPool.close(self, close_time, reason)
+        return 
+    
+    def unblock(self): 
+        ''' let callback complete '''
+        self.event.set()
+        return
+    
+    def block(self):
+        ''' stop callback from completing '''
+        self.event.clear()
+        return 
+            
+class IncidentPoolLocking(TealTestCase):
+    ''' Test that locking is working as expected '''
+    
+    def setUp(self):
+        self.teal = teal.Teal('data/common/configurationtest.conf', 'stderr', msgLevel=self.msglevel, data_only=True, commit_alerts=False, commit_checkpoints=False)
+
+    def tearDown(self):
+        self.teal.shutdown()
+        
+    def _run_add_event_p1(self):
+        ''' Add an event to the pool '''
+        right_now2 = self.right_now + timedelta(seconds=self.add_time)
+        te2 = teal.Event.fromDict({EVENT_ATTR_REC_ID:2, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: right_now2,
+                                   EVENT_ATTR_TIME_LOGGED: right_now2})  
+        try:
+            self.assertRaisesTealError(IncidentPoolClosedError, 'Attempted to add incident to closed pool', self.p1.add_incident, te2, 0, 0)
+        except:
+            get_logger().exception('Test case failure')
+            self.thread_failed = True
+        return 
+        
+    def _testLockingbase(self, add_time):
+        ''' Test that locking works correctly if add event while closed and event is in pool '''
+        self.p1 = BlockingIncidentPool.new_pool(POOL_MODE_LOGGED, 3, None, close_callback=None, use_timer=True)
+        self.right_now = datetime.now()
+        te1 = teal.Event.fromDict({EVENT_ATTR_REC_ID:1, 
+                                   EVENT_ATTR_EVENT_ID:'IPT0', 
+                                   EVENT_ATTR_SRC_COMP: 'TC', 
+                                   EVENT_ATTR_TIME_OCCURRED: self.right_now,
+                                   EVENT_ATTR_TIME_LOGGED: self.right_now})  
+        self.p1.add_incident(te1, 0, 0)
+        self.p1.add_incident_completed()
+        time.sleep(5)
+        self.thread_failed = False
+        self.add_time = add_time
+        tealp = threading.Thread(target=self._run_add_event_p1)
+        tealp.start()
+        time.sleep(5)
+        self.p1.unblock()
+        tealp.join()
+        if self.thread_failed:
+            self.fail('Thread detected failure.  See the log for details')
+        self.assertEqual(len(self.p1.incidents), 1)
+        return 
+        
+    def testLocking001(self):
+        ''' Test case when close and then add one to pool '''
+        self._testLockingbase(1)
+        return
+ 
+    def testLocking002(self):
+        ''' Test case when close and then add one after pool '''
+        self._testLockingbase(10)
+        return
+   
+    
+ 
 
 if __name__ == "__main__":
     unittest.main()

@@ -134,7 +134,7 @@ def parse_last_event(errm_env):
             attributes = attr[3]
     
     event_id = PNSD_RETRANSMIT_THRESHOLD    
-    time_occurred = time.strftime('%Y-%m-%d %H:%M:S', time.localtime(long(event_time_sec))) 
+    time_occurred = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(long(event_time_sec))) 
     
     src = ('PNSD', 'A', '{0}##{1}'.format(node_name.strip('"'), rsrc_name))
     rpt = ('PNSD', 'A', '{0}##{1}'.format(errm_env.get('ERRM_NODE_NAME'),
@@ -176,11 +176,14 @@ if __name__ == '__main__':
     else:
         log_file = options.log_file
   
-    t = teal.Teal(None, data_only=True, msgLevel=options.msg_level, logFile=log_file)
+    try:
+        t = teal.Teal(None, data_only=True, msgLevel=options.msg_level, logFile=log_file)
     
-    if options.hierarchical:
-        parse_last_event(os.environ)
-    else:
-        parse_event(os.environ)
+        if options.hierarchical:
+            parse_last_event(os.environ)
+        else:
+            parse_event(os.environ)
         
-    t.shutdown()
+        t.shutdown()
+    except BaseException, be:
+        get_logger().exception(be)

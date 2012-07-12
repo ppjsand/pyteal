@@ -142,7 +142,7 @@ class TealCommandLineTest(TealTestCase):
         self.assertCmdWorks([CHALERT,'--id','4','--state','close'])
         self.assertCmdWorks([CHALERT,'--id','5','--state','close'])
         self.assertCmdWorks([CHALERT,'--id','6','--state','close'])
-        self.assertCmdWorks([RMALERT], exp_good_msg='5 unique alerts removed', alt_exp_good_msgs=['6 unique alerts removed'])
+        self.assertCmdWorks([RMALERT], exp_good_msg='5 unique alerts removed', alt_exp_good_msgs=['5 unique alerts removed\n1 duplicate alert removed', '6 unique alerts removed\n1 duplicate alert removed'])
         # Start TEAL so we can add some checkpoints!
         t = Teal(None)
         # DB was cleared ... so no checkpoints in table
@@ -202,7 +202,7 @@ class TealCommandLineTest(TealTestCase):
         self.assertCmdWorks([RMEVENT,'--id','1,2,3,4,5,6'], exp_good_msg="0 events removed", exp_err_msg="Event '1' cannot be removed.\tReason: Event is associated with Alert '1'Event '2' cannot be removed.\tReason: Event is associated with Alert '1'\tReason: Event is associated with Alert '2'Event '3' cannot be removed.\tReason: Event is associated with Alert '3'Event '4' cannot be removed.\tReason: Event is associated with Alert '4'Event '5' cannot be removed.\tReason: Event is associated with Alert '5'Event '6' cannot be removed.\tReason: Event is associated with Alert '6'")
         self.assertCmdWorks([RMEVENT,'--older-than','2011-01-18'], exp_good_msg='0 events removed')
         self.assertCmdWorks([RMALERT,'--ids','4,5,36'], exp_good_msg="0 unique alerts removed", exp_err_msg="Alert '4' cannot be removed.\tReason: Alert is not closedAlert '5' cannot be removed.\tReason: Alert is not closed")
-        self.assertCmdWorks([RMALERT,'--id','1'], exp_good_msg='1 unique alert removed')
+        self.assertCmdWorks([RMALERT,'--id','1'], exp_good_msg='1 unique alert removed', alt_exp_good_msgs=['1 unique alert removed\n1 duplicate alert removed'])
         tmp_good_msg = 'rec_id,alert_id,creation_time,severity,urgency,event_loc,event_loc_type,fru_loc,recommendation,reason,src_name,state,raw_data\r\n3,Alert US,{0},W,N,MB-SL1-ET1-PT2,C,,Recommend doing something,no value,AnalyzerTest057a,1,\r\n' \
         + '4,Alert US,{1},W,N,MB-SL1-ET1-PT2,C,,Recommend doing something,no value,AnalyzerTest057a,1,\r\n5,Alert 03,{2},E,I,MB-SL1-ET1-PT2,C,fru_loc2,try again,reason from config1,AnalyzerTest057a,1,This is another test\r\n6,Alert US,{3},W,N,MB-SL1-ET1-PT1,C,,Recommend doing something,no value,AnalyzerTest057a,1,'
         tmp_dts = apply_time_pattern(['2011-01-17 16:14:21.437000', '2011-01-17 16:14:25.437000', '2011-01-17 16:14:26.453000', '2011-01-17 16:14:33.468000'], self.time_pattern)
@@ -277,7 +277,7 @@ class TealCommandLineTest(TealTestCase):
         + '--commit              Commit alerts in historic mode [default=False]  '
         + '--occurred            Use time occurred instead of time logged                        [default=False]')
         
-        self.assertCmdWorks([CHALERT,'-h'], exp_good_msg='Usage: tlchalert -s close -i <rec_id> | -q <query string> | -l <locations> [-c|-d <delim>]Options:  '
+        self.assertCmdWorks([CHALERT,'-h'], exp_good_msg='Usage: tlchalert -s close -i <rec_id> | -q <query string> | -l <locations> [-c|-d <delim>]\n\nChange TEAL alerts\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-s STATE, --state=STATE                        The new alert state. (close is the only valid value at                        this time.  '
         + '-i REC_ID, --id=REC_ID                        The record id of the alert. (use tllsalert)  '
@@ -293,7 +293,7 @@ class TealCommandLineTest(TealTestCase):
         + 'event_loc     - =           - A location in the format <location type>:<location>.                               The location is optional; otherwise all events                               with the same location type will be included'
         + 'event_scope   - =           - A scoping value for the specified reporting location type'
         + 'src_name      - =           - A single value or a comma-separated list of values')
-        self.assertCmdWorks([CHALERT,'--help'], exp_good_msg='Usage: tlchalert -s close -i <rec_id> | -q <query string> | -l <locations> [-c|-d <delim>]Options:  '
+        self.assertCmdWorks([CHALERT,'--help'], exp_good_msg='Usage: tlchalert -s close -i <rec_id> | -q <query string> | -l <locations> [-c|-d <delim>]\n\nChange TEAL alerts\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-s STATE, --state=STATE                        The new alert state. (close is the only valid value at                        this time.  '
         + '-i REC_ID, --id=REC_ID                        The record id of the alert. (use tllsalert)  '
@@ -310,7 +310,7 @@ class TealCommandLineTest(TealTestCase):
         + 'event_scope   - =           - A scoping value for the specified reporting location type'
         + 'src_name      - =           - A single value or a comma-separated list of values')
         
-        self.assertCmdWorks([LSALERT,'-h'], exp_good_msg='Usage: tllsalert [options]Options:  '
+        self.assertCmdWorks([LSALERT,'-h'], exp_good_msg='Usage: tllsalert [options]\n\nList TEAL alerts\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-q QUERY, --query=QUERY                        Query parameters used to limit the range of alerts                        listed. See list of valid values below  '
         + '-f OUTPUT_FORMAT, --format=OUTPUT_FORMAT                        Output format of alert: json,csv,text [default =                        brief]  '
@@ -329,7 +329,7 @@ class TealCommandLineTest(TealTestCase):
         + 'event_scope   - =           - A scoping value for the specified reporting location type'
         + 'src_name      - =           - A single value or a comma-separated list of values')
 
-        self.assertCmdWorks([LSALERT,'--help'], exp_good_msg='Usage: tllsalert [options]Options:  '
+        self.assertCmdWorks([LSALERT,'--help'], exp_good_msg='Usage: tllsalert [options]\n\nList TEAL alerts\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-q QUERY, --query=QUERY                        Query parameters used to limit the range of alerts                        listed. See list of valid values below  '
         + '-f OUTPUT_FORMAT, --format=OUTPUT_FORMAT                        Output format of alert: json,csv,text [default =                        brief]  '
@@ -348,16 +348,16 @@ class TealCommandLineTest(TealTestCase):
         + 'event_scope   - =           - A scoping value for the specified reporting location type'
         + 'src_name      - =           - A single value or a comma-separated list of values')
 
-        self.assertCmdWorks([LSCKPT,'-h'], exp_good_msg='Usage: tllsckpt [options]Options:  '
+        self.assertCmdWorks([LSCKPT,'-h'], exp_good_msg='Usage: tllsckpt [options]\n\nList TEAL checkpoints\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-n NAME, --name=NAME  Name of checkpoint to list  '
         + '-f OUTPUT_FORMAT, --format=OUTPUT_FORMAT                        Output format of checkpoints: json,csv,text [default =                        brief]')
-        self.assertCmdWorks([LSCKPT,'--help'], exp_good_msg='Usage: tllsckpt [options]Options:  '
+        self.assertCmdWorks([LSCKPT,'--help'], exp_good_msg='Usage: tllsckpt [options]\n\nList TEAL checkpoints\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-n NAME, --name=NAME  Name of checkpoint to list  '
         + '-f OUTPUT_FORMAT, --format=OUTPUT_FORMAT                        Output format of checkpoints: json,csv,text [default =                        brief]')
         
-        self.assertCmdWorks([LSEVENT,'-h'], exp_good_msg='Usage: tllsevent [options]Options:  '
+        self.assertCmdWorks([LSEVENT,'-h'], exp_good_msg='Usage: tllsevent [options]\n\nList TEAL events\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-q QUERY, --query=QUERY                        Query parameters used to limit the range of events                        listed. See list of valid values below '
         +' -f OUTPUT_FORMAT, --format=OUTPUT_FORMAT                        Output format of event: json,csv,text [default =                        brief]  '
@@ -374,7 +374,7 @@ class TealCommandLineTest(TealTestCase):
         + 'rpt_comp      - =           - A single component or a comma-separated list of components'
         + 'rpt_loc       - =           - A location in the format <location type>:<location>. location                               can be omitted to return all locations of the specified type'
         + 'rpt_scope     - =           - A scoping value for the specified reporting location type')
-        self.assertCmdWorks([LSEVENT,'--help'], exp_good_msg='Usage: tllsevent [options]Options:  '
+        self.assertCmdWorks([LSEVENT,'--help'], exp_good_msg='Usage: tllsevent [options]\n\nList TEAL events\n\nOptions:  '
         + '-h, --help            show this help message and exit  '
         + '-q QUERY, --query=QUERY                        Query parameters used to limit the range of events                        listed. See list of valid values below '
         +' -f OUTPUT_FORMAT, --format=OUTPUT_FORMAT                        Output format of event: json,csv,text [default =                        brief]  '
@@ -483,7 +483,7 @@ class TealCommandLineTest_tlrmalert(TealTestCase):
         self.assertCmdFails([CHALERT,'--id','4','--state','close'], exp_err_msg="Cannot close alert. Reason: rc = 2: 'Current alert state does not allow this operation'", exp_rc=1)
         self.assertCmdWorks([CHALERT,'--id','5','--state','close'], exp_good_msg='')
         self.assertCmdFails([CHALERT,'--id','6','--state','close'], exp_err_msg="Cannot close alert. Reason: rc = 2: 'Current alert state does not allow this operation'", exp_rc=1)
-        self.assertCmdWorks([RMALERT,'--id','1,2,4'], exp_good_msg='1 unique alert removed', exp_err_msg="Alert '4' cannot be removed.\tReason: Alert is associated with Alert '3'")
+        self.assertCmdWorks([RMALERT,'--id','1,2,4'], exp_good_msg='1 unique alert removed\n1 duplicate alert removed', exp_err_msg="Alert '4' cannot be removed.\tReason: Alert is associated with Alert '3'")
         tmp_good_msg = '3: Alert US {0} C:MB-SL1-ET1-PT2    4: Alert US {1} C:MB-SL1-ET1-PT2    5: Alert 03 {2} C:MB-SL1-ET1-PT2    6: Alert US {3} C:MB-SL1-ET1-PT1'       
         tmp_dts = apply_time_pattern(['2011-01-17 16:14:21.437000', '2011-01-17 16:14:25.437000', '2011-01-17 16:14:26.453000', '2011-01-17 16:14:33.468000'], self.time_pattern)
         tmp_good_msg = tmp_good_msg.format(*tmp_dts)
@@ -687,6 +687,111 @@ class TealCommandLineTest_tlchalert(TealTestCase):
         tmp_good_msg = tmp_good_msg.format(*tmp_dts)                
         self.assertCmdWorks([LSALERT,'-d','-c'], exp_good_msg=tmp_good_msg)
 
+class TealCommandLineTest_manydups_tlrmalert(TealTestCase):
+    
+    def setUp(self):
+        t = Teal('data/tlcommands_test/test.conf', data_only=True)
+        global RMALERT, LSALERT, TEAL
+        teal_path = registry.get_service(registry.TEAL_ROOT_DIR)
+        RMALERT = os.path.join(teal_path,'bin/tlrmalert')
+        LSALERT = os.path.join(teal_path,'bin/tllsalert')
+        TEAL    = os.path.join(teal_path,'ibm/teal/teal.py')
+        t.shutdown()
+        
+        self.time_pattern = get_table_date_time_pattern()
+
+        self.prepare_db()
+        self._add_journal('data/tlcommands_test/events_many_dups_001.json')
+        self._add_journal('data/tlcommands_test/alerts_many_dups_001.json')  # Note different from class above
+        
+        tmp_data_dir = os.path.join(os.environ.get('TEAL_ROOT_DIR', '/opt/teal'), 'data')
+        self.teal_data_dir = self.force_env('TEAL_DATA_DIR', tmp_data_dir)
+        tmp_cfg_dir = os.path.join(os.environ.get('TEAL_ROOT_DIR', '/'), 'etc')
+ 
+        # If the path doesn't exists, then it is assumed that this is an installed
+        # version of TEAL and will use the default CONF path
+        if os.path.exists(tmp_cfg_dir):
+            # This is a non-standard install (build environment) and will use
+            # the etc directory from the ROOT dir
+            pass
+        else:
+            tmp_cfg_dir = '/etc'
+
+        self.teal_cfg_dir = self.force_env('TEAL_CONF_DIR', tmp_cfg_dir)
+        
+        # Create a logger for logging if the test was not run because the package was missing
+        self.create_temp_logger('info')
+ 
+    def tearDown(self):
+        self.restore_env('TEAL_DATA_DIR', self.teal_data_dir)
+    
+    def _add_journal(self, json_file):
+        ''' Load the alert DB from the journal JSON file '''
+        t = Teal('data/tlcommands_test/test.conf')
+        # Alerts
+        ja = Journal('temp_journal', file=json_file)
+        ja.insert_in_db(truncate=False, no_delay=True)
+        t.shutdown()
+
+    def test_tlrmalert_many_dups(self):
+        ''' Test special case of tlrmalert removing many duplicates '''
+        tmp_good_msg = 'Removing closed alerts...  This may take several minutes...\n\n3 unique alerts removed\n53 duplicate alerts removed'       
+#        tmp_dts = apply_time_pattern(['2011-01-17 16:14:21.437000', '2011-01-17 16:14:25.437000', '2011-01-17 16:14:26.453000', '2011-01-17 16:14:33.468000'], self.time_pattern)
+#        tmp_good_msg = tmp_good_msg.format(*tmp_dts)
+#       self.assertCmdWorks([LSALERT,'-c', '-d'], exp_good_msg=tmp_good_msg,print_out=True)
+        self.assertCmdWorks([RMALERT], exp_good_msg=tmp_good_msg)
+        
+class TealCommandLineTest_fix_dups_tlrmalert(TealTestCase):
+    
+    def setUp(self):
+        t = Teal('data/tlcommands_test/test.conf', data_only=True)
+        global RMALERT, LSALERT, TEAL
+        teal_path = registry.get_service(registry.TEAL_ROOT_DIR)
+        RMALERT = os.path.join(teal_path,'bin/tlrmalert')
+        LSALERT = os.path.join(teal_path,'bin/tllsalert')
+        TEAL    = os.path.join(teal_path,'ibm/teal/teal.py')
+        t.shutdown()
+        
+        self.time_pattern = get_table_date_time_pattern()
+
+        self.prepare_db()
+        self._add_journal('data/tlcommands_test/events_001.json')
+        self._add_journal('data/tlcommands_test/alerts_fix_dup_001.json')  # Note different from class above
+        
+        tmp_data_dir = os.path.join(os.environ.get('TEAL_ROOT_DIR', '/opt/teal'), 'data')
+        self.teal_data_dir = self.force_env('TEAL_DATA_DIR', tmp_data_dir)
+        tmp_cfg_dir = os.path.join(os.environ.get('TEAL_ROOT_DIR', '/'), 'etc')
+ 
+        # If the path doesn't exists, then it is assumed that this is an installed
+        # version of TEAL and will use the default CONF path
+        if os.path.exists(tmp_cfg_dir):
+            # This is a non-standard install (build environment) and will use
+            # the etc directory from the ROOT dir
+            pass
+        else:
+            tmp_cfg_dir = '/etc'
+
+        self.teal_cfg_dir = self.force_env('TEAL_CONF_DIR', tmp_cfg_dir)
+        
+        # Create a logger for logging if the test was not run because the package was missing
+        self.create_temp_logger('info')
+ 
+    def tearDown(self):
+        self.restore_env('TEAL_DATA_DIR', self.teal_data_dir)
+    
+    def _add_journal(self, json_file):
+        ''' Load the alert DB from the journal JSON file '''
+        t = Teal('data/tlcommands_test/test.conf')
+        # Alerts
+        ja = Journal('temp_journal', file=json_file)
+        ja.insert_in_db(truncate=False, no_delay=True)
+        t.shutdown()
+
+    def test_tlrmalert_fix_dups(self):
+        ''' Test resolution for known bug with unclosed duplicates '''
+        tmp_good_msg = '1 unique alert removed\n1 duplicate alert removed'
+        self.assertCmdWorks([RMALERT, '-i', '1'], exp_good_msg=tmp_good_msg)
+        
 class TealCommandLineTest_tllsevent_metadata_msg(TealTestCase):
 
     def setUp(self):

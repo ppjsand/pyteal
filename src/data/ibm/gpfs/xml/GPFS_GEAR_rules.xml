@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gear_ruleset>
+    <description>GPFS Rules</description>
+    <gear_control>
+        <default_event_comp value="GPFS"/>
+    </gear_control>
+    <events>
+        <event id="GP000001" name="MountFS" />
+        <event id="GP000002" name="UnMountFS" />
+        <event id="GP000003" name="AddDisk" />
+        <event id="GP000004" name="DelDisk" />
+        <event id="GP000005" name="ChDisk" />
+        <event id="GP000006" name="SGMGRTakeOver" />
+        <event id="GP000007" name="NodeFailed" />
+        <event id="GP000008" name="NodeRecovered" />
+        <event id="GP000009" name="AddFS" />
+        <event id="GP00000A" name="DelFS" />
+        <event id="GP00000B" name="ChFS" />
+        <event id="GP00000C" name="NewConnection" />
+        <event id="GP00000D" name="BufOverflow" />
+        <event id="GP00000E" name="TokenMGRStatus" />
+        <event id="GP00000F" name="HungThread" />
+        <event id="GP000010" name="StgPoolUtilization" />
+        <event id="GP000011" name="SDR changed" />
+        <event id="GP000012" name="AddDiskCmdExe" />
+        <event id="GP000014" name="ConsoleLog" />
+        <event id="GP000015" name="LongIO" />
+        <event id="GP000016" name="RGTakeOver" />
+        <event id="GP000017" name="RGRelenquish" />
+        <event id="GP000018" name="RGOpenFailed" />
+        <event id="GP000019" name="RGPanic" />
+        <event id="GP000020" name="PdiskFailed" />
+        <event id="GP000021" name="PdiskRecovered" />
+        <event id="GP000022" name="PdiskReplace" />
+        <event id="GP000023" name="PdiskPathFailed" />
+        <event id="GP000024" name="DARebuildFailed" />
+        <event id="GP000025" name="NSDCkSumMismatch" />
+        <event id="GP010001" name="GPFSConnectorUp" />
+        <event id="GP010002" name="GPFSConnectorDown" />
+    </events>
+    <pool_control>
+        <initial_duration default="60"/>
+        <max_duration default ="60"/>
+    </pool_control>
+    <analyze>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="SGMGRTakeOver">
+            <description>SGMGR takeover</description>
+            <condition>
+                <event_equals id="GP000006"/>
+            </condition>
+            <action>
+                <create_alert id="GP000006"/>
+            </action>
+        </rule>
+
+        <!-- Begin: Node failure/recovery. Uncomment it if needed
+        <rule name="NodeFailed">
+            <description>Node failed</description>
+            <condition>
+                <event_equals id="GP000007"/>
+            </condition>
+            <action>
+                <create_alert id="GP000007"/>
+            </action>
+        </rule>
+
+        <rule name="NodeRecovered" >
+            <description>Node recovered</description>
+            <condition>
+                <event_equals id="GP000008"/>
+            </condition>
+            <action>
+                <suppress_events ids="GP000007" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+        End: Node failure/recovery -->
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="BufOverflow" >
+            <description>Event collection buffer overflow</description>
+            <condition>
+                <event_equals id="GP00000D"/>
+            </condition>
+            <action>
+                <create_alert id="GP00000D"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="StgPoolUtilization" >
+            <description>Storage pool utilization crossed threshold</description>
+            <condition>
+                <event_equals id="GP000010"/>
+            </condition>
+            <action>
+                <create_alert id="GP000010"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="LongIO" >
+            <description>Long IO time</description>
+            <condition>
+                <event_equals id="GP000015"/>
+            </condition>
+            <action>
+                <create_alert id="GP000015"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  GP000017(RGRelenquish)-->
+        <rule name="RGTakeOver" >
+            <description>Recovery group takeover</description>
+            <condition>
+                <event_equals id="GP000016"/>
+            </condition>
+            <action>
+                <create_alert id="GP000016"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="RGRelenquish" >
+            <description>Recovery group relenquish</description>
+            <condition>
+                <event_equals id="GP000017"/>
+            </condition>
+            <action>
+                <suppress_events ids="GP000016" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="RGOpenFailed" >
+            <description>Recovery group open failed</description>
+            <condition>
+                <event_equals id="GP000018"/>
+            </condition>
+            <action>
+                <create_alert id="GP000018"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="RGPanic" >
+            <description>Recovery group panic</description>
+            <condition>
+                <event_equals id="GP000019"/>
+            </condition>
+            <action>
+                <create_alert id="GP000019"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  GP000021(Pdisk recovered)-->
+        <rule name="PdiskFailed" >
+            <description>pdisk failed</description>
+            <condition>
+                <event_equals id="GP000020"/>
+            </condition>
+            <action>
+                <create_alert id="GP000020"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="PdiskRecovered" >
+            <description>pdisk recovered</description>
+            <condition>
+                <event_equals id="GP000021"/>
+            </condition>
+            <action>
+                <suppress_events ids="GP000021" 
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="PdiskReplace" >
+            <description>pdisk needs to be replaced</description>
+            <condition>
+                <event_equals id="GP000022"/>
+            </condition>
+            <action>
+                <create_alert id="GP000022"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="PdiskPathFailed" >
+            <description>Pdisk path failed</description>
+            <condition>
+                <event_equals id="GP000023"/>
+            </condition>
+            <action>
+                <create_alert id="GP000023"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="DARebuildFailed" >
+            <description>Declustered array rebuild failed</description>
+            <condition>
+                <event_equals id="GP000024"/>
+            </condition>
+            <action>
+                <create_alert id="GP000024"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="NSDCkSumMismatch" >
+            <description>NSD checksum mismatch</description>
+            <condition>
+                <event_equals id="GP000025"/>
+            </condition>
+            <action>
+                <create_alert id="GP000025"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  Nothing -->
+        <rule name="GPFSConnectorUp" >
+            <description>GPFS connector started</description>
+            <condition>
+                <event_equals id="GP010001"/>
+            </condition>
+            <action>
+                <suppress_events ids="GP010001" scope="A:node"
+                    locations="GEAR[all_condition_events.src_loc]"/>
+            </action>
+        </rule>
+
+        <!-- Suppressed by:  GP010001(GPFSConnectorUp)-->
+        <rule name="GPFSConnectorDown" >
+            <description>GPFS connector stopped</description>
+            <condition>
+                <event_equals id="GP010002"/>
+            </condition>
+            <action>
+                <create_alert id="GP010002"/>
+            </action>
+        </rule>
+
+    </analyze>
+</gear_ruleset> 
+ 

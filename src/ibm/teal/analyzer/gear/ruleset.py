@@ -393,7 +393,7 @@ class GearRuleset(dict, GearEngine):
             self.pool_force_closure = False
             right_now = datetime.now()
             self.pool.close( right_now, right_now, POOL_CLOSE_REASON_RULE)
-        self.event_pool.lock.release()
+        self.event_pool.add_incident_completed()
         return
     
     def flush(self, flush_time):

@@ -95,12 +95,13 @@ class TealTestCase(unittest.TestCase):
         try:
             method(*args, **kwargs)
         except exception as e:
-            self.assertEqual(msg, e.msg)
+            if msg != e.msg:
+                self.fail('Exception occurred, but message did not match: {0} != {1}'.format(msg, e.msg))
             return
         except BaseException, e:
-            print 'Expected %s got %s' % (exception, e.__class__,)
-            self.assertRaises(exception, method, *args)
-        self.fail('Exception %s did not occur' % (exception,))
+            self.fail('Expected {0} got {1}'.format(str(exception), str(e.__class__),))
+            return 
+        self.fail('Exception {0} did not occur'.format(str(exception),))
         return
     
     def prepare_db(self):

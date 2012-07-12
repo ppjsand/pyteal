@@ -530,6 +530,7 @@ class TestPkgfiles(TealTestCase):
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/uninstall/Teal_rm_mysql.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/xml/percs_location.xml')
         base_spec_files.remove('/opt/teal/sbin/tltab')
+        base_spec_files.remove('/opt/teal/bin/tlrmevent')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_db2.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_schema/Teal_mysql.pm')
         base_spec_files.remove('/opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor/TealSendAlert.pm')

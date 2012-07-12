@@ -130,7 +130,7 @@ if __name__ == '__main__':
 
     # Parse the command line        
     parser = optparse.OptionParser(usage='%prog -s close -i <rec_id> | -q <query string> | -l <locations> [-c|-d <delim>]', epilog=query_text) 
-
+    parser.description = 'Change TEAL alerts'
     parser.add_option('-s', '--state',
                         type='choice',
                         choices=['close'],

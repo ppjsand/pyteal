@@ -94,7 +94,7 @@ class SmtpAlertListener(AlertListener):
         
         msg = MIMEText(self.body_template.safe_substitute(alert_dict))
         msg['Subject'] = self.subj_template.safe_substitute(alert_dict)
-        msg['Date'] = str(alert_dict[ALERT_ATTR_CREATION_TIME])
+        msg['Date'] = alert_dict[ALERT_ATTR_CREATION_TIME].strftime('%a, %d %b %Y %H:%M:%S -0000')
         msg['From'] = self.sender
         msg['To'] = self.receivers
         

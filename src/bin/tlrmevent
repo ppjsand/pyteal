@@ -32,6 +32,7 @@ from ibm.teal.util import command
 if __name__ == '__main__':
     # Parse the command line        
     parser = optparse.OptionParser()
+    parser.description = 'Remove TEAL events'
     parser.add_option('-i','--ids',
                         type='string',
                         action='callback',

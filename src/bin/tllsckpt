@@ -94,6 +94,7 @@ if __name__ == '__main__':
 
     # Parse the command line        
     parser = optparse.OptionParser()
+    parser.description = 'List TEAL checkpoints'
     parser.add_option('-n', '--name',
                         type='string',
                         action='store',

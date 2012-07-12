@@ -227,7 +227,7 @@ class IncidentPool(object):
                 new_obj.min_time_incidents[incident] = (new_min, 0, dur_ext)
 
                 # Process next as a subsequent 
-                new_obj.add_incident = new_obj._add_incident_ACTIVE_SUBSEQUENT
+                new_obj._add_incident = new_obj._add_incident_ACTIVE_SUBSEQUENT
 
             # Start the pool
             # Note: sets the state, the start times, the planned close times, and, if needed,  starts the timer
@@ -254,7 +254,7 @@ class IncidentPool(object):
             self.get_time = self.get_time_OCCURRED
 
         # New so first incident starts the pool 
-        self.add_incident = self._add_incident_ACTIVE_FIRST
+        self._add_incident = self._add_incident_ACTIVE_FIRST
 
         # Lock because timer thread may be accessing asynchronously
         self.lock = threading.RLock()
@@ -336,7 +336,7 @@ class IncidentPool(object):
                 if self.timer is not None:
                     self.timer.cancel()
                 # turn off ability to add incidents
-                self.add_incident = self._add_incident_CLOSED
+                self._add_incident = self._add_incident_CLOSED
                 self.state = POOL_STATE_CLOSED
                 self.close_time = close_time
                 if self.log_on_close == False:
@@ -372,7 +372,7 @@ class IncidentPool(object):
                 if self.timer is not None:
                     self.timer.cancel()
                 # turn off ability to add incidents
-                self.add_incident = self._add_incident_CLOSED
+                self._add_incident = self._add_incident_CLOSED
                 self.state = POOL_STATE_CLOSED
                 self.msg_target.debug('Closing {0}' \
                                          .format(POOL_CLOSE_REASON_AS_STRING[reason]))
@@ -400,7 +400,7 @@ class IncidentPool(object):
     def failed(self):
         ''' Mark the pool as failed '''
         # turn off ability to add incidents
-        self.add_incident = self._add_incident_FAILED
+        self._add_incident = self._add_incident_FAILED
         self.state = POOL_STATE_FAILED
         self.msg_target.error('Pool failed:')
         try:
@@ -414,8 +414,26 @@ class IncidentPool(object):
     def add_incident(self, incident, ext_dur, min_time):
         '''Add an incident to the pool.  Using dynamic method pattern
            Note that the ext_dur and min_time must be positive values
+           
+           If this does not raise an exception the a lock will be held.
+           Caller is responsible for calling add_incident_completed to release it 
         '''
-        pass        
+        self.lock.acquire()
+        try:
+            self._add_incident(incident, ext_dur, min_time)
+        except ThreadKilled:
+            raise
+        except:
+            self.lock.release()
+            raise
+        return
+    
+    def add_incident_completed(self):
+        '''Any additional processing to be done when adding an incident has been 
+           completed.   This will release the pool lock
+        '''
+        self.lock.release()
+        return
 
     def _add_incident_CLOSED(self, incident, ext_dur, min_time):
         '''Add an incident to the pool when the pool is closed
@@ -428,20 +446,13 @@ class IncidentPool(object):
 
     def _add_incident_ACTIVE_FIRST(self, incident, ext_dur, min_time):
         '''Add an incident to the pool when it is the first incident to go into the pool'''
-        self.lock.acquire()
-        try:
-            self.duration = min(self.duration + ext_dur, self.max_duration)
-            if min_time > 0:
-                self.min_time_incidents[incident] = (min_time, 0, ext_dur)
-            self.start(self.get_time(incident))
-            self.incidents[incident.get_incident_id()].append(incident)
-            self.msg_target.debug('Started and {0} added'.format(incident))
-            self.add_incident = self._add_incident_ACTIVE_SUBSEQUENT
-        except ThreadKilled:
-            raise
-        except:
-            self.lock.release()
-            raise
+        self.duration = min(self.duration + ext_dur, self.max_duration)
+        if min_time > 0:
+            self.min_time_incidents[incident] = (min_time, 0, ext_dur)
+        self.start(self.get_time(incident))
+        self.incidents[incident.get_incident_id()].append(incident)
+        self.msg_target.debug('Started and {0} added'.format(incident))
+        self._add_incident = self._add_incident_ACTIVE_SUBSEQUENT
         self.last_incident = incident
         self.add_arrival_window_value(0)
         return
@@ -449,42 +460,35 @@ class IncidentPool(object):
     def _add_incident_ACTIVE_SUBSEQUENT(self, incident, ext_dur, min_time):
         '''Add an incident to the pool, but not the first         
         '''
-        self.lock.acquire()
-        try:
-            # Check if pool should be closed
-            point_in_pool = abs(self.get_time(incident) - self.start_time).seconds
-            if self.get_time(incident) > self.planned_close_time:
-                extension = min(self.get_arrival_extension(point_in_pool), self.max_duration - self.duration)
-                if extension == 0:
-                    #close the pool and throw exception
-                    self.close(self.planned_close_time, POOL_CLOSE_REASON_INCIDENT_TIME)
-                    raise IncidentPoolClosedError('Pool closed by incident past planned close time', error=False)
-                # Arrival rate extension occurred
-                self.msg_target.debug('Arrival rate caused extension of {0}'.format(str(extension)))
-                self.duration += extension
-                self.planned_close_time += timedelta(seconds=extension)
-                if self.use_timer is True:
-                    self.timer.add_time(extension)
-
-            # Add the incident 
-            self.incidents[incident.get_incident_id()].append(incident)
-            self.msg_target.debug('{0} added'.format(incident))
-            # Duration is extended after check
-            increment = min(ext_dur, self.max_duration - self.duration)
-            self.msg_target.debug('Extending pool duration from {0} by {1}'.format(str(self.duration), str(increment)))
-            self.duration += increment
-            self.planned_close_time += timedelta(seconds=increment)
-            # Record min time info if might need at close
-            self.add_arrival_window_value(point_in_pool)
-            if min_time != 0:
-                self.min_time_incidents[incident] = (min_time, point_in_pool, ext_dur)
+        # Check if pool should be closed
+        point_in_pool = abs(self.get_time(incident) - self.start_time).seconds
+        if self.get_time(incident) > self.planned_close_time:
+            extension = min(self.get_arrival_extension(point_in_pool), self.max_duration - self.duration)
+            if extension == 0:
+                #close the pool and throw exception
+                self.close(self.planned_close_time, POOL_CLOSE_REASON_INCIDENT_TIME)
+                raise IncidentPoolClosedError('Pool closed by incident past planned close time', error=False)
+            # Arrival rate extension occurred
+            self.msg_target.debug('Arrival rate caused extension of {0}'.format(str(extension)))
+            self.duration += extension
+            self.planned_close_time += timedelta(seconds=extension)
             if self.use_timer is True:
-                self.timer.add_time(increment)
-        except ThreadKilled:
-            raise
-        except:
-            self.lock.release()
-            raise
+                self.timer.add_time(extension)
+
+        # Add the incident 
+        self.incidents[incident.get_incident_id()].append(incident)
+        self.msg_target.debug('{0} added'.format(incident))
+        # Duration is extended after check
+        increment = min(ext_dur, self.max_duration - self.duration)
+        self.msg_target.debug('Extending pool duration from {0} by {1}'.format(str(self.duration), str(increment)))
+        self.duration += increment
+        self.planned_close_time += timedelta(seconds=increment)
+        # Record min time info if might need at close
+        self.add_arrival_window_value(point_in_pool)
+        if min_time != 0:
+            self.min_time_incidents[incident] = (min_time, point_in_pool, ext_dur)
+        if self.use_timer is True:
+            self.timer.add_time(increment)
         self.last_incident = incident
         return
 
@@ -588,7 +592,7 @@ class IncidentPool(object):
             except ThreadKilled:
                 raise
             except:
-                self.msg_target.exception('Closing pool because the timer expired failed')
+                self.msg_target.exception('Failing pool because the timer expired failed')
                 self.failed()
         else:
             # Need to restart the timer with the extension time
@@ -845,7 +849,7 @@ class IncidentPoolEventCheckpoint(EventAnalyzerCheckpoint):
                 pool.min_time_incidents[t_event] = (t_min, 0, t_dur)
         
             # Going to start pool so don't have to start when next incident added
-            pool.add_incident = pool._add_incident_ACTIVE_SUBSEQUENT
+            pool._add_incident = pool._add_incident_ACTIVE_SUBSEQUENT
             # Now start the pool with the checkpoint start time
             pool.start(datetime.strptime(t_list[0], '%Y-%m-%d %H:%M:%S.%f'))
         

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alertMetadata xmlns:tns="http://www.ibm.com/teal/alertmeta" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ibm.com/teal/alertmeta ../../../../../../xml/alertmeta.xsd ">
+
+  <alert id="GP000006">
+    <msg_template>SGMGR takeover</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+  <!-- Begin: Uncomment it if needed
+  <alert id="GP000007">
+    <msg_template>Node failed</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+  End: Don't forget to uncomment the corresponding lines in GPFS_GEAR_rules.xml as well.  -->
+
+  <alert id="GP00000D">
+    <msg_template>Event collection buffer overflow</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="GP000010">
+    <msg_template>Storage pool utilization crossed threshold</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="GP000015">
+    <msg_template>Long IO time</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="GP000016">
+    <msg_template>Recovery group takeover</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+
+  <alert id="GP000018">
+    <msg_template>Recovery group open failed</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>E</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="GP000019">
+    <msg_template>Recovery group panic</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>E</severity>
+    <urgency>N</urgency>
+    <priority>80</priority>
+  </alert>
+
+
+  <alert id="GP000020">
+    <msg_template>pdisk failed</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="GP000022">
+    <msg_template>pdisk needs to be replaced</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>E</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="GP000023">
+    <msg_template>Pdisk path failed</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>E</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="GP000024">
+    <msg_template>Declustered array rebuild failed</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>E</severity>
+    <urgency>N</urgency>
+    <priority>70</priority>
+  </alert>
+
+
+  <alert id="GP000025">
+    <msg_template>NSD checksum mismatch</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>W</severity>
+    <urgency>N</urgency>
+    <priority>60</priority>
+  </alert>
+
+
+  <alert id="GP010002">
+    <msg_template>GPFS connector stopped</msg_template>
+    <recommendation>Refer to the GPFS Administration and Problem Determination guides to resolve the problem. If the problem cannot be resolved, contact your next level of support.</recommendation>
+    <severity>I</severity>
+    <urgency>N</urgency>
+    <priority>50</priority>
+  </alert>
+
+</alertMetadata>

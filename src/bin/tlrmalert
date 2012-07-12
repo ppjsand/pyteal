@@ -27,7 +27,10 @@ import optparse
 from ibm.teal import Teal
 from ibm.teal import registry, alert
 from ibm.teal.database import db_interface
+from ibm.teal.registry import get_logger
 from ibm.teal.util import command
+
+fix_open_dup_problem = True
 
 def _gen_select_alerts(db, options, add_a2a_check):
     ''' Generate select to get the alerts (minus duplicates) that should be deleted '''
@@ -66,11 +69,22 @@ def _gen_select_alerts(db, options, add_a2a_check):
               where_fields=where_flds)
     return out_select
 
+def close_open_dups(open_dup_list):
+    ''' Close the open duplicates '''
+
+    where_open_dups = "${0} IN ({1})".format(alert.ALERT_ATTR_REC_ID, open_dup_list)
+    where_open_dup_flds = [alert.ALERT_ATTR_REC_ID]
+    db.update(cursor, [alert.ALERT_ATTR_STATE], db_interface.TABLE_ALERT_LOG,
+                                  where=where_open_dups,
+				  where_fields=where_open_dup_flds,
+                                  parms=[alert.ALERT_STATE_CLOSED])	
+    get_logger().warning('Duplicate alerts {0} were closed'.format(open_dup_list))
 
 if __name__ == '__main__':
 
     # Parse the command line        
     parser = optparse.OptionParser()
+    parser.description = 'Remove TEAL alerts'
     parser.add_option('-i', '--ids',
                       type='string',
                       action='callback',
@@ -88,87 +102,172 @@ if __name__ == '__main__':
                       help=_('The time condition_qry in the format YYYY-MM-DD-HH:MM::SS'))
     (options, args) = parser.parse_args()
 
+    # Do not allow -i and -o to be used together
+    if options.recid_list and options.query_time:
+        parser.error(_("Cannot specify both -i and -o"))
+        
     # Start up teal in data-only mode since we don't need the pipeline set up
-    t = Teal(None, logFile='$TEAL_LOG_DIR/tlrmalert.log', msgLevel='warning', data_only=True)
+    t = Teal(None, logFile='$TEAL_LOG_DIR/tlrmalert.log', msgLevel='info', data_only=True)
 
     # Prepare to use the database
     db = registry.get_service(registry.SERVICE_DB_INTERFACE)
     cnxn = db.get_connection()
     cursor = cnxn.cursor()
     
+    args = ' '.join(str(arg) for arg in sys.argv[1:])
+    get_logger().info('tlrmalert {0}'.format(args))
+    unique_alerts_deleted = 0
+    dup_alerts_deleted = 0
+    base_where_flds = [alert.ALERT_ATTR_REC_ID]
+ 
     # Build the core alert where clause
     ## Always check state
-    base_where_flds = [alert.ALERT_ATTR_STATE]
+    base_where_flds.append(alert.ALERT_ATTR_STATE)
     base_where = '${0} = {1}'.format(alert.ALERT_ATTR_STATE, alert.ALERT_STATE_CLOSED)
+    options_where_flds = [alert.ALERT_ATTR_STATE]
     
     ### if option for time set add it 
     if options.query_time is not None:
         base_where = "{0} AND ${1} < '{2}'".format(base_where, alert.ALERT_ATTR_CREATION_TIME, options.query_time[0])
         base_where_flds.append(alert.ALERT_ATTR_CREATION_TIME)
+        options_where_flds.append(alert.ALERT_ATTR_CREATION_TIME)
     else:
         older_where = ''
     ### list of alerts
     if options.recid_list is not None:
         base_where = '{0} AND ${1} IN ({2})'.format(base_where, alert.ALERT_ATTR_REC_ID, options.recid_list)
         base_where_flds.append(alert.ALERT_ATTR_REC_ID)
+        options_where_flds.append(alert.ALERT_ATTR_REC_ID)
     else:
         recids_where = ''
-   
-    # Build the where clause to select the A2A duplicate entries to be removed 
-    a2a_entry_where = "${0} IN ({1}) AND ${2} = '{3}'".format(alert.ALERT2ALERT_ATTR_ALERT_RECID, 
-                                                            db.gen_select([alert.ALERT_ATTR_REC_ID], 
-                                                                          db_interface.TABLE_ALERT_LOG, 
-                                                                          where=base_where,
-                                                                          where_fields=base_where_flds),
-                                                            alert.ALERT2ALERT_ATTR_ASSOC_TYPE, 
-                                                            alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE)
-    a2a_entry_where_fields=[alert.ALERT2ALERT_ATTR_ALERT_RECID, alert.ALERT2ALERT_ATTR_ASSOC_TYPE]
-   
-    # Get the duplicate alert rec_ids for later deletion 
-    db.select(cursor, [alert.ALERT2ALERT_ATTR_T_ALERT_RECID], db_interface.TABLE_ALERT2ALERT, where=a2a_entry_where, where_fields=a2a_entry_where_fields)
-    rows = cursor.fetchall()
-    if rows is not None and len(rows) > 0:
-        dups_to_delete = ','.join(str(row[0]) for row in rows)
-    else:
-        dups_to_delete = ''
         
-    # Delete the duplicate associations 
-    #    Where the source of the alert2alert entry is in the list of alerts to delete and it is a duplicate relationship
-    db.delete(cursor, db_interface.TABLE_ALERT2ALERT, where=a2a_entry_where, where_fields=a2a_entry_where_fields)
+    dup_where = "${0} = '{1}'".format(alert.ALERT2ALERT_ATTR_ASSOC_TYPE, alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE)
+    dup_where_flds = [alert.ALERT2ALERT_ATTR_ASSOC_TYPE]
+    # Build the where clause to select the A2A duplicate entries to be removed
+    a2a_entry_where = "${0} IN ({1}) AND {2}".format(alert.ALERT_ATTR_REC_ID,
+                                                        db.gen_select([alert.ALERT2ALERT_ATTR_ALERT_RECID],
+                                                                      db_interface.TABLE_ALERT2ALERT,
+                                                                      where=dup_where,
+                                                                      where_fields=dup_where_flds),
+                                                        base_where)
+    # Find the set of primary alerts within the specified dates or id list which have duplicates
+    db.select(cursor, [alert.ALERT_ATTR_REC_ID], db_interface.TABLE_ALERT_LOG, where=a2a_entry_where, where_fields=base_where_flds)
+    primary_alerts = cursor.fetchall()
+
+    # Warn the user it might take a while if there are > 1000 primary alerts
+    wait_msg = _('\nRemoving closed alerts...  This may take several minutes...')
+    if len(primary_alerts) > 10:
+        print wait_msg
+        wait_msg = ''
+
+    commit_count = 0
     
-    # Delete duplicate alerts 
-    if dups_to_delete != '':
-        db.delete(cursor, db_interface.TABLE_ALERT_LOG, 
-                  where='${0} IN ({1})'.format(alert.ALERT_ATTR_REC_ID, dups_to_delete),
-                  where_fields=[alert.ALERT_ATTR_REC_ID])
-  
-    # Delete base alerts
-    #  where the alert is not the target of a duplicate relationship
-    ## Get the rec_ids of the alerts that are the target of a duplicate relationship 
-    ## Generate select of duplicate relationships in Alert2Alert table 
-    a2a_qry = db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
-                            db_interface.TABLE_ALERT2ALERT, 
-                            where="${0} = '{1}'".format(alert.ALERT2ALERT_ATTR_ASSOC_TYPE, alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE),
-                            where_fields=[alert.ALERT2ALERT_ATTR_ASSOC_TYPE])
-    a2a_where = 'AND ${0} IN ({1})'.format (alert.ALERT_ATTR_REC_ID, a2a_qry)
-    a2a_where_flds = base_where_flds + [alert.ALERT2ALERT_ATTR_ASSOC_TYPE, alert.ALERT_ATTR_REC_ID]
-    db.select(cursor, [alert.ALERT_ATTR_REC_ID], db_interface.TABLE_ALERT_LOG, 
-              where='{0} {1}'.format(base_where, a2a_where),
-              where_fields=a2a_where_flds)
-    rows = cursor.fetchall()
-    if rows is not None and len(rows) > 0:
-        dups_ignore_where = 'AND ${0} NOT IN ({1})'.format (alert.ALERT_ATTR_REC_ID, ','.join([str(row[0]) for row in rows]))
-    else:
-        dups_ignore_where = ''
-   
-    db.delete(cursor, db_interface.TABLE_ALERT_LOG, 
-              where='{0} {1}'.format(base_where, dups_ignore_where),
-              where_fields=base_where_flds)
-    unique_alerts_deleted = cursor.rowcount
-    
+      # Loop through the set of primary alerts that have duplicates
+    for primary_alert in primary_alerts:
+
+        dup_where = "${0} = '{1}' AND ${2} = '{3}'".format(alert.ALERT2ALERT_ATTR_ALERT_RECID, primary_alert.rec_id, alert.ALERT2ALERT_ATTR_ASSOC_TYPE, alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE)
+        dup_where_flds = [alert.ALERT2ALERT_ATTR_ALERT_RECID, alert.ALERT2ALERT_ATTR_ASSOC_TYPE]
+
+        # There is an error situation where there could be some open duplicates even though the primary alert is closed.  Since this situation will result in
+        # a failure with tlrmalert, it will be handled here...  the following will determine if there are any open duplicates and close them if there are.
+
+        if fix_open_dup_problem:
+            where_dup_open = "${0} IN ({1}) AND ${2} ='{3}'".format(alert.ALERT_ATTR_REC_ID,
+                                                                  db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
+                                                                                 db_interface.TABLE_ALERT2ALERT,
+                                                                                 where=dup_where,
+                                                                                 where_fields=dup_where_flds),
+                                                                   alert.ALERT_ATTR_STATE,
+                                                                   alert.ALERT_STATE_OPEN)
+            db.select(cursor,
+                    [alert.ALERT_ATTR_REC_ID],
+                     db_interface.TABLE_ALERT_LOG,
+                     where=where_dup_open,
+                     where_fields=[alert.ALERT_ATTR_REC_ID, alert.ALERT_ATTR_STATE])
+
+            open_dup_rows = cursor.fetchall()
+
+            if open_dup_rows is not None and len(open_dup_rows) > 0:
+                open_dup_list = ','.join(str(open_dup_row[0]) for open_dup_row in open_dup_rows)
+                close_open_dups(open_dup_list)
+
+        # Determine the duplicates
+        db.select(cursor, [alert.ALERT2ALERT_ATTR_T_ALERT_RECID], db_interface.TABLE_ALERT2ALERT, where=dup_where, where_fields=dup_where_flds)
+        dup_rows = cursor.fetchall()
+
+        dup_alerts_deleted += len(dup_rows)
+
+        # Warn the user if there are many duplicates, if not already warned
+        if len(dup_rows) > 10 and wait_msg != '':
+            print wait_msg
+            wait_msg = ''
+
+        a2a_entry_where = "${0} = '{1}'".format(alert.ALERT2ALERT_ATTR_ALERT_RECID, str(primary_alert[0]))
+        a2a_entry_where_fields = [alert.ALERT2ALERT_ATTR_ALERT_RECID]
+
+        # delete the associative records from ALERT2ALERT where alert_recid=primary_alert and type = D
+        db.delete(cursor, db_interface.TABLE_ALERT2ALERT, where=a2a_entry_where, where_fields=a2a_entry_where_fields)
+
+        # Delete the primary alert from the alert log
+        prim_alert_where = "${0} = '{1}'".format(alert.ALERT_ATTR_REC_ID, str(primary_alert[0]))
+        db.delete(cursor, db_interface.TABLE_ALERT_LOG, where=prim_alert_where, where_fields=[alert.ALERT_ATTR_REC_ID])
+
+        unique_alerts_deleted += cursor.rowcount
+
+        # create the query statement with the list of duplicates, no more than 1500 on one
+        max_per_delete = 1500
+        if dup_rows is not None and len(dup_rows) > 0:
+
+            if len(dup_rows) > max_per_delete:
+                first = 0
+                last = first+max_per_delete-1
+                while first < len(dup_rows):
+                    dups_to_delete = ','.join(str(dup_row[0]) for dup_row in dup_rows[first:last])
+
+                    db.delete(cursor, db_interface.TABLE_ALERT_LOG,
+                              where='${0} IN ({1})'.format(alert.ALERT_ATTR_REC_ID, dups_to_delete),
+                              where_fields=[alert.ALERT_ATTR_REC_ID])
+
+                    first = last+1
+                    last = min(first+max_per_delete-1, len(dup_rows))
+            else:
+                dups_to_delete = ','.join(str(dup_row[0]) for dup_row in dup_rows)
+                db.delete(cursor, db_interface.TABLE_ALERT_LOG,
+                          where='${0} IN ({1})'.format(alert.ALERT_ATTR_REC_ID, dups_to_delete),
+                          where_fields=[alert.ALERT_ATTR_REC_ID])
+
+        # Do a commit after deleting 10 primary alerts and all their duplicates
+        if (commit_count == 10):
+            # This might be taking long, so print out something to let the user know it is still working on it
+            print '.',
+            sys.stdout.flush()
+            cnxn.commit()
+
+            # Print out something to tell the user things are still churning away
+            if len(primary_alerts) > 10:
+                commit_count = 0
+        else:
+            commit_count += 1
+
+        # delete all the remaining primary alerts from the alert log -- find the ones that do not have dup associations
+
+    dup_where = "${0} = '{1}'".format(alert.ALERT2ALERT_ATTR_ASSOC_TYPE, alert.ALERT2ALERT_ASSOC_TYPE_DUPLICATE)
+    dup_where_flds = [alert.ALERT2ALERT_ATTR_ASSOC_TYPE]
+
+    # Build the where clause to select the A2A duplicate entries to be removed
+    dup_ignore_where = "${0} NOT IN ({1}) AND {2}".format(alert.ALERT_ATTR_REC_ID,
+                                                          db.gen_select([alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
+                                                                        db_interface.TABLE_ALERT2ALERT,
+                                                                        where=dup_where,
+                                                                        where_fields=dup_where_flds),
+                                                          base_where)
+    options_where_flds.append(alert.ALERT_ATTR_REC_ID)
+    db.delete(cursor, db_interface.TABLE_ALERT_LOG, where=dup_ignore_where, where_fields=options_where_flds)
+    unique_alerts_deleted += cursor.rowcount
+
     cnxn.commit()
 
-    # If record ids where specified, then if any of them were not deleted, let the user know why
+    # If record ids were specified, then if any of them were not deleted, let the user know why
     if options.recid_list is not None:
         alert_state_qry = db.gen_select([alert.ALERT_ATTR_REC_ID, alert.ALERT_ATTR_STATE],
                                         db_interface.TABLE_ALERT_LOG,
@@ -177,11 +276,11 @@ if __name__ == '__main__':
                                         order=alert.ALERT_ATTR_REC_ID)
         
         alert_assoc_qry = db.gen_select([alert.ALERT2ALERT_ATTR_ALERT_RECID, 
-                                         alert.ALERT2ALERT_ATTR_ASSOC_TYPE,
-                                         alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
-                                         db_interface.TABLE_ALERT2ALERT,
-                                         where='${0} IN ({1})'.format(alert.ALERT2ALERT_ATTR_T_ALERT_RECID, options.recid_list),
-                                         where_fields=[alert.ALERT2ALERT_ATTR_T_ALERT_RECID])
+                                        alert.ALERT2ALERT_ATTR_ASSOC_TYPE,
+                                        alert.ALERT2ALERT_ATTR_T_ALERT_RECID],
+                                        db_interface.TABLE_ALERT2ALERT,
+                                        where='${0} IN ({1})'.format(alert.ALERT2ALERT_ATTR_T_ALERT_RECID, options.recid_list),
+                                        where_fields=[alert.ALERT2ALERT_ATTR_T_ALERT_RECID])
         
         cursor.execute(alert_state_qry)
         alert_states = cursor.fetchall()
@@ -207,3 +306,10 @@ if __name__ == '__main__':
         print _('\n{0} unique alert removed').format(unique_alerts_deleted)
     else:
         print _('\n{0} unique alerts removed').format(unique_alerts_deleted)
+        
+    if dup_alerts_deleted > 0:
+        if dup_alerts_deleted == 1:
+            print _('{0} duplicate alert removed').format(dup_alerts_deleted)
+        else:
+            print _('{0} duplicate alerts removed').format(dup_alerts_deleted)
+
