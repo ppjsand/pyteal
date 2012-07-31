@@ -656,7 +656,7 @@ CREATE TABLE X_LL_1_1 (
     PRIMARY KEY  ("rec_id")
 );
 
-CREATE TABLE "XCATDB  "."X_SFP_1_1"  (
+CREATE TABLE X_SFP_1_1  (
     "rec_id" BIGINT NOT NULL,
     "prob_num" INTEGER NOT NULL,
     "description" VARCHAR(256) NOT NULL,
@@ -674,6 +674,71 @@ CREATE TABLE SITE (
 	"comments" VARCHAR(512), 
 	"disable" VARCHAR(8), 
 	PRIMARY KEY("key")
+);
+
+CREATE TABLE x_AMM_1_1 (
+  "rec_id" BIGINT NOT NULL,
+  "app_id" VARCHAR(255),
+  "sp_txt_id" VARCHAR(255),
+  "sys_uuid" VARCHAR(255),
+  "sys_sern" VARCHAR(255),
+  "app_type" INTEGER,
+  "priority" INTEGER NOT NULL,
+  "msg_text" VARCHAR(255),
+  "host_contact" VARCHAR(255),
+  "host_location" VARCHAR(255),
+  "blade_name" VARCHAR(255),
+  "blade_sern" VARCHAR(255),
+  "blade_uuid" VARCHAR(255),
+  "evt_name" INTEGER,
+  "source_id" VARCHAR(255),
+  "call_home_flag" INTEGER,
+  "sys_ip_address" VARCHAR(255),
+  "sys_machine_model" VARCHAR(255),
+  "blade_machine_model" VARCHAR(255),
+  "comments" VARCHAR(512),
+  "disable" VARCHAR(8),
+  PRIMARY KEY ("rec_id")
+);
+
+CREATE TABLE x_IPMI_1_1 (
+  "rec_id" BIGINT NOT NULL,
+  "guid" char(32),
+  "sequence" SMALLINT,
+  "time_occurred" INTEGER,
+  "utc_offset" SMALLINT,
+  "trap_src" SMALLINT,
+  "event_src" SMALLINT,
+  "severity" SMALLINT,
+  "sensor_dev" SMALLINT,
+  "sensor_num" SMALLINT,
+  "entity" SMALLINT,
+  "entity_inst" SMALLINT,
+  "event_data1" SMALLINT,
+  "event_data2" SMALLINT,
+  "event_data3" SMALLINT,
+  "event_data4" SMALLINT,
+  "event_data5" SMALLINT,
+  "event_data6" SMALLINT,
+  "event_data7" SMALLINT,
+  "event_data8" SMALLINT,
+  "lang_code" SMALLINT,
+  "mfg_id" SMALLINT,
+  "sys_id" SMALLINT,
+  "message" VARCHAR(256) NOT NULL,
+  "comments" VARCHAR(512),
+  "disable" VARCHAR(8),
+  PRIMARY KEY ("rec_id")
+);
+
+CREATE TABLE x_IB_1_1 (
+  "rec_id" BIGINT NOT NULL,
+  "severity" VARCHAR(16),
+  "category" VARCHAR(32),
+  "description" VARCHAR(256),
+  "comments" VARCHAR(512),
+  "disable" VARCHAR(8),
+  PRIMARY KEY ("rec_id")
 );
 
 ALTER TABLE X_TEALALERT2ALERT ADD CONSTRAINT TEAL_FK_AREC FOREIGN KEY ("alert_recid") REFERENCES X_TEALALERTLOG ("rec_id") ON DELETE CASCADE;
@@ -698,6 +763,10 @@ ALTER TABLE x_GPFS_1_4 ADD CONSTRAINT TEAL_GPFS_MSC_FK FOREIGN KEY ("rec_id") RE
 ALTER TABLE X_LL_1_1 ADD CONSTRAINT TEAL_LL_FK FOREIGN KEY ("rec_id") REFERENCES X_TEALEVENTLOG ("rec_id") ON DELETE CASCADE;
 
 ALTER TABLE X_SFP_1_1 ADD CONSTRAINT TEAL_SFP_FK FOREIGN KEY ("rec_id") REFERENCES X_TEALEVENTLOG ("rec_id") ON DELETE CASCADE;
+
+ALTER TABLE X_IPMI_1_1 ADD CONSTRAINT TEAL_IPMI_FK FOREIGN KEY ("rec_id") REFERENCES X_TEALEVENTLOG ("rec_id") ON DELETE CASCADE;
+ALTER TABLE X_AMM_1_1  ADD CONSTRAINT TEAL_AMM_FK  FOREIGN KEY ("rec_id") REFERENCES X_TEALEVENTLOG ("rec_id") ON DELETE CASCADE;
+ALTER TABLE x_IB_1_1 ADD CONSTRAINT TEAL_IB_FK FOREIGN KEY ("rec_id") REFERENCES X_TEALEVENTLOG ("rec_id") ON DELETE CASCADE;
 
 CREATE TRIGGER TEAL_DUPALERT_DELETE AFTER DELETE ON X_TEALALERT2ALERT REFERENCING OLD AS OLD FOR EACH ROW BEGIN ATOMIC IF (OLD."assoc_type" = 'D') THEN DELETE FROM X_TEALALERTLOG WHERE "rec_id" = OLD."t_alert_recid"; END IF; END;
 CREATE TRIGGER TEAL_ALERTLOG_DELETE BEFORE DELETE ON X_TEALALERTLOG REFERENCING OLD AS OLD FOR EACH ROW BEGIN ATOMIC IF (OLD."state" = 1) THEN SIGNAL SQLSTATE '70003' ('Deletion not permitted'); END IF; END;

@@ -47,6 +47,7 @@ AC_ARG_ENABLE([ll],AC_HELP_STRING([--enable-ll], [enable loadleveler connector (
 AC_ARG_ENABLE([pnsd],AC_HELP_STRING([--enable-pnsd], [enable PNSD connector (default: 1)]),[enable_pnsd=$enableval],[enable_pnsd=1])
 AC_ARG_ENABLE([gpfs],AC_HELP_STRING([--enable-gpfs], [enable GPFS connector (default: 0)]),[enable_gpfs=$enableval],[enable_gpfs=0])
 AC_ARG_ENABLE([test],AC_HELP_STRING([--enable-test], [enable testcase package (default: 1)]),[enable_test=$enableval],[enable_test=1])
+AC_ARG_ENABLE([ib],AC_HELP_STRING([--enable-ib], [enable IB package (default: 0)]),[enable_test=$enableval],[enable_ib=1])
 
 case "$enable_isnm" in
 	"yes"|"1") ENABLE_ISNM=1 ;;
@@ -72,6 +73,11 @@ case "$enable_test" in
 	"yes"|"1") ENABLE_TEST=1 ;;
 	*) ENABLE_TEST=0 ;;
 esac
+case "$enable_ib" in
+        "yes"|"1") ENABLE_IB=1 ;;
+        *) ENABLE_IB=0 ;;
+esac
+
 
 # Determine if 32 or 64 bit platform target
 machine="`uname -m`"
@@ -132,7 +138,8 @@ AC_CONFIG_FILES([Makefile:Makefile.in
 				teal-sfp.mk
 				teal-isnm.mk
 				teal-gpfs.mk
-				teal-test.mk])
+				teal-test.mk
+				teal-ib.mk])
 
 AC_SUBST(PYTHON_VER)
 AC_SUBST(BITS)
@@ -142,6 +149,7 @@ AC_SUBST(ENABLE_LL)
 AC_SUBST(ENABLE_PNSD)
 AC_SUBST(ENABLE_GPFS)
 AC_SUBST(ENABLE_TEST)
+AC_SUBST(ENABLE_IB)
 
 AC_OUTPUT
 

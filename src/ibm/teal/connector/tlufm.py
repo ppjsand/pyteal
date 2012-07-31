@@ -257,7 +257,11 @@ def _info(message):
     except:
         thread_name = 'Unknown'
     msg = "<Thread:{0}>".format(thread_name) + message
-    registry.get_logger().info(msg)
+    if not logger:
+        mylogger = registry.get_logger()
+    else:
+        mylogger = logger
+    mylogger.info(msg)
 
 '''An approach to achieve recv_all()'''
 End='end_of_ufm_msg'
@@ -292,7 +296,7 @@ def remote_execute(server,rsh,cmd):
     if status == 0 :
         lines = output.split('\n')
     else:
-        _error('Invoke command on UFM server {0} failed.'.format(server))
+        _error('Invoke command {0} on UFM server {1} failed.'.format(cmd,server))
     return lines
 
 """check UFM server status"""
@@ -300,11 +304,11 @@ def check_ufm_status(server,rsh):
     try:
         rec = remote_execute(server, rsh, CHECK_UFM_CMD)
     except:
-        _error("Error to check UFM server's status")
+        _error("Error occured during checking UFM server's status")
         return STATUS_UNKNOWN
 
     if rec == []:
-        _error("Fail to check UFM server's status")
+        _error("Can not retrieve UFM server's status")
         return STATUS_UNKNOWN
 
     rc = rec[0]
@@ -420,6 +424,10 @@ class ufm_server():
         _debug('Logging event {0}, ext data {1}'.format(event,ext_data))
         try:
             self.cnxn = self.db.get_connection()
+        except:
+            _exception("Error accessing DB")
+            return
+        try:
             self.teal_cursor = self.cnxn.cursor()
             self.db.insert(self.teal_cursor, IB_TEAL_COLS, db_interface.TABLE_EVENT_LOG, event)
             self.db.insert_dependent(self.teal_cursor, IB_TEAL_EXTENDED_PK, IB_TEAL_EXTENDED_COLS, IB_TEAL_EXTDATA_TABLE, ext_data)

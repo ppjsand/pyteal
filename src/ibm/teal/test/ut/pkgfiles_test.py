@@ -4,7 +4,7 @@
 # After initializing,  DO NOT MODIFY OR MOVE
 # ================================================================
 #
-# (C) Copyright IBM Corp.  2010,2011
+# (C) Copyright IBM Corp.  2010,2012
 # Eclipse Public License (EPL)
 #
 # ================================================================

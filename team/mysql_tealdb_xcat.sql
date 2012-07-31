@@ -34,6 +34,10 @@ DROP TABLE IF EXISTS x_LL_1_1;
 DROP TABLE IF EXISTS x_SFP_1_1;
 DROP TABLE IF EXISTS site;
 
+DROP TABLE IF EXISTS x_AMM_1_1;
+DROP TABLE IF EXISTS x_IPMI_1_1;
+DROP TABLE IF EXISTS `x_IB_1_1`;
+
 DROP TABLE IF EXISTS x_tealalert2alert;
 DROP TABLE IF EXISTS x_tealalert2event;
 DROP TABLE IF EXISTS x_tealcheckpoint;
@@ -705,6 +709,72 @@ CREATE TABLE site (
 ) ENGINE=InnoDB;
 
 
+CREATE TABLE x_AMM_1_1 (
+  rec_id bigint(20) NOT NULL,
+  app_id varchar(255) DEFAULT NULL,
+  sp_txt_id varchar(255) DEFAULT NULL,
+  sys_uuid varchar(255) DEFAULT NULL,
+  sys_sern varchar(255) DEFAULT NULL,
+  app_type int(11) DEFAULT NULL,
+  priority int(11) NOT NULL,
+  msg_text varchar(255) DEFAULT NULL,
+  host_contact varchar(255) DEFAULT NULL,
+  host_location varchar(255) DEFAULT NULL,
+  blade_name varchar(255) DEFAULT NULL,
+  blade_sern varchar(255) DEFAULT NULL,
+  blade_uuid varchar(255) DEFAULT NULL,
+  evt_name int(11) DEFAULT NULL,
+  source_id varchar(255) DEFAULT NULL,
+  call_home_flag int(11) DEFAULT NULL,
+  sys_ip_address varchar(255) DEFAULT NULL,
+  sys_machine_model varchar(255) DEFAULT NULL,
+  blade_machine_model varchar(255) DEFAULT NULL,
+  comments text,
+  disable text,
+  PRIMARY KEY (rec_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE x_IPMI_1_1 (
+  rec_id bigint(20) NOT NULL,
+  guid char(32) DEFAULT NULL,
+  sequence smallint(6) DEFAULT NULL,
+  time_occurred int(11) DEFAULT NULL,
+  utc_offset smallint(6) DEFAULT NULL,
+  trap_src smallint(6) DEFAULT NULL,
+  event_src smallint(6) DEFAULT NULL,
+  severity smallint(6) DEFAULT NULL,
+  sensor_dev smallint(6) DEFAULT NULL,
+  sensor_num smallint(6) DEFAULT NULL,
+  entity smallint(6) DEFAULT NULL,
+  entity_inst smallint(6) DEFAULT NULL,
+  event_data1 smallint(6) DEFAULT NULL,
+  event_data2 smallint(6) DEFAULT NULL,
+  event_data3 smallint(6) DEFAULT NULL,
+  event_data4 smallint(6) DEFAULT NULL,
+  event_data5 smallint(6) DEFAULT NULL,
+  event_data6 smallint(6) DEFAULT NULL,
+  event_data7 smallint(6) DEFAULT NULL,
+  event_data8 smallint(6) DEFAULT NULL,
+  lang_code smallint(6) DEFAULT NULL,
+  mfg_id smallint(6) DEFAULT NULL,
+  sys_id smallint(6) DEFAULT NULL,
+  message varchar(256) NOT NULL,
+  comments text,
+  disable text,
+  PRIMARY KEY (rec_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE `x_IB_1_1` (
+  `rec_id` BIGINT NOT NULL,
+  `severity` varchar(16) DEFAULT NULL,
+  `category` varchar(32) DEFAULT NULL,
+  `description` varchar(256) DEFAULT NULL,
+  `comments` text,
+  `disable` text,
+  PRIMARY KEY (`rec_id`)
+) ENGINE=InnoDB;
+
+
 ALTER TABLE x_tealalert2alert ADD CONSTRAINT teal_fk_arec FOREIGN KEY (alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE CASCADE;
 ALTER TABLE x_tealalert2alert ADD CONSTRAINT teal_fk_t_arec FOREIGN KEY (t_alert_recid) REFERENCES x_tealalertlog (rec_id) ON DELETE RESTRICT;
 ALTER TABLE x_tealalert2alert ADD CONSTRAINT teal_a2a_assoc_check CHECK(assoc_type IN ('C','S','D'));
@@ -728,4 +798,6 @@ ALTER TABLE x_LL_1_1 ADD CONSTRAINT teal_ll_fk FOREIGN KEY (rec_id) REFERENCES x
 
 ALTER TABLE x_SFP_1_1 ADD CONSTRAINT teal_sfp_fk FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;
 
-
+ALTER TABLE x_IPMI_1_1 ADD CONSTRAINT teal_ipmi_fk FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;
+ALTER TABLE x_AMM_1_1  ADD CONSTRAINT teal_amm_fk  FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;
+ALTER TABLE x_IB_1_1 ADD CONSTRAINT teal_ib_fk FOREIGN KEY (rec_id) REFERENCES x_tealeventlog (rec_id) ON DELETE CASCADE;

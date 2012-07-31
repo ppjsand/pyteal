@@ -13,7 +13,7 @@
 
 Summary: Toolkit for Event Analysis and Logging
 Name: teal
-%define teal_ver 1.1.0.6
+%define teal_ver 1.2.0.1
 Version: %{teal_ver}
 Release: 1
 
@@ -39,6 +39,7 @@ to log events, have analyzers evaluate the events to get closer to the root caus
 %define  with_pnsd 1
 %define  with_gpfs 0
 %define  with_test 1
+%define  with_ib 1
 
 # if --without switch is used
 %{?_without_isnm: %{expand: %%global with_isnm 0}}
@@ -47,6 +48,7 @@ to log events, have analyzers evaluate the events to get closer to the root caus
 %{?_without_pnsd: %{expand: %%global with_pnsd 0}}
 %{?_without_gpfs: %{expand: %%global with_gpfs 0}}
 %{?_without_test: %{expand: %%global with_test 0}}
+%{?_without_ib: %{expand: %%global with_ib 0}}
 
 # if --with switch is used
 %{?_with_isnm: %{expand: %%global with_isnm 1}}
@@ -55,13 +57,14 @@ to log events, have analyzers evaluate the events to get closer to the root caus
 %{?_with_pnsd: %{expand: %%global with_pnsd 1}}
 %{?_with_gpfs: %{expand: %%global with_gpfs 1}}
 %{?_with_test: %{expand: %%global with_test 1}}
+%{?_with_ib: %{expand: %%global with_ib 1}}
 
 %prep
 %setup -n pyteal-code
 
 %build
 autoconf
-%configure --enable-isnm=%{with_isnm} --enable-sfp=%{with_sfp} --enable-ll=%{with_ll} --enable-pnsd=%{with_pnsd} --enable-gpfs=%{with_gpfs} --enable-test=%{with_test}
+%configure --enable-isnm=%{with_isnm} --enable-sfp=%{with_sfp} --enable-ll=%{with_ll} --enable-pnsd=%{with_pnsd} --enable-gpfs=%{with_gpfs} --enable-test=%{with_test} --enable-ib=%{with_ib}
 make
 
 %install
@@ -73,7 +76,13 @@ Summary: Toolkit for Event Analysis and Logging
 
 Group: Applications/System
 
+%define is_rhel %(uname -r | grep -c el)
+
+%if 0%{?is_rhel}
 Requires: xCAT >= 2.6.6, python >= 2.6, pyodbc >= 2.1.7, perl-Module-Load
+%else
+Requires: xCAT >= 2.6.6, python >= 2.6, pyodbc >= 2.1.7
+%endif
 
 %description base
 The base framework for TEAL.
@@ -95,13 +104,19 @@ if  [ $1 -eq 1 ]; then
 /sbin/service xcatd start
 /opt/xcat/sbin/runsqlcmd -d /opt/teal/data/ibm/teal/sql/install
 ln -sf /opt/teal/ibm/teal/teal.py /opt/teal/bin/teal
-/sbin/chkconfig --add teal 
+/sbin/chkconfig --add teal
+fi
+
+/opt/teal/sbin/tlconfig -l snmp > /dev/null 2>&1 
+if  [ $? -ne 0 ]; then
+	/opt/teal/sbin/tlconfig -c snmp
 fi
 
 /sbin/service teal start
 
 %preun base
 if  [ $1 -eq 0 ]; then
+/opt/teal/sbin/tlconfig -d snmp 
 /sbin/service teal stop
 /sbin/chkconfig --del teal
 rm /opt/teal/bin/teal
@@ -122,7 +137,8 @@ rm -rf /var/log/teal/
 fi
 
 %files base
-%config(noreplace) %attr( 644, bin, bin ) /etc/teal/teal.conf
+%config %attr( 644, bin, bin ) /etc/teal/teal.conf
+%config %attr( 644, bin, bin ) /etc/teal/snmp.conf
 %attr( 755, bin, bin ) /etc/init.d/teal
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/install/Teal_db2.sql
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/install/Teal_dba_db2.sql
@@ -130,11 +146,15 @@ fi
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/uninstall/Teal_dba_db2.sql
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/uninstall/Teal_rm_db2.sql
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/sql/uninstall/Teal_rm_mysql.sql
-%config(noreplace) %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/percs_location.xml
+%attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/AMM_1.xml
+%attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/IPMI_1.xml
+%config %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/MM_GEAR_rules.xml
+%attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/IPMI_GEAR_event_metadata.xml
+%config %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/percs_location.xml
 %attr( 755, bin, bin ) /usr/lib/libteal_common.so
 %attr( 755, bin, bin ) /usr/lib/libteal_common.so.1
 %attr( 755, bin, bin ) /usr/lib/libteal_common.so.1.0
-%ifarch ppc64 x86_64
+%ifarch x86_64 ppc64
 %attr( 755, bin, bin ) /usr/lib64/libteal_common.so
 %attr( 755, bin, bin ) /usr/lib64/libteal_common.so.1
 %attr( 755, bin, bin ) /usr/lib64/libteal_common.so.1.0
@@ -146,6 +166,7 @@ fi
 %attr( 755, bin, bin ) /opt/teal/bin/tlchalert
 %attr( 755, bin, bin ) /opt/teal/bin/tlrmevent
 %attr( 755, bin, bin ) /opt/teal/bin/tlvfyrule
+%attr( 755, bin, bin ) /opt/teal/sbin/tlconfig
 %attr( 755, bin, bin ) /opt/teal/sbin/tlnotify
 %attr( 755, bin, bin ) /opt/teal/sbin/tltab
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/analyzer/gear/__init__.py
@@ -172,6 +193,8 @@ fi
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/analyzer/analysis_info.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/analyzer/analyzer.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/connector/__init__.py
+%attr( 755, bin, bin ) /opt/teal/ibm/teal/connector/tlammtraphandler.py
+%attr( 755, bin, bin ) /opt/teal/ibm/teal/connector/tlipmitraphandler.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/database/__init__.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/database/db_interface.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/database/db_interface_pyodbc.py
@@ -198,9 +221,11 @@ fi
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/__init__.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/command.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/extendable_timer.py
+%attr( 755, bin, bin ) /opt/teal/ibm/teal/util/gear.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/listenable_queue.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/journal.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/msg_target.py
+%attr( 755, bin, bin ) /opt/teal/ibm/teal/util/snmp_config.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/teal_thread.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/util/xml_file_reader.py
 %attr( 755, bin, bin ) /opt/teal/ibm/teal/__init__.py
@@ -229,6 +254,8 @@ fi
 %attr( 644, bin, bin ) /opt/teal/xml/location.xsd
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_db2.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_mysql.pm
+%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_amm.pm
+%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_ipmi.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor/TealSendAlert.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify_H.pm
@@ -240,11 +267,10 @@ fi
 %attr( 755, bin, bin ) /install/postscripts/rmcmon/resources/node/IBM.Sensor/TealEventNotify.pm
 %attr( 755, bin, bin ) /install/postscripts/rmcmon/resources/sn/IBM.Condition/TealAnyNodeEventNotify.pm
 
-
 %ifarch ppc64
 %package base-bg
 
-Summary: Toolkit for Event Analysis for BlueGene/Q
+Summary: Toolkit for Event Analysis and Logging for BlueGene/Q
 
 Group: Applications/System
 
@@ -386,7 +412,7 @@ Summary: Toolkit for Event Analysis and Logging ISNM Connector
 
 Group: Applications/System
 
-Requires: teal-base >= 1.1.0.6
+Requires: teal-base >= 1.2.0.1
 
 %description isnm
 This package provides the TEAL connector for ISNM. It also provides the additional plug-ins to 
@@ -429,7 +455,7 @@ fi
 %attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/CNM_1.xml
 %attr( 644, bin, bin ) /opt/teal/data/ibm/isnm/xml/CNM_GEAR_alert_metadata.xml
 %attr( 644, bin, bin ) /opt/teal/data/ibm/isnm/xml/CNM_GEAR_event_metadata.xml
-%attr( 644, bin, bin ) /opt/teal/data/ibm/isnm/xml/CNM_GEAR_rule.xml
+%config %attr( 644, bin, bin ) /opt/teal/data/ibm/isnm/xml/CNM_GEAR_rule.xml
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_isnm.pm
 %attr( 644, bin, bin ) /opt/teal/data/ibm/isnm/sql/install/Teal_isnm_db2.sql
 %attr( 644, bin, bin ) /opt/teal/data/ibm/isnm/sql/install/Teal_isnm_dba_db2.sql
@@ -440,12 +466,12 @@ fi
 %attr( 755, bin, bin ) /usr/lib/libteal_isnm.so
 %attr( 755, bin, bin ) /usr/lib/libteal_isnm.so.1
 %attr( 755, bin, bin ) /usr/lib/libteal_isnm.so.1.0
-%ifarch ppc64 x86_64
+%ifarch x86_64 ppc64
 %attr( 755, bin, bin ) /usr/lib64/libteal_isnm.so
 %attr( 755, bin, bin ) /usr/lib64/libteal_isnm.so.1
 %attr( 755, bin, bin ) /usr/lib64/libteal_isnm.so.1.0
 %endif
-%config(noreplace) %attr( 644, bin, bin ) /etc/teal/isnm.conf
+%config %attr( 644, bin, bin ) /etc/teal/isnm.conf
 
 %endif
 %if %{with_ll}
@@ -454,7 +480,7 @@ Summary: Toolkit for Event Analysis and Logging Loadleveler Connector
 
 Group: Applications/System
 
-Requires: teal-base >= 1.1.0.5
+Requires: teal-base >= 1.2.0.0
 
 %description ll
 This package provides the TEAL connector for Loadleveler. It also provides the additional plug-ins to 
@@ -516,7 +542,7 @@ Summary: Toolkit for Event Analysis and Logging PNSD Connector
 
 Group: Applications/System
 
-Requires: teal-base >= 1.1.0.5
+Requires: teal-base >= 1.2.0.0
 
 %description pnsd
 This package provides the TEAL connector for PNSD. It also provides the additional plug-ins to 
@@ -548,7 +574,7 @@ fi
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodePnsdStat.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodePnsdStat_H.pm
 %attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogPnsdEvent.pm 
-%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogPnsdEvent_H.pm
+%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealLogPnsdEvent_H.pm 
 %config(noreplace) %attr( 644, bin, bin ) /etc/teal/pnsd.conf
 
 %endif
@@ -558,7 +584,7 @@ Summary: Toolkit for Event Analysis and Logging Service Focal Point Connector
 
 Group: Applications/System
 
-Requires: teal-base >= 1.1.0.4
+Requires: teal-base >= 1.2.0.0
 
 %description sfp
 This package provides the TEAL connector for the Service Focal Point. It also provides the additional plug-ins to 
@@ -615,7 +641,7 @@ Summary: Toolkit for Event Analysis and Logging Testcases
 
 Group: Applications/System
 
-Requires: teal-base >= 1.1.0.6
+Requires: teal-base >= 1.2.0.1
 
 %description test
 This package provides the unit and functional verification test for TEAL
@@ -1518,7 +1544,8 @@ Summary: Toolkit for Event Analysis and Logging GPFS Connector
 
 Group: Applications/System
 
-Requires: teal-base >= 1.1.0.4
+BuildRequires: gpfs.base >= 3.5
+Requires: teal-base >= 1.2.0.0
 
 %description gpfs
 This package provides the TEAL connector for GPFS. It also provides the additional plug-ins to 
@@ -1599,8 +1626,8 @@ a GPFS collector node for a cluster.
 %files gpfs-sn
 %attr( 755, bin, bin ) /opt/teal/bin/tlgpfsmon
 %attr( 755, bin, bin ) /opt/teal/bin/tlgpfsrefresh
-%attr( 755, bin, bin ) /opt/teal/bin/tlgpfslauncher
 %attr( 755, bin, bin ) /opt/teal/bin/tlgpfserrhandler
+%attr( 755, bin, bin ) /opt/teal/bin/tlgpfslauncher
 %attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so
 %attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so.1
 %attr( 755, bin, bin ) /usr/lib64/libteal_gpfs.so.1.0
@@ -1609,4 +1636,76 @@ a GPFS collector node for a cluster.
 %attr( 755, bin, bin ) /usr/lib64/libteal_common.so.1.0
 %attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/tlgpfsmon.conf.sample
 %config(noreplace) %attr( 644, bin, bin ) /opt/teal/data/ibm/gpfs/tlgpfsmon.conf
+%endif
+%if %{with_ib}
+%package ib
+Summary: Toolkit for Event Analysis and Logging Infiniband Connector  	
+
+Group: Applications/System
+
+Requires: teal-base >= 1.2.0.0
+
+%description ib
+This package provides the TEAL connector for infiniband. It also provides the additional plug-ins to 
+support the additional user data, rules and TEAL framework configuration for reporting TEAL Alerts
+
+%pre ib
+/sbin/service teal stop
+
+if  [ $1 -eq 1 ]; then
+/sbin/service xcatd stop
+else
+/sbin/service teal_ufm stop
+fi
+
+%post ib
+if  [ $1 -eq 1 ]; then
+/sbin/service xcatd start
+/opt/xcat/sbin/runsqlcmd -d /opt/teal/data/ibm/ib/sql/install
+/opt/xcat/sbin/chtab name=snmpmon,key=runcmd30 monsetting.value="snmpTrapOID.0=~SMA-MIB"
+/opt/xcat/sbin/chtab name=snmpmon,key=runcmd31 monsetting.value="snmpTrapOID.0=~MELLANOX-MIB"
+/opt/xcat/sbin/chtab name=snmpmon,key=cmds30 monsetting.value="/opt/teal/ibm/teal/connector/tlufmtraphandler.py"
+/opt/xcat/sbin/chtab name=snmpmon,key=cmds31 monsetting.value="/opt/teal/ibm/teal/connector/tlmlxtraphandler.py"
+fi
+
+/sbin/service teal start
+/sbin/service teal_ufm start
+
+%preun ib
+if  [ $1 -eq 0 ]; then
+/sbin/service teal_ufm stop
+/sbin/service teal stop
+/opt/xcat/sbin/runsqlcmd -d /opt/teal/data/ibm/ib/sql/uninstall
+/opt/xcat/sbin/chtab -d name=snmpmon,key=cmds30 monsetting
+/opt/xcat/sbin/chtab -d name=snmpmon,key=cmds31 monsetting
+/opt/xcat/sbin/chtab -d name=snmpmon,key=runcmd30 monsetting
+/opt/xcat/sbin/chtab -d name=snmpmon,key=runcmd31 monsetting
+/sbin/service xcatd stop
+fi
+
+%postun ib
+if  [ $1 -eq 0 ]; then
+/sbin/service xcatd start
+/sbin/service teal start
+fi
+
+%files ib
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/sql/install/Teal_ib_db2.sql
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/sql/install/Teal_ib_mysql.sql
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/sql/uninstall/Teal_ib_rm_db2.sql
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/sql/uninstall/Teal_ib_rm_mysql.sql
+%config %attr( 644, bin, bin ) /opt/teal/data/ibm/ib/xml/IB_GEAR_rules.xml
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/xml/IB_GEAR_event_metadata.xml
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/xml/IB_GEAR_alert_metadata.xml
+%attr( 644, bin, bin ) /opt/teal/data/ibm/teal/xml/IB_1.xml
+%attr( 755, bin, bin ) /opt/xcat/lib/perl/xCAT_schema/Teal_ib.pm
+%attr( 755, bin, bin ) /opt/teal/ibm/teal/connector/tlufm.py
+%attr( 755, bin, bin ) /opt/teal/ibm/teal/connector/tlmlxtraphandler.py
+%attr( 755, bin, bin ) /opt/teal/ibm/teal/connector/tlufmtraphandler.py
+%attr( 755, bin, bin ) /opt/teal/sbin/tlufmcfghdler
+%attr( 755, bin, bin ) /etc/init.d/teal_ufm
+%config %attr( 644, bin, bin ) /etc/teal/ib.conf
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/tlufm.conf
+%attr( 644, bin, bin ) /opt/teal/data/ibm/ib/tlufm.conf.sample
+
 %endif
