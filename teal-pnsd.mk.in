@@ -7,7 +7,8 @@ TEAL_CLEAN_COMPS += clean_pnsd
 
 TEAL_OPT_FILES += \
 ibm/teal/connector/pnsd.py \
-data/ibm/pnsd/xml/PNSD_GEAR_rules.xml
+data/ibm/pnsd/xml/PNSD_GEAR_rules.xml \
+data/ibm/pnsd/xml/PNSD_GEAR_event_metadata.xml
 
 TEAL_XCAT_FILES += \
 perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodePnsdStat.pm \

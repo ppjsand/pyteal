@@ -1,0 +1,25 @@
+
+TEAL_OPT_FILES += \
+sbin/tlufmcfghdler \
+ibm/teal/connector/tlufm.py \
+ibm/teal/connector/tlmlxtraphandler.py \
+ibm/teal/connector/tlufmtraphandler.py \
+data/ibm/ib/sql/install/Teal_ib_db2.sql \
+data/ibm/ib/sql/install/Teal_ib_mysql.sql \
+data/ibm/ib/sql/uninstall/Teal_ib_rm_db2.sql \
+data/ibm/ib/sql/uninstall/Teal_ib_rm_mysql.sql \
+data/ibm/ib/xml/IB_GEAR_rules.xml \
+data/ibm/ib/xml/IB_GEAR_event_metadata.xml \
+data/ibm/ib/xml/IB_GEAR_alert_metadata.xml \
+data/ibm/teal/xml/IB_1.xml \
+data/ibm/ib/tlufm.conf \
+data/ibm/ib/tlufm.conf.sample
+
+ 
+TEAL_XCAT_FILES += \
+perl/xCAT_schema/Teal_ib.pm
+
+TEAL_ETC_FILES += \
+etc/teal/ib.conf \
+etc/init.d/teal_ufm
+

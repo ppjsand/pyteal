@@ -91,14 +91,22 @@ data/ibm/gpfs/sql/install/Teal_gpfs_db2.sql \
 data/ibm/gpfs/sql/install/Teal_gpfs_mysql.sql \
 data/ibm/gpfs/sql/uninstall/Teal_gpfs_rm_db2.sql \
 data/ibm/gpfs/sql/uninstall/Teal_gpfs_rm_mysql.sql \
+data/ibm/gpfs/sql/update/Teal_gpfs_1104_db2.sql \
 data/ibm/gpfs/tlgpfsmon.conf \
 data/ibm/gpfs/tlgpfsmon.conf.sample \
+data/ibm/gpfs/xml/GPFS_GEAR_event_metadata.xml \
+data/ibm/gpfs/xml/GPFS_GEAR_rules.xml \
+data/ibm/gpfs/xml/GPFS_GEAR_alert_metadata.xml \
 data/ibm/teal/xml/GPFS_1.xml
 
 TEAL_XCAT_FILES += \
 perl/xCAT_schema/Teal_gpfs.pm \
-perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/GPFSConnectorFailed.pm \
-perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/GPFSConnectorMonitor.pm
+
+TEAL_XCAT_INSTALL_FILES += \
+perl/xCAT_monitoring/rmc/resources/sn/IBM.Condition/GPFSConnectorMonitor.pm \
+perl/xCAT_monitoring/rmc/resources/sn/IBM.EventResponse/GPFSConnectorFailed.pm \
+perl/xCAT_monitoring/rmc/resources/node/IBM.EventResponse/GPFSConnectorFailed.pm \
+perl/xCAT_monitoring/rmc/resources/node/IBM.Condition/GPFSConnectorMonitor.pm \
 
 TEAL_ETC_FILES += \
 etc/teal/gpfs.conf

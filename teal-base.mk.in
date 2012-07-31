@@ -90,20 +90,27 @@ teal_common_info.c::
 TEAL_XCAT_FILES += \
 perl/xCAT_schema/Teal_db2.pm \
 perl/xCAT_schema/Teal_mysql.pm \
+perl/xCAT_schema/Teal_amm.pm \
+perl/xCAT_schema/Teal_ipmi.pm \
 perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealNotifyEventLogged.pm \
 perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify_H.pm \
 perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor/TealSendAlert.pm 
 
 TEAL_XCAT_INSTALL_FILES += \
-perl/xCAT_monitoring/rmc/resources/sn/IBM.Sensor/TealEventNotify.pm 
+perl/xCAT_monitoring/rmc/resources/sn/IBM.Sensor/TealEventNotify.pm \
+perl/xCAT_monitoring/rmc/resources/node/IBM.Sensor/TealEventNotify.pm \
+perl/xCAT_monitoring/rmc/resources/sn/IBM.Condition/TealAnyNodeEventNotify.pm 
 
 TEAL_ETC_FILES += \
 etc/init.d/teal \
-etc/teal/teal.conf 
+etc/teal/teal.conf \
+etc/teal/snmp.conf 
 
 TEAL_OPT_FILES += \
 sbin/tltab \
 sbin/tlnotify \
+sbin/tlconfig \
 data/ibm/teal/sql/uninstall/Teal_dba_db2.sql \
 data/ibm/teal/sql/uninstall/Teal_rm_db2.sql \
 data/ibm/teal/sql/uninstall/Teal_rm_mysql.sql \
@@ -111,6 +118,10 @@ data/ibm/teal/sql/install/Teal_dba_db2.sql \
 data/ibm/teal/sql/install/Teal_db2.sql \
 data/ibm/teal/sql/install/Teal_mysql.sql \
 data/ibm/teal/xml/percs_location.xml \
+data/ibm/teal/xml/AMM_1.xml \
+data/ibm/teal/xml/IPMI_1.xml \
+data/ibm/teal/xml/MM_GEAR_rules.xml \
+data/ibm/teal/xml/IPMI_GEAR_event_metadata.xml \
 bin/tllsalert \
 bin/tllsevent \
 bin/tlrmalert \
@@ -148,6 +159,8 @@ ibm/teal/analyzer/gear/engine_factory.py \
 ibm/teal/analyzer/gear/common.py \
 ibm/teal/analyzer/gear/rule_value.py \
 ibm/teal/analyzer/gear/rule_condition.py \
+ibm/teal/connector/tlammtraphandler.py \
+ibm/teal/connector/tlipmitraphandler.py \
 ibm/teal/monitor/__init__.py \
 ibm/teal/monitor/noop_monitor.py \
 ibm/teal/monitor/event_monitor.py \
@@ -184,7 +197,10 @@ ibm/teal/util/msg_target.py \
 ibm/teal/util/extendable_timer.py \
 ibm/teal/util/journal.py \
 ibm/teal/util/command.py \
+ibm/teal/util/teal_thread.py \
 ibm/teal/util/xml_file_reader.py \
+ibm/teal/util/gear.py \
+ibm/teal/util/snmp_config.py \
 ibm/teal/constants.py \
 ibm/teal/event.py \
 ibm/teal/configuration.py \
