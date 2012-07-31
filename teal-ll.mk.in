@@ -8,6 +8,7 @@ data/ibm/ll/sql/uninstall/Teal_ll_dba_db2.sql \
 data/ibm/ll/sql/uninstall/Teal_ll_rm_db2.sql \
 data/ibm/ll/sql/uninstall/Teal_ll_rm_mysql.sql \
 data/ibm/ll/xml/LL_GEAR_rules.xml \
+data/ibm/ll/xml/LL_GEAR_event_metadata.xml \
 data/ibm/teal/xml/LL_1.xml
 
 TEAL_XCAT_FILES += \

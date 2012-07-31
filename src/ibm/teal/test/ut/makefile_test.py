@@ -99,10 +99,10 @@ class TestMakefiles(TealTestCase):
         self.create_temp_logger('info')
         
         # Check if TEAL_ROOT_DIR is set ... if it is not, do not run the test
-        if TEAL_ROOT_DIR not in os.environ:
+        if os.environ[TEAL_ROOT_DIR] == os.path.join(os.sep, 'opt', 'teal'):
             get_logger().info('Make file test not run because using default install directory')
             return 
-        
+       
         base_dir = '../../..' # This should be ibm
         ## ADD EXCLUSIONS BELOW
         files_to_exclude = ['../../../teal/monitor/teal_semaphore.cc', 

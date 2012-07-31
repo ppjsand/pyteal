@@ -100,7 +100,7 @@ package xCAT_schema::Teal_mysql;
     x_tealalert2alert => {
           cols => [qw(assoc_id alert_recid assoc_type t_alert_recid comments disable)], 
         keys => [qw(assoc_id)],
-        required => [qw(alert_recid assoc_type)],
+        required => [qw(alert_recid assoc_type t_alert_recid)],
         types => { 
            assoc_id => 'BIGINT AUTO_INCREMENT',
            alert_recid => 'BIGINT',
@@ -122,7 +122,7 @@ package xCAT_schema::Teal_mysql;
     x_tealalert2event => {
           cols => [qw(assoc_id alert_recid assoc_type t_event_recid comments disable)], 
         keys => [qw(assoc_id)],
-        required => [qw(alert_recid assoc_type)],
+        required => [qw(alert_recid assoc_type t_event_recid)],
         types => { 
            assoc_id => 'BIGINT AUTO_INCREMENT',
            alert_recid => 'BIGINT',

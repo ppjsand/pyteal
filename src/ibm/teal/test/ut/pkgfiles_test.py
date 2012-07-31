@@ -18,7 +18,7 @@ from string import replace
 from ibm.teal.test.teal_unittest import TealTestCase
 
 EXT_755 = ['.pm', '.py', '.so']
-EXT_644 = ['.json', '.xml', '.conf', '.sql', '.pdf', '.sample', '.po', '.mo', '.pot']
+EXT_644 = ['.json', '.xml', '.conf', '.sql', '.pdf', '.sample', '.po', '.mo', '.pot', '.xsd']
 NAME_ONLY_644 = ['cfgloc']
 
 def get_files_and_dirs(tup, path, filenames):
@@ -187,9 +187,9 @@ TEAL_UT_PKG_DIR = 'TEAL_UT_PKG_DIR'
 TEAL_PKGS_CTL = {
                   'base': (
                            # Add to il
-                           ['/usr/lib64/libteal_common.so', '/etc/init.d/teal'],
+                           ['/usr/lib64/libteal_common.so', '/etc/init.d/teal', '/opt/teal/doc/teal_guide.pdf'],
                            # Add to spec
-                           [],
+                           ['/opt/teal/doc/teal_guide.pdf'],
                            # Dir replacements
                            {'/install/postscripts/rmcmon/' : '/opt/xcat/lib/perl/xCAT_monitoring/rmc/'},
                            # Files not in all check
@@ -201,9 +201,37 @@ TEAL_PKGS_CTL = {
                           ),
                   'test': (
                            # Add to il
-                           [],
+                           ['/opt/teal/ibm/teal/test/interactive/common_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/dictionary_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/event_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/gear_ruleset_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/journal_explorer.py',
+                            '/opt/teal/ibm/teal/test/interactive/teal_interactive.py',
+                            '/opt/teal/ibm/teal/test/interactive/__init__.py',
+                            '/opt/teal/ibm/teal/test/interactive/data/alert_metadata_demo_01.xml',
+                            '/opt/teal/ibm/teal/test/interactive/data/data_sample_001_NEW.json',
+                            '/opt/teal/ibm/teal/test/interactive/data/data_sample_demo_NEW_001.json',
+                            '/opt/teal/ibm/teal/test/interactive/data/data_sample_demo_NEW_002.json',
+                            '/opt/teal/ibm/teal/test/interactive/data/interactive_001.conf',
+                            '/opt/teal/ibm/teal/test/interactive/data/teal.conf',
+                            '/opt/teal/ibm/teal/test/ut/data/checkpoint_test/xcat/cfgloc',
+                            '/opt/teal/ibm/teal/test/ut/data/common/xcat/cfgloc'],
                            # Add to spec
-                           [],
+                           ['/opt/teal/ibm/teal/test/interactive/common_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/dictionary_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/event_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/gear_ruleset_gui.py',
+                            '/opt/teal/ibm/teal/test/interactive/journal_explorer.py',
+                            '/opt/teal/ibm/teal/test/interactive/teal_interactive.py',
+                            '/opt/teal/ibm/teal/test/interactive/__init__.py',
+                            '/opt/teal/ibm/teal/test/interactive/data/alert_metadata_demo_01.xml',
+                            '/opt/teal/ibm/teal/test/interactive/data/data_sample_001_NEW.json',
+                            '/opt/teal/ibm/teal/test/interactive/data/data_sample_demo_NEW_001.json',
+                            '/opt/teal/ibm/teal/test/interactive/data/data_sample_demo_NEW_002.json',
+                            '/opt/teal/ibm/teal/test/interactive/data/interactive_001.conf',
+                            '/opt/teal/ibm/teal/test/interactive/data/teal.conf',
+                            '/opt/teal/ibm/teal/test/ut/data/checkpoint_test/xcat/cfgloc',
+                            '/opt/teal/ibm/teal/test/ut/data/common/xcat/cfgloc'],
                            # Dir replacements
                            {},
                            # Files not in all check
@@ -373,6 +401,15 @@ TEAL_SRC_CTL = (
                     ['/opt/teal/doc'],
                     []
                   ),
+                  ( '../../../../xml',
+                    '/opt/teal/xml/',
+                    # Exclude
+                    [],
+                    [],
+                    # Add
+                    ['/opt/teal/xml'],
+                    []
+                  ),
                   ( '../../../../etc',
                     '/etc/',
                     # Exclude
@@ -509,10 +546,11 @@ class TestPkgfiles(TealTestCase):
         src_files.remove('/etc/xcat/cfgloc')
         src_dirs.remove('/etc/init.d')
         src_dirs.remove('/etc/xcat')
+        src_dirs.remove('/opt/teal/ibm/teal/test/interactive')
+        src_dirs.remove('/opt/teal/ibm/teal/test/interactive/data')
         
         _compare_file_lists('pkg', pkg_files, 'teal', src_files, 'all files', failures)
         _compare_file_lists('pkg', pkg_dirs, 'teal', src_dirs, 'all dirs', failures)
-       
         #########################
         # Compare base and base-bg
         base_spec_files = []
@@ -521,7 +559,6 @@ class TestPkgfiles(TealTestCase):
         _load_spec_file(spec_loc, 'base-bg', base_bg_spec_files, failures )
         base_spec_files.remove('/etc/teal/teal.conf')
         base_spec_files.remove('/etc/init.d/teal')
-        base_spec_files.remove('/opt/teal/doc/teal_guide.pdf')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_db2.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_dba_db2.sql')
         base_spec_files.remove('/opt/teal/data/ibm/teal/sql/install/Teal_mysql.sql')

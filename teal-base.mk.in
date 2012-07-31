@@ -92,10 +92,13 @@ perl/xCAT_schema/Teal_db2.pm \
 perl/xCAT_schema/Teal_mysql.pm \
 perl/xCAT_monitoring/rmc/resources/mn/IBM.EventResponse/TealNotifyEventLogged.pm \
 perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify.pm \
+perl/xCAT_monitoring/rmc/resources/mn/IBM.Condition/TealAnyNodeEventNotify_H.pm \
 perl/xCAT_monitoring/rmc/resources/mn/IBM.Sensor/TealSendAlert.pm 
 
 TEAL_XCAT_INSTALL_FILES += \
-perl/xCAT_monitoring/rmc/resources/sn/IBM.Sensor/TealEventNotify.pm 
+perl/xCAT_monitoring/rmc/resources/sn/IBM.Sensor/TealEventNotify.pm \
+perl/xCAT_monitoring/rmc/resources/node/IBM.Sensor/TealEventNotify.pm \
+perl/xCAT_monitoring/rmc/resources/sn/IBM.Condition/TealAnyNodeEventNotify.pm 
 
 TEAL_ETC_FILES += \
 etc/init.d/teal \
@@ -184,6 +187,7 @@ ibm/teal/util/msg_target.py \
 ibm/teal/util/extendable_timer.py \
 ibm/teal/util/journal.py \
 ibm/teal/util/command.py \
+ibm/teal/util/teal_thread.py \
 ibm/teal/util/xml_file_reader.py \
 ibm/teal/constants.py \
 ibm/teal/event.py \

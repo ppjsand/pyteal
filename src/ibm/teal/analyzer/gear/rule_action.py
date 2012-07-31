@@ -54,7 +54,7 @@ GACT_VALUES = {GACT_TYPE_CREATE_ALERT:   {
                                            'raw_data':        (GRVA_TYPE_ANY, None, False, False),
                                            'use_metadata':    (GRVA_TYPE_BOOLEAN, 'true', False, True),
                                            'init_class':      (GRVA_TYPE_STRING, None, False, True),
-                                           'priority':        (GRVA_TYPE_NONZERO_UINT, None, False, False),                                        'scope': (GRVA_TYPE_SCOPE, False, False), 
+                                           'priority':        (GRVA_TYPE_NONZERO_UINT, None, False, False) 
                                          },
                GACT_TYPE_SUPPRESS_EVENTS:{
                                            'ids':        (GRVA_TYPE_SET_OF_EVENT_IDS, None, False, False), 
